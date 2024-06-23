@@ -1,4 +1,5 @@
 GEM
+  remote: https://rubygems.org/
   specs:
     activesupport (7.1.3.4)
       base64
@@ -294,6 +295,7 @@ PLATFORMS
 
 DEPENDENCIES
   github-pages
+  jekyll-include-cache
 
 BUNDLED WITH
    2.5.14
