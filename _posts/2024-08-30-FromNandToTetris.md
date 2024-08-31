@@ -8,7 +8,7 @@ description: Notes and thoughts on this great online course.
 
 ## Overview
 
-In this famous course (often regarded as one of the best courses ever designed for Computer Science), we build a computer
+In this [famous course](https://www.nand2tetris.org/) (often regarded as one of the best courses ever designed for Computer Science), we build a computer
 from scratch, and then, using a higher-level programming language that we design ourselves, develop a program that runs on
 that very computer.
 
