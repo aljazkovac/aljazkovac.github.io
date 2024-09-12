@@ -2,7 +2,7 @@
 title: FromNand2Tetris
 date: 2024-08-30 10:48:23 +0200
 categories: [software, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
-tags: [software, hardware, courses, certificates]     # TAG names should always be lowercase.
+tags: [software, hardware, courses, certificates] # TAG names should always be lowercase.
 description: Notes and thoughts on this great online course.
 ---
 
@@ -30,3 +30,80 @@ I really enjoyed designing the chips using the HDL (Figure 1). One thing one nee
 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400" }
 _Figure 1: Design for a Dmux4Way and a Dmux8Way chip_
+
+## Highlights and Notes on Project 2
+
+In this project we built an ALU (Arithmetic Logic Unit). We built a family of adders (half-adder, full adder, add16, inc16), and then we used those to build a full ALU. The ALU computes a function on two inputs, and outputs the result.
+It can perform a family of 18 functions, including setting an integer to 0, negating it, addition, multiplication and division of two integers, etc. It is a simple and elegant design.
+
+Here is my implementation in less than twenty lines of HDL code:
+
+```verilog
+ * ALU (Arithmetic Logic Unit):
+ * Computes out = one of the following functions:
+ *                0, 1, -1,
+ *                x, y, !x, !y, -x, -y,
+ *                x + 1, y + 1, x - 1, y - 1,
+ *                x + y, x - y, y - x,
+ *                x & y, x | y
+ * on the 16-bit inputs x, y,
+ * according to the input bits zx, nx, zy, ny, f, no.
+ * In addition, computes the two output bits:
+ * if (out == 0) zr = 1, else zr = 0
+ * if (out < 0)  ng = 1, else ng = 0
+ */
+// Implementation: Manipulates the x and y inputs
+// and operates on the resulting values, as follows:
+// if (zx == 1) sets x = 0        // 16-bit constant
+// if (nx == 1) sets x = !x       // bitwise not
+// if (zy == 1) sets y = 0        // 16-bit constant
+// if (ny == 1) sets y = !y       // bitwise not
+// if (f == 1)  sets out = x + y  // integer 2's complement addition
+// if (f == 0)  sets out = x & y  // bitwise and
+// if (no == 1) sets out = !out   // bitwise not
+
+CHIP ALU {
+    IN
+        x[16], y[16],  // 16-bit inputs
+        zx, // zero the x input?
+        nx, // negate the x input?
+        zy, // zero the y input?
+        ny, // negate the y input?
+        f,  // compute (out = x + y) or (out = x & y)?
+        no; // negate the out output?
+    OUT
+        out[16], // 16-bit output
+        zr,      // if (out == 0) equals 1, else 0
+        ng;      // if (out < 0)  equals 1, else 0
+
+    PARTS:
+    // Pre-setting the x-input
+    Mux16(a=x, b[0..15]=false, sel=zx, out=xSetZero);
+    Not16(in=xSetZero, out=notX);
+    Mux16(a=xSetZero, b=notX, sel=nx, out=xSet);
+
+    // Pre-setting the y-input
+    Mux16(a=y, b[0..15]=false, sel=zy, out=ySetZero);
+    Not16(in=ySetZero, out=notY);
+    Mux16(a=ySetZero, b=notY, sel=ny, out=ySet);
+
+    // Selecting between computing + or &
+    Add16(a=xSet, b=ySet, out=xPlusY);
+    And16(a=xSet, b=ySet, out=xAndY);
+    Mux16(a=xAndY, b=xPlusY, sel=f, out=fSet);
+
+    // Post-setting the output
+    Not16(in=fSet, out=notOut);
+    Mux16(a=fSet, b=notOut, sel=no, out=out, out[0..7]=outFirst, out[8..15]=outSecond, out[15]=outMSB);
+
+    // Setting the control bits
+    // Or8Way outputs 1 if any of the bits is 1, and 0 if all are 0
+    Or8Way(in=outFirst, out=firstPartAllZero);
+    Or8Way(in=outSecond, out=secondPartAllZero);
+    Or(a=firstPartAllZero, b=secondPartAllZero, out=allBitsZero);
+    Mux(a=true, b=false, sel=allBitsZero, out=zr);
+
+    // if (MSB == 1) then the number is negative
+    Mux(a=false, b=true, sel=outMSB, out=ng);
+}
+```
