@@ -107,3 +107,25 @@ CHIP ALU {
     Mux(a=false, b=true, sel=outMSB, out=ng);
 }
 ```
+
+## Highlights and Notes on Project 3
+
+In this part we built the computer's main memory unit, Random Access Memory, or RAM. This marks the point where we move from combinational logic to a clock-based sequential logic.
+
+We know that the RAM is not the only type of memory in a computer. Other types are ROM (Read-only memory), which is persistent and stores the boot programs. Then we also have the cache memory (fast, small and expensive) and the disk memory (slow, large and inexpensive). The difference between RAM and cache is that cache is much faster and located closer to the CPU or even inside it, whereas RAM is located on the motherboard and is connected to the CPU via a memory bus. Cache is used for super fast access to data that is needed often, and RAM is used to access data and instructions that are being worked on by the system. The cache is checked first, then the RAM.
+
+To be able to implement sequential logic, we need a gate that can "remember" the previous state. Such a gate is called a "flip-flop" gate, and in this course it was given to use. Otherwise, it can be implemented with Nand gates, by creating a "loop" and a "master-slave" setup. We used the given flip-flop gate, and other gates we built in project 1 and project 2, to build the following gates:
+
+1. Bit
+2. Register
+3. RAM8
+4. RAM64
+5. RAM512
+6. RAM4K
+7. RAM16K
+8. PS (Program counter)
+
+I must admit that the program counter is the first thing in this course where I got really stuck. I could have used an LLM to help me, of course, or Googled around for tips and ideas, but I knew that the problem wasn't that hard, and I really wanted to give my brain a proper exercise. So I tried various ways of breaking the problem down into smaller pieces, drawing diagrams, turning the concepts around in my head. In the end, I did arrive at the correct solution, and one can see the elegance of it from the diagram below (Figure 2). You see, the logic of what input is chosen, follows the logic of what the selector bit will be in the register. This is what we do Computer Science for, the elegance of the solutions and the satisfaction of solving problems.
+
+![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p3-pc.jpg){: w="700" h="400" }
+_Figure 2: Design for a Program Counter (PC)
