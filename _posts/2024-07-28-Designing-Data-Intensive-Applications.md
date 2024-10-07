@@ -8,7 +8,7 @@ description: Notes and thoughts on the book.
 
 I am currently reading Martin Kleppman's book [Designing Data-Intensive Applications](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/).
 
-I have greatly enjoyed reading Part I. I find the book to be very well-written in the sense that it walks the fine line between being technical but also not overy complicated. As a developer who is not an expert in the field of databases, I feel like I can perfectly follow the explanations and the more challenging technical passages, and feel like I am learning something valuable.
+I have greatly enjoyed reading Part I. I find the book to be very well-written in the sense that it walks the fine line between being technical but also not overy complicated. As a developer who is not an expert in the field of databases, I feel like I can perfectly follow the explanations and the more challenging technical passages, and feel like I am learning something valuable. I will summarize some selected chapters, mostly because I enjoy making notes after reading because it helps with long-term memory retention.
 
 **Chapter 1** introduces the core principles of data systems: reliability, scalability, and maintainability.
 
@@ -46,3 +46,19 @@ It seems, however, that relational and document databases are coming closer to e
 Then there is the thid option, as mentioned above, Graph-like data models. These are most appropriate for data that is very interconnected. A graph simply consists of **_vertices_** (nodes or entities) and **_edges_** (relationships or arcs). Some typical examples of data that can be modelled as a graph are: social graphs, the web graph, or road and rail networks. There are different ways of structuring and querying data in graphs, e.g., the **_property graph model_** and the **_triple-store model_**.
 
 What the two NoSQL data models have in common is that they don't enforce a schema, which makes it easier to adapt applications to changing requirements. However, the application still assumes that data has a structure, so the question is really if the schema is explicit (enforced on write) or implicit (handled on read).
+
+**Chapter 7** is about transactions and the various problems that arise with transactions, e.g., problems related to concurrency control, and how to solve them. There is an important term that describes the safety guarantees provided by transactions, **_ACID_**, which stands for Atomicity, Consistency, Isolation, and Durability. But as the author points out, the interpretations and implementations of **_ACID_** differ greatly.
+
+**_Atomicity_** is the ability to abort a transaction on error and have all writes from that transaction discarded.
+
+**_Consistency_** is the idea that we have certain statements about our data (invariants) that must always be true.
+
+**_Isolation_** means that concurrently executing transactions are isolated from each other.
+
+**_Durability_** is the promise that once a transaction has committed successfully, the data it has written to the database will not be forgotten.
+
+There exist various isolation levels that are used to control concurrency: **_read committed_**, **_snapshot isolation_**, and **_serializable_**. There are meant to deal with and prevent various race conditions, e.g., **_dirty reads_**, **_dirty writes_**, **_read skew_**, **_lost updates_**, **_write skew_**, **_phantom reads_**, etc. Weak isolation levels protect against some of them, but most of them need to be handled manually. The only isolation level that protects against all of them is serializable isolation. There are three different approaches to implement it:
+
+1. Literally executing transactions in a serial order
+2. Two-phase locking
+3. Serializable snapshot isolation (SSI): when a transaction wants to commit, it is checked; if the execution was not serializable, the transaction is aborted.
