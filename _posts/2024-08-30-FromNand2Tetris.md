@@ -129,3 +129,128 @@ I must admit that the program counter is the first thing in this course where I 
 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p3-pc.jpg){: w="700" h="400" }
 _Figure 2: Design for a Program Counter (PC)_
+
+## Highlights and Notes on Project 4
+
+This project was all about writing assembly programs using the Hack machine language, designed specifically for this course. I love writing low-level code, and find it intellectually much more interesting to high-level coding. The feeling of steering the computer at a very granular, basic level, gives a greater feeling of intelectual satisfaction, and reminds us of what computing is all about: zeroes and ones. It is important to note the difference between a machine language and an assembly language. The former is the zeroes and ones, the binary code that the CPU can execute. The assembly language is a level higher, a human-readable representation of machine language, which uses symbolic names (called mnemonics) instead of binary code. This makes it quite a bit easier to understand and write machine instructions. As such, there is a direct, one-to-one mapping between an assembly language and machine code, and the former is translated into the later by an assembler.
+
+In this project, I wrote two simple assembly programs, one that blackens the screen if any key is pressed, and whitens it if the key is released; and one that multiples two numbers. Here is the first program:
+
+```nasm
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/4/Fill.asm
+
+// Runs an infinite loop that listens to the keyboard input. 
+// When a key is pressed (any key), the program blackens the screen,
+// i.e. writes "black" in every pixel. When no key is pressed, 
+// the screen should be cleared.
+
+//// Replace this comment with your code.
+
+
+// Set the start screen address
+@SCREEN
+D=A
+@addr
+M=D
+
+// Set the end screen address
+@SCREEN
+D=A
+@8192
+D=D+A
+@endscreenaddr
+M=D
+
+(MAINLOOP)
+// Listen to keyboard input
+@KBD
+D=M
+
+// Blacken screen if D-reg (keyboard input) does not contain 0.
+@BLACK
+D;JNE
+
+@MAINLOOP
+0;JMP
+
+// Blacken screen
+(BLACK)
+@addr
+A=M
+M=-1
+
+@KBD
+D=M
+@WHITE
+D;JEQ
+
+// Check if outside of screen
+// highscreenaddr = 16384 (SCREEN) + 8192 = 24576
+// if (addr - 24576 = 0) => egde of screen
+@addr
+D=M
+@24576
+D=D-A
+@OUTSIDESCREENHIGH
+D;JEQ
+
+// Set new address
+@addr
+D=M
+MD=D+1
+
+@BLACK
+0;JMP
+
+// WHITE
+(WHITE)
+@addr
+A=M
+M=0
+
+@KBD
+D=M
+@BLACK
+D;JNE
+
+// Check if outside of screen
+// lowscreenaddr = 16384 
+// if (addr - 16384 = 0) => edge of screen
+@addr
+D=M
+@SCREEN
+D=D-A
+@OUTSIDESCREENLOW
+D;JEQ
+
+// Set new address
+@addr
+D=M
+MD=D-1
+
+@WHITE
+0;JMP
+
+(OUTSIDESCREENHIGH)
+@KBD
+D=M
+@WHITE
+D;JEQ
+@OUTSIDESCREENHIGH
+0;JMP
+
+(OUTSIDESCREENLOW)
+@KBD
+D=M
+@BLACK
+D;JNE
+@OUTSIDESCREENLOW
+0;JMP
+
+// Unconditional jump to start of loop
+@MAINLOOP
+0;JMP
+```
