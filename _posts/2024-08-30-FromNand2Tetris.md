@@ -3,7 +3,7 @@ title: FromNand2Tetris
 date: 2024-08-30 10:48:23 +0200
 categories: [software, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [software, hardware, courses, certificates] # TAG names should always be lowercase.
-description: Notes and thoughts on this great online course.
+description: A course in which you build a computer (hardware and software) from scratch.
 ---
 
 ## Overview

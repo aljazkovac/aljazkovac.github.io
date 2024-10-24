@@ -3,7 +3,7 @@ title: Full Stack Open - Deep Dive Into Modern Web Development
 date: 2024-07-28 10:48:23 +0200
 categories: [software, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [software, full stack, courses, certificates]     # TAG names should always be lowercase.
-description: Notes and thoughts on this great online course.
+description: A course on modern full stack web development.
 ---
 
 ## Overview
