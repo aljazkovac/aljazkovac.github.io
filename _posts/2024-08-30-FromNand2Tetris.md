@@ -142,9 +142,9 @@ In this project, I wrote two simple assembly programs, one that blackens the scr
 // by Nisan and Schocken, MIT Press.
 // File name: projects/4/Fill.asm
 
-// Runs an infinite loop that listens to the keyboard input. 
+// Runs an infinite loop that listens to the keyboard input.
 // When a key is pressed (any key), the program blackens the screen,
-// i.e. writes "black" in every pixel. When no key is pressed, 
+// i.e. writes "black" in every pixel. When no key is pressed,
 // the screen should be cleared.
 
 //// Replace this comment with your code.
@@ -217,7 +217,7 @@ D=M
 D;JNE
 
 // Check if outside of screen
-// lowscreenaddr = 16384 
+// lowscreenaddr = 16384
 // if (addr - 16384 = 0) => edge of screen
 @addr
 D=M
@@ -254,3 +254,78 @@ D;JNE
 @MAINLOOP
 0;JMP
 ```
+
+## Highlights and Notes on Project 5
+
+In this part we had to finish and tie together the entire computer architecture. First we build the memory module, consisting of RAM, Screen and Keyboard parts. Then we design the central processing unit (CPU), which we connect to the memory and the ROM (the module that stores whatever program we decide to run.) Naturally, the most challenging part of this project was designing the CPU. The CPU essentially performs two main tasks:
+
+1. Executes a given Hack instruction
+2. Determines which instruction should be fetched and executed next.
+
+In order to achieve that, it also needs to decode the instruction, determine what type of instruction it is (in our case, either an A or a C-instruction), and route the relevant bits to the relevant parts of the architecture.
+
+As with Project 3, the most difficult part was coming up with the logic that controls the program counter. In this case, we had to come up with a logic gate architecture that realizes the following behavior: _\*if jump then PC = A else PC++_\*.
+
+Here is my rather simplistic implementation:
+
+```nasm
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M?
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+
+    Mux16(a=instruction, b=outALU, sel=instruction[15], out=AorCinstruction);
+    Mux(a=true, b=instruction[5], sel=instruction[15], out=loadAreg); // Load the A-register if the instruction is an A-instruction
+    ARegister(in=AorCinstruction, load=loadAreg, out[0..14]=addressM, out[0..15]=aregOut);
+    And(a=instruction[15], b=instruction[4], out=loadDreg); // c3 == C-instruction and d2-bit set
+    DRegister(in=outALU, load=loadDreg, out=dregOut);
+    Mux16(a=aregOut, b=inM, sel=instruction[12], out=aregOutOrInM); // Send either A-register or inM as input to the ALU
+
+    DMux8Way(in=true, sel=instruction[0..2], a=noJump, b=second, c=third, d=fourth, e=fifth, f=sixth, g=seventh, h=eight);
+
+    Not(in=noJump, out=noJumpFalse);
+    Not(in=zeroOut, out=notZero);
+    Not(in=negOut, out=notNegative);
+    And(a=notZero, b=notNegative, out=outGreaterThanZero);
+    And(a=second, b=outGreaterThanZero, out=jumpIfGreaterThanZero);
+
+    And(a=third, b=zeroOut, out=jumpIfZero);
+
+    Or(a=zeroOut, b=notNegative, out=outGreaterThanOrZero);
+    And(a=fourth, b=outGreaterThanOrZero, out=jumpIfGreaterThanOrZero);
+
+    And(a=fifth, b=negOut, out=jumpIfLessThanZero);
+
+    And(a=sixth, b=notZero, out=jumpIfNotZero);
+
+    Or(a=negOut, b=zeroOut, out=outLessThanOrZero);
+    And(a=seventh, b=outLessThanOrZero, out=jumpIfLessThanOrZero);
+
+    Or(a=jumpIfGreaterThanZero, b=jumpIfZero, out=firstOr);
+    Or(a=firstOr, b=jumpIfGreaterThanOrZero, out=secondOr);
+    Or(a=secondOr, b=jumpIfLessThanZero, out=thirdOr);
+    Or(a=thirdOr, b=jumpIfNotZero, out=fourthOr);
+    Or(a=fourthOr, b=jumpIfLessThanOrZero, out=fifthOr);
+    Or(a=fifthOr, b=eight, out=jumpConditions);
+
+    And(a=noJumpFalse, b=jumpConditions, out=effectJump);
+    And(a=effectJump, b=instruction[15], out=effectJumpIfCInstruction);
+
+    And(a=instruction[15], b=instruction[3], out=writeM); // Write to memory if d3 set and instruction is a C-instruction
+
+    PC(in=aregOut, load=effectJumpIfCInstruction, inc=true, reset=reset, out[0..14]=pc);
+    ALU(x=dregOut, y=aregOutOrInM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out[0..15]=outALU, zr=zeroOut, ng=negOut);
+}
+```
+
+The rest was quite simple, and the final Hack computer implementation can then be done in only a few lines of HDL code. Feel free to check out [this part of my course repository](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project5) for more detail.
