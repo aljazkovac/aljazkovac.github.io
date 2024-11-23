@@ -15,23 +15,27 @@ that very computer.
 This means that we go through all the building blocks a modern computer needs to be able to run software. In Part I we design
 the hardware, and in Part II we focus on the software.
 
+## Part I
+
 Part I consists of five projects:
 
-1. Boolean functions and gate logic: we design our own basic chips, using the course's HDL (Hardware Descriptive Language), e.g.
-   And, Not, Or, Xor, Mux, Dmux, etc.
+1. Boolean functions and gate logic
 2. Boolean Arithmetic and the ALU (Arithmetic Logic Unit)
-3. etc.
+3. The main mermoy unit, RAM (random access memory)
+4. Assembly programs in the Hack assembly language
+5. The CPU (central processing unit), and the entire computer architecture
+6. The assembler for the Hack assembly language
 
 Feel free to check out my [repo for the course](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/).
 
-## Highlights and Notes on Project 1
+### Highlights and Notes on Project 1
 
 I really enjoyed designing the chips using the HDL (Figure 1). One thing one needs to keep in mind is that the multi-bit buses are indexed from right to left, so the opposite from what one is used to. I especially enjoyed designing the Mux4Way16 and Mux8Way16 and the Dmux4Way and Dmux8Way chips. It helped to actually draw out the sketches for the designs to get a better understanding. Another interesting thing happened around this time. I saw a post by [Andrej Karpathy](https://github.com/karpathy) about [Cursor](https://www.cursor.com/), a fork of VS Code, but with a built-in AI assistant (basically similar to GitHub Copilot, the only difference being that Cursor offers the chance to choose between various models, such as ChatGPT4o, Claude Sonnet 3.5, etc.). It looked pretty good and I really enjoyed using it but it would automatically produce solutions for me for the first couple of chips. After a few minutes I realized I wasn't solving the problems myself, and was therefore not learning anything. I deleted all the solutions and re-implemented everything myself from scratch. This could lead to a further debate on how to properly use LLMs for both work and learning, but my general feeling at the moment is simply: Don't use them to give you solutions. Only use them as a form of quicker and more comprehensive research, or as a complement to Googling and reading the documentation. That is, if you actually want to learn anything, of course.
 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400" }
 _Figure 1: Design for a Dmux4Way and a Dmux8Way chip_
 
-## Highlights and Notes on Project 2
+### Highlights and Notes on Project 2
 
 In this project we built an ALU (Arithmetic Logic Unit). We built a family of adders (half-adder, full adder, add16, inc16), and then we used those to build a full ALU. The ALU computes a function on two inputs, and outputs the result.
 It can perform a family of 18 functions, including setting an integer to 0, negating it, addition, multiplication and division of two integers, etc. It is a simple and elegant design.
@@ -108,7 +112,7 @@ CHIP ALU {
 }
 ```
 
-## Highlights and Notes on Project 3
+### Highlights and Notes on Project 3
 
 In this part we built the computer's main memory unit, Random Access Memory, or RAM. This marks the point where we move from combinational logic to a clock-based sequential logic.
 
@@ -130,7 +134,7 @@ I must admit that the program counter is the first thing in this course where I 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p3-pc.jpg){: w="700" h="400" }
 _Figure 2: Design for a Program Counter (PC)_
 
-## Highlights and Notes on Project 4
+### Highlights and Notes on Project 4
 
 This project was all about writing assembly programs using the Hack machine language, designed specifically for this course. I love writing low-level code, and find it intellectually much more interesting to high-level coding. The feeling of steering the computer at a very granular, basic level, gives a greater feeling of intelectual satisfaction, and reminds us of what computing is all about: zeroes and ones. It is important to note the difference between a machine language and an assembly language. The former is the zeroes and ones, the binary code that the CPU can execute. The assembly language is a level higher, a human-readable representation of machine language, which uses symbolic names (called mnemonics) instead of binary code. This makes it quite a bit easier to understand and write machine instructions. As such, there is a direct, one-to-one mapping between an assembly language and machine code, and the former is translated into the later by an assembler.
 
@@ -255,7 +259,7 @@ D;JNE
 0;JMP
 ```
 
-## Highlights and Notes on Project 5
+### Highlights and Notes on Project 5
 
 In this part we had to finish and tie together the entire computer architecture. First we build the memory module, consisting of RAM, Screen and Keyboard parts. Then we design the central processing unit (CPU), which we connect to the memory and the ROM (the module that stores whatever program we decide to run.) Naturally, the most challenging part of this project was designing the CPU. The CPU essentially performs two main tasks:
 
@@ -264,7 +268,7 @@ In this part we had to finish and tie together the entire computer architecture.
 
 In order to achieve that, it also needs to decode the instruction, determine what type of instruction it is (in our case, either an A or a C-instruction), and route the relevant bits to the relevant parts of the architecture.
 
-As with Project 3, the most difficult part was coming up with the logic that controls the program counter. In this case, we had to come up with a logic gate architecture that realizes the following behavior: _\*if jump then PC = A else PC++_\*.
+As with Project 3, the most difficult part was coming up with the logic that controls the program counter. In this case, we had to come up with a logic gate architecture that realizes the following behavior: _*if jump then PC = A else PC++_*.
 
 Here is my rather simplistic implementation:
 
