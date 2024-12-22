@@ -17,7 +17,7 @@ the hardware, and in Part II we focus on the software.
 
 ## Part I
 
-Part I consists of five projects:
+Part I consists of six projects:
 
 1. Boolean functions and gate logic
 2. Boolean Arithmetic and the ALU (Arithmetic Logic Unit)
