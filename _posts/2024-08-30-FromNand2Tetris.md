@@ -333,3 +333,132 @@ CHIP CPU {
 ```
 
 The rest was quite simple, and the final Hack computer implementation can then be done in only a few lines of HDL code. Feel free to check out [this part of my course repository](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project5) for more detail.
+
+### Highlights and Notes on Project 6
+
+In this part we had to implement the assembler for the Hack assembly language. This was a proper, albeit small, software project, and I thoroughly enjoyed it. An assembler is, in essence, just a parsing and translation tool. I implemented the parsing without doing any rigorous validation of the instructions. This was part of the contract for the project, namely that the instructions provided would be valid. I have also, once again, pondered the value of coding with an AI assistant. As much as it might speed up the process to a certain degree, I really find it quite harmful to the learning process. I enjoy the convenience of being able to ask an LLM questions directly in the editor (I use [Cursor](https://www.cursor.com/)), but I dislike the use of tab completion. (expect sometimes when you have to code some really tedious parts of a program). I don't want a model to be generating code for me. I want to have an AI assistant that I can discuss the various aspects of my code with, but in the end I want the decisions and conclusions to be my own. The beauty of designing software, just like with writing a novel or a poem, is that there are many ways of doing it, and they all have their advantages and disadvantages. The important thing is that you thoroughly understand your design and its strenghts and shortcomings. This becomes rather impossible with excessive use of AI assistants. And it isn't just about the general design of code, most lines of code can be implemented in several ways. It is important to implement things in suboptimal ways also, so that you can learn and understand why they are suboptimal. 
+
+Anyways, I digress. The assembler can most certainly be improved, on both the design and practical-implementation level. But I am happy with it for now, since it simply does the job, and I have learned what I wanted to learn about assemblers. For now. Here is my main program implementation, which follows the recommendation to pass through the program twice; in the first pass, we handle the labels, and in the second pass we handle the rest.
+
+```csharp
+namespace Assembler;
+
+internal abstract class Program
+{
+    private static void Main(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            Console.WriteLine("Usage: Assembler <file.asm>");
+            return;
+        }
+        
+        // Load the file
+        string file = args[0];
+        var parser = new Parser(file);
+        
+        // The first pass (build the symbol table)
+        var romAddress = 0;
+        while (parser.HasMoreCommands())
+        {
+            parser.Advance();
+            if (parser.CurrentCommand == null)
+            {
+                Console.WriteLine("Current command is null.");
+            }
+            else
+            {
+                if (Parser.DetermineInstructionType(parser.CurrentCommand).Equals(InstructionType.LInstruction))
+                {
+                    SymbolTable.AddEntry(
+                        parser.Symbol() ?? throw new InvalidOperationException("Symbol cannot be null."), romAddress);
+                }
+                if (Parser.DetermineInstructionType(parser.CurrentCommand).Equals(InstructionType.AInstruction) ||
+                    Parser.DetermineInstructionType(parser.CurrentCommand).Equals(InstructionType.CInstruction))
+                {
+                    romAddress++;
+                }
+            }
+        }
+        
+        // The second pass (translate A-instructions and C-instructions, fetch L-instructions from the symbol table,
+        // and handle variables)
+        parser.DisposeReader();
+        parser = new Parser(file);
+        var lines = new List<string>();
+        var variableAddress = 16;
+        while (parser.HasMoreCommands())
+        {
+            parser.Advance();
+            if (parser.CurrentCommand == null)
+            {
+                Console.WriteLine("Current command is null.");
+            }
+            else
+            {
+                Console.WriteLine(parser.CurrentCommand + " == " + Parser.DetermineInstructionType(parser.CurrentCommand));
+
+                if (Parser.DetermineInstructionType(parser.CurrentCommand).Equals(InstructionType.CInstruction))
+                {
+                    const string firstBits = "111";
+                    string? compBits = Code.Comp(parser.Comp() ?? throw new InvalidOperationException());
+                    string? destBits = Code.Dest(parser.Dest() ?? throw new InvalidOperationException());
+                    string? jumpBits = Code.Jump(parser.Jump() ?? throw new InvalidOperationException());
+                    string translation = firstBits + compBits + destBits + jumpBits;
+                    Console.WriteLine("Machine code for C-instruction " + parser.CurrentCommand + " : " + translation);
+                    lines.Add(translation);
+                }
+
+                if (Parser.DetermineInstructionType(parser.CurrentCommand).Equals(InstructionType.AInstruction))
+                {
+                    try
+                    {
+                        var number = Convert.ToInt32(parser.Symbol());
+                        const string firstBit = "0";
+                        string bits = Convert.ToString(number, 2).PadLeft(15, '0');
+                        string translation = firstBit + bits;
+                        Console.WriteLine("Machine code for numeric A-instruction " + parser.CurrentCommand + " : " + translation);
+                        lines.Add(translation);
+                    }
+                    // This means that the A-instruction is either a symbolic A-instruction or a variable
+                    catch (FormatException)
+                    {
+                        string? symbol = parser.Symbol();
+                        // The A-instruction is a symbolic A-instruction
+                        if (symbol != null && SymbolTable.Contains(symbol))
+                        {
+                            int symbolValue = SymbolTable.GetAddress(symbol);
+                            // Translate the symbol value
+                            const string firstBit = "0";
+                            string bits = Convert.ToString(symbolValue, 2).PadLeft(15, '0');
+                            string translation = firstBit + bits;
+                            Console.WriteLine("Machine code for symbolic A-instruction " + parser.CurrentCommand + " : " + translation);
+                            lines.Add(translation);
+                        }
+                        else
+                        // The A-instruction is a variable
+                        {
+                            string? variable = parser.Symbol();
+                            SymbolTable.AddEntry(variable ?? throw new InvalidOperationException("Symbol cannot be null."), variableAddress);
+                            const string firstBit = "0";
+                            string bits = Convert.ToString(variableAddress, 2).PadLeft(15, '0');
+                            string translation = firstBit + bits;
+                            Console.WriteLine("Machine code for variable A-instruction " + parser.CurrentCommand + " : " + translation);
+                            lines.Add(translation);
+                            variableAddress++;
+                        }
+                    }
+                }
+            }
+        }
+
+        string docPath = Environment.CurrentDirectory;
+        string? fileNameWithoutType = file.Split('.').FirstOrDefault();
+        using var outputFile = new StreamWriter(Path.Combine(docPath, fileNameWithoutType + ".hack"));
+        foreach (string line in lines)
+            outputFile.WriteLine(line);
+    }
+}
+```
+
+Check out [my code for the HACK assembler](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project6/Assembler), or [my repository for this course](https://github.com/aljazkovac/from-nand-to-tetris), and thanks for reading! See you in the next one!
