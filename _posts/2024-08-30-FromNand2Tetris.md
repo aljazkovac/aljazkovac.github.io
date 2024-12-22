@@ -21,7 +21,7 @@ Part I consists of six projects:
 
 1. Boolean functions and gate logic
 2. Boolean Arithmetic and the ALU (Arithmetic Logic Unit)
-3. The main mermoy unit, RAM (random access memory)
+3. The main memory unit, RAM (random access memory)
 4. Assembly programs in the Hack assembly language
 5. The CPU (central processing unit), and the entire computer architecture
 6. The assembler for the Hack assembly language
