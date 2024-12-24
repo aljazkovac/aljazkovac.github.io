@@ -1,6 +1,6 @@
 ---
 title: "macOS Terminal Commands Cheatsheet"
-date: 2024-12-24 10:48:23 +0200
+date: 2024-12-24 10:00:00 +0200
 categories: [Cheatsheets, macOS]
 tags: [terminal, macos, commands]
 description: A quick cheatsheet for macOS terminal commands.
