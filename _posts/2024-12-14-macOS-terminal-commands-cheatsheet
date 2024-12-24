@@ -1,0 +1,138 @@
+---
+title: "macOS Terminal Commands Cheatsheet"
+date: 2024-12-24
+categories: [Cheatsheets, macOS]
+tags: [terminal, macos, commands]
+---
+
+A handy reference guide for the most commonly used macOS terminal commands. Perfect for beginners and power users alike!
+
+---
+
+## File and Directory Management
+
+| **Command**          | **Description**                                      |
+| -------------------- | ---------------------------------------------------- |
+| `ls`                 | List files and directories in the current folder.    |
+| `ls -l`              | List with detailed information (permissions, size).  |
+| `cd <directory>`     | Change directory (e.g., `cd ~/Documents`).           |
+| `pwd`                | Show the current directory path.                     |
+| `mkdir <directory>`  | Create a new directory.                              |
+| `touch <file>`       | Create an empty file.                                |
+| `cp <source> <dest>` | Copy a file or directory.                            |
+| `mv <source> <dest>` | Move (or rename) a file or directory.                |
+| `rm <file>`          | Delete a file.                                       |
+| `rm -r <directory>`  | Delete a directory and its contents recursively.     |
+| `open <file>`        | Open a file or directory in the default application. |
+
+---
+
+## File Viewing and Editing
+
+| **Command**      | **Description**                    |
+| ---------------- | ---------------------------------- |
+| `cat <file>`     | View the contents of a file.       |
+| `less <file>`    | View a file one page at a time.    |
+| `nano <file>`    | Edit a file in the terminal.       |
+| `open -e <file>` | Open a file in TextEdit.           |
+| `head <file>`    | View the first 10 lines of a file. |
+| `tail <file>`    | View the last 10 lines of a file.  |
+
+---
+
+## System Information
+
+| **Command**          | **Description**                                 |
+| -------------------- | ----------------------------------------------- |
+| `whoami`             | Display the current user.                       |
+| `uname -a`           | Show system information.                        |
+| `df -h`              | Show disk space usage in human-readable format. |
+| `du -sh <directory>` | Show the size of a directory.                   |
+| `top`                | Display active processes and system stats.      |
+| `ps`                 | List running processes.                         |
+
+---
+
+## Networking
+
+| **Command**                     | **Description**                                         |
+| ------------------------------- | ------------------------------------------------------- |
+| `ping <host>`                   | Check connectivity to a host (e.g., `ping google.com`). |
+| `ifconfig`                      | Show network interface details.                         |
+| `curl <url>`                    | Fetch the content of a URL.                             |
+| `scp <source> <user@host:dest>` | Securely copy files to/from a remote machine.           |
+| `ssh <user@host>`               | Log into a remote machine via SSH.                      |
+
+---
+
+## Permissions and Ownership
+
+| **Command**                   | **Description**                                   |
+| ----------------------------- | ------------------------------------------------- |
+| `chmod <mode> <file>`         | Change file permissions (e.g., `chmod 755 file`). |
+| `chown <user>:<group> <file>` | Change file ownership.                            |
+| `sudo <command>`              | Run a command with superuser privileges.          |
+
+---
+
+## Package Management (Homebrew)
+
+| **Command**                | **Description**                                |
+| -------------------------- | ---------------------------------------------- |
+| `brew install <package>`   | Install a package (e.g., `brew install wget`). |
+| `brew update`              | Update Homebrew to the latest version.         |
+| `brew upgrade`             | Upgrade all installed packages.                |
+| `brew uninstall <package>` | Remove a package.                              |
+| `brew list`                | List installed packages.                       |
+
+---
+
+## Search
+
+| **Command**                     | **Description**                    |
+| ------------------------------- | ---------------------------------- |
+| `find <directory> -name <name>` | Search for files by name.          |
+| `grep <pattern> <file>`         | Search for a pattern in a file.    |
+| `grep -r <pattern> <directory>` | Recursively search in a directory. |
+
+---
+
+## Process Management
+
+| **Command**      | **Description**                                           |
+| ---------------- | --------------------------------------------------------- |
+| `kill <PID>`     | Terminate a process by its PID.                           |
+| `killall <name>` | Terminate all processes by name (e.g., `killall Safari`). |
+
+---
+
+## Utilities
+
+| **Command** | **Description**             |
+| ----------- | --------------------------- |
+| `clear`     | Clear the terminal screen.  |
+| `history`   | Show the command history.   |
+| `!!`        | Repeat the last command.    |
+| `exit`      | Close the terminal session. |
+
+---
+
+## Customizing the Terminal
+
+| **Command**                 | **Description**                                             |
+| --------------------------- | ----------------------------------------------------------- |
+| `alias <name>=<command>`    | Create a shortcut for a command (e.g., `alias ll='ls -l'`). |
+| `unalias <name>`            | Remove an alias.                                            |
+| `export <variable>=<value>` | Set an environment variable.                                |
+
+---
+
+### **Pro Tips**
+
+- **Tab Completion**: Use `Tab` to auto-complete file or folder names.
+- **Up Arrow**: Recall previous commands.
+- **Command Chaining**: Use `&&` to run commands sequentially (e.g., `cd folder && ls`).
+
+---
+
+Feel free to reach out in the comments if you have any questions or suggestions!
