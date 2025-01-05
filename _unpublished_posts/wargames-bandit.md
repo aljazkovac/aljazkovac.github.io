@@ -302,3 +302,96 @@ The 2>/dev/null option is used to suppress error messages.
      * Error messages (e.g., "Permission denied").
    When you add 2>/dev/null, errors are discarded, leaving only valid results displayed. 
    This doesn't affect the stdout stream, which still contains the matching files.
+
+## Bandit 7-8
+
+**Level Goal**
+
+The password for the next level is stored in the file data.txt next to the word millionth.
+
+*Solution*
+
+```bash
+bandit7@bandit:~$ grep "millionth" data.txt
+millionth	dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
+```
+Password: dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
+
+## Bandit 8-9
+
+**Level Goal**
+
+The password for the next level is stored in the file data.txt and is the only line of text that occurs only once.
+
+*Solution*
+
+```bash
+bandit8@bandit:~$ sort data.txt | uniq -c | awk '$1 == 1 {print $2}'
+4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
+```
+Password: 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
+
+### Explanation:
+1. sort data.txt: Sorts the lines in data.txt.
+2. uniq -c: Counts the number of occurrences of each line.
+3. awk '$1 == 1 {print $2}': Filters lines where the count is 1 and prints the second field (the password).
+
+#### The awk Command
+The awk command processes input line by line and splits each line into fields (columns) based on a delimiter, 
+which is a space or tab by default. Each field can then be accessed using a variable, such as $1 for the first field, 
+$2 for the second field, and so on.
+
+Here’s a detailed breakdown of the awk command:
+
+General Syntax of awk
+```bash
+awk 'condition {action}'
+```
+  * condition: A test to decide if the action should be applied to the current line.
+  * action: The operation to perform if the condition is true. If omitted, the entire line is printed by default.
+
+## Bandit 9-10
+**Level Goal**
+
+The password for the next level is stored in the file data.txt in one of the few human-readable strings, 
+preceded by several '=' characters.
+
+*Solution*
+  
+```bash
+bandit9@bandit:~$ strings data.txt | grep "=="
+}========== the
+3JprD========== passwordi
+~fDV3========== is
+D9========== FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
+```
+
+Password: FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
+
+I could have used grep to search for the password, but I wanted to experiment with the strings command.
+The strings command is less efficient than grep.
+
+## Bandit 10-11
+
+**Level Goal**
+
+The password for the next level is stored in the file data.txt, which contains base64 encoded data.
+
+*Solution*
+
+## Bandit 11-12
+
+**Level Goal**
+
+The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters 
+have been rotated by 13 positions.
+
+*Solution*
+
+## Bandit 12-13
+
+**Level Goal**
+
+The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly.
+
+*Solution*
