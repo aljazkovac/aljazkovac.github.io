@@ -164,6 +164,8 @@ bandit5@bandit:~/inhere$ cat ./maybehere07/.file2
 HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
 ```
 
+Password: HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
+
 ### Explanation of the commands:
 
 Use find to Recursively Search All Files 
@@ -247,3 +249,40 @@ The password for the next level is stored somewhere on the server and has all of
   * 33 bytes in size
 
 *Solution*
+
+```bash
+find . -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null
+cat ./var/lib/dpkg/info/bandit7.password
+```
+Password: morbNTDkSW6jIlUc0ymOdMaLnOlFVAaj
+
+### Explanation:
+The find command is used to search for files that meet specific criteria.
+The -type f option specifies that we are looking for files.
+The -user bandit7 option specifies that the file is owned by the user bandit7.
+The -group bandit6 option specifies that the file is owned by the group bandit6.
+The -size 33c option specifies that the file is 33 bytes in size.
+The 2>/dev/null option is used to suppress error messages.
+
+### How Redirection Works in 2>/dev/null
+1. File Descriptors
+   Every process in Unix/Linux has three default file descriptors:
+   * 0 (stdin): Standard input, usually from the keyboard.
+   * 1 (stdout): Standard output, typically displayed on the terminal.
+   * 2 (stderr): Standard error, also typically displayed on the terminal.
+2. The 2> Operator
+   The 2> operator redirects the stderr stream.
+   ```bash
+   find . -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null
+   ```
+   find normally sends results to stdout and errors to stderr.
+   2>/dev/null redirects the stderr stream (error messages) to /dev/null.
+3. /dev/null
+   /dev/null is a special device file in Unix/Linux that discards anything written to it.
+   Redirecting to /dev/null effectively "silences" the error messages.
+   #### Why This Works as a Filter
+   Without 2>/dev/null, the find command produces both:
+     * Valid results (files matching the criteria).
+     * Error messages (e.g., "Permission denied").
+   When you add 2>/dev/null, errors are discarded, leaving only valid results displayed. 
+   This doesn't affect the stdout stream, which still contains the matching files.
