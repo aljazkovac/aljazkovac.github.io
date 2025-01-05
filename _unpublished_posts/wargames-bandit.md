@@ -1,3 +1,19 @@
+# OVERTHEWIRE WARGAMES: BANDIT
+
+The wargames are a series of security challenges that test your knowledge of various security concepts.
+You can access the wargames at [OverTheWire](https://overthewire.org/wargames/).
+Bandit is the first wargame in the series and is designed for beginners.
+The goal is to find the password for the next level by solving the challenges in each level.
+
+Here are my solutions to the Bandit wargame levels. I have adopted the following approach to solve the challenges:
+  * Read the level goal and understand the requirements, as well as the hints provided.
+  * Read man pages to learn about commands and options.
+  * Experiment with the commands to understand how they work.
+  * Discuss the problem with an LLM under the following conditions:
+    * If I have solved the problem myself, but feel I could have done it better, I discuss it with the LLM.
+    * I have spent a reasonable amount of time trying to solve the problem.
+    * Only discuss parts of the problem, never ask for a full solution.
+
 ## Bandit 0
 
 **Level goal**
