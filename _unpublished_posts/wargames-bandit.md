@@ -486,6 +486,112 @@ have been rotated by 13 positions.
 
 *Solution*
 
+This seems to be a ROT13 cipher, which is a simple letter substitution cipher that replaces a letter with the 13th letter 
+after it in the alphabet. It is a special case of the [Caesar cipher](https://en.wikipedia.org/wiki/ROT13).
+
+The translation table is as follows:
+| Plain                        | Cipher                        |
+|------------------------------|-------------------------------|
+| ABCDEFGHIJKLMNOPQRSTUVWXYZ   | NOPQRSTUVWXYZABCDEFGHIJKLM    |
+| abcdefghijklmnopqrstuvwxyz   | nopqrstuvwxyzabcdefghijklm    |
+
+I have read that in Vim one can use the `ggg?G` command to ROT13 the entire file, so I did that first to the data.txt file.
+The password: 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
+
+But one would like to do this in bash, so I used the `tr` command to ROT13 the file:
+
+```bash
+bandit11@bandit:~$ cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+The password is 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
+```
+
+---
+
+### ROT13 in Bash and `tr`
+
+ROT13 ("rotate by 13 places") is a substitution cipher that shifts each letter by 13 positions in the alphabet. For example:
+- `A` becomes `N`, `B` becomes `O`, ..., `M` becomes `Z`.
+- After `Z`, it wraps around: `N` becomes `A`, `O` becomes `B`, ..., `Z` becomes `M`.
+
+This cipher is reversible, meaning applying ROT13 twice restores the original text.
+
+You can implement ROT13 in Bash using the `tr` command:
+
+```bash
+tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
+
+This command works by translating characters in the input set (`A-Za-z`) to corresponding characters in the output set 
+(`N-ZA-Mn-za-m`).
+
+---
+
+### How Does It Work?
+#### 1. **`tr` Command Overview**
+The `tr` command translates or replaces characters. Its syntax is:
+```bash
+tr SET1 SET2
+```
+- **`SET1`**: Characters to be replaced.
+- **`SET2`**: Characters to replace them with.
+- Characters in `SET1` are mapped one-to-one to characters in `SET2`.
+
+#### 2. **Why `A-Za-z`?**
+- `A-Z`: Represents all uppercase letters (`A` to `Z`).
+- `a-z`: Represents all lowercase letters (`a` to `z`).
+- Combined as `A-Za-z`, it covers all alphabetic characters in the input to be processed.
+
+#### 3. **Why `N-ZA-Mn-za-m`?**
+This is the output set that defines the ROT13 transformation:
+- `N-ZA-M`: Shifts uppercase letters by 13 positions:
+  - `N-Z`: Maps the second half of the uppercase alphabet (`N` to `Z`).
+  - `A-M`: Maps the first half of the uppercase alphabet (`A` to `M`).
+- `n-za-m`: Shifts lowercase letters by 13 positions:
+  - `n-z`: Maps the second half of the lowercase alphabet (`n` to `z`).
+  - `a-m`: Maps the first half of the lowercase alphabet (`a` to `m`).
+
+Together, `N-ZA-Mn-za-m` defines 52 characters (26 uppercase + 26 lowercase), perfectly matching `A-Za-z`.
+
+---
+
+### How Does the Mapping Work?
+The `tr` command pairs characters from the input set (`A-Za-z`) with characters in the output set (`N-ZA-Mn-za-m`):
+- `A` maps to `N`, `B` maps to `O`, ..., `M` maps to `Z`.
+- `N` maps to `A`, `O` maps to `B`, ..., `Z` maps to `M`.
+- `a` maps to `n`, `b` maps to `o`, ..., `m` maps to `z`.
+- `n` maps to `a`, `o` maps to `b`, ..., `z` maps to `m`.
+
+#### Example
+Input:
+```bash
+echo "Hello World!" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+```
+Output:
+```
+Uryyb Jbeyq!
+```
+Explanation:
+- `H` becomes `U`, `e` becomes `r`, `l` becomes `y`, ..., `W` becomes `J`, and so on.
+
+---
+
+### Why Are the Sets of Equal Length?
+Although `N-ZA-Mn-za-m` appears longer due to the split ranges (`N-Z` and `A-M`, etc.), it matches `A-Za-z` perfectly in length:
+- `A-Za-z`: 52 characters (26 uppercase + 26 lowercase).
+- `N-ZA-Mn-za-m`: 52 characters (26 uppercase + 26 lowercase).
+
+Each input character maps directly to a corresponding output character, maintaining a one-to-one relationship.
+
+---
+
+### Recap
+- **`A-Za-z`**: Defines the input characters (all alphabetic characters).
+- **`N-ZA-Mn-za-m`**: Defines the output characters (ROT13-transformed alphabet).
+- **Mapping**: Each character in the input set maps directly to one in the output set.
+
+This makes `tr 'A-Za-z' 'N-ZA-Mn-za-m'` a simple and efficient way to implement ROT13 in Bash!
+
+
 ## Bandit 12-13
 
 **Level Goal**
