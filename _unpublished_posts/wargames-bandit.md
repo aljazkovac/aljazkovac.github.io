@@ -6,13 +6,15 @@ Bandit is the first wargame in the series and is designed for beginners.
 The goal is to find the password for the next level by solving the challenges in each level.
 
 Here are my solutions to the Bandit wargame levels. I have adopted the following approach to solve the challenges:
-  * Read the level goal and understand the requirements, as well as the hints provided.
-  * Read man pages to learn about commands and options.
-  * Experiment with the commands to understand how they work.
+  * Read the level goal and understand the requirements, as well as the hints provided;
+  * Read man pages to learn about commands and options;
+  * Experiment with the commands to understand how they work;
   * Discuss the problem with an LLM under the following conditions:
-    * If I have solved the problem myself, but feel I could have done it better, I discuss it with the LLM.
-    * I have spent a reasonable amount of time trying to solve the problem.
+    * I have solved the problem myself, but feel I could have done it better;
+    * I have spent a reasonable amount of time trying to solve the problem but didn't succeed;
     * Only discuss parts of the problem, never ask for a full solution.
+
+Most of the background details or explanations are provided by an LLM, and I have either edited them, or added my own.
 
 ## Bandit 0
 
@@ -378,6 +380,102 @@ The strings command is less efficient than grep.
 The password for the next level is stored in the file data.txt, which contains base64 encoded data.
 
 *Solution*
+  
+```bash
+bandit10@bandit:~$ base64 -d data.txt
+The password is dtR173fZKb0RRsDFSGsg2RWnpNVj3qRr
+```
+
+Password: dtR173fZKb0RRsDFSGsg2RWnpNVj3qRr 
+### What is Base64 Encoding?
+
+**Base64 encoding** is a method to encode binary data (e.g., images, files, or arbitrary text) into a text-only format that uses **64 ASCII characters**. This ensures compatibility with systems that expect plain text, such as email protocols or JSON payloads.
+
+---
+
+### Example Encoding Process: "Hello"
+
+#### Step 1: Convert Characters to Binary
+The input string is `"Hello"`. Each character is converted into its ASCII value in **binary**:
+
+| Character | ASCII (Decimal) | Binary (8 Bits) |
+|-----------|------------------|------------------|
+| H         | 72               | `01001000`       |
+| e         | 101              | `01100101`       |
+| l         | 108              | `01101100`       |
+| l         | 108              | `01101100`       |
+| o         | 111              | `01101111`       |
+
+Concatenate these binary values into a single stream:
+```
+01001000 01100101 01101100 01101100 01101111
+```
+
+#### Step 2: Group Into 6-Bit Chunks
+Break the binary stream into **6-bit groups**:
+```
+010010 000110 010101 101100 011011 110111
+```
+
+#### Step 3: Convert Each 6-Bit Chunk to Decimal
+Each 6-bit group is treated as a number and converted from **binary to decimal**:
+
+| 6-Bit Group | Decimal Value |
+|-------------|---------------|
+| 010010      | 18            |
+| 000110      | 6             |
+| 010101      | 21            |
+| 101100      | 44            |
+| 011011      | 27            |
+| 110111      | 55            |
+
+#### Step 4: Map Decimal Values to Base64 Characters
+Using the Base64 encoding table:
+
+| Decimal Value | Base64 Character |
+|---------------|------------------|
+| 18            | S                |
+| 6             | G                |
+| 21            | V                |
+| 44            | s                |
+| 27            | b                |
+| 55            | G                |
+
+The resulting Base64 encoded string so far is:
+```
+SGVsbG
+```
+
+#### Step 5: Add Padding if Necessary
+Base64 requires the output length to be a multiple of 4 characters. Since `"Hello"` results in 6 Base64 characters, add `=` padding to make it 8 characters:
+```
+SGVsbG8=
+```
+
+---
+
+### Final Base64 Encoded String
+The Base64 encoding of `"Hello"` is:
+```
+SGVsbG8=
+```
+
+---
+
+### Summary of Steps
+1. Convert input to binary.
+2. Split the binary stream into **6-bit chunks**.
+3. Convert each 6-bit chunk to decimal.
+4. Map decimal values to Base64 characters.
+5. Add padding (`=`) to ensure the output length is a multiple of 4.
+
+---
+
+### Key Points
+- **Purpose**: Base64 encoding allows binary data to be safely transmitted or stored in systems that expect plain text.
+- **Character Set**: Base64 uses 64 symbols (`A-Z`, `a-z`, `0-9`, `+`, `/`) and `=` for padding.
+- **Output Size**: Base64 encoded data is about **33% larger** than the original binary data.
+- **Reversible**: Base64 is not encryption; it’s easily decoded.
 
 ## Bandit 11-12
 
