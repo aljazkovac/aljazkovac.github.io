@@ -591,11 +591,155 @@ Each input character maps directly to a corresponding output character, maintain
 
 This makes `tr 'A-Za-z' 'N-ZA-Mn-za-m'` a simple and efficient way to implement ROT13 in Bash!
 
+---
 
 ## Bandit 12-13
 
 **Level Goal**
 
-The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly.
+The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. 
+For this level it may be useful to create a directory under /tmp in which you can work. Use mkdir with a hard to guess directory name. 
+Or better, use the command “mktemp -d”. Then copy the datafile using cp, and rename it using mv (read the manpages!)
 
 *Solution*
+  
+1. Follow the instructions, and create a temporary directory using `mktemp -d`. Then copy the data.txt file to this directory, 
+and navigate to the directory. Rename the data.txt file to data.hex. Now we can work on the file.
+    ```bash
+    bandit12@bandit:~$ mktemp -d
+    /tmp/tmp.NCTnzrrXbQ
+    bandit12@bandit:~$ cp data.txt /tmp/tmp.NCTnzrrXbQ
+    bandit12@bandit:~$ cd /tmp/tmp.NCTnzrrXbQ
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data.txt data.hex # Rename the file
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 4
+    -rw-r----- 1 bandit12 bandit12 2583 Jan  7 16:08 data.hex
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data.txt
+    data.txt: ASCII text
+    ```
+2. The file is a hexdump of a file that has been repeatedly compressed. We can use `xxd` to reverse the hexdump and `file` to
+check the type of file this produces.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ xxd -r data.hex > data
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data
+    data: gzip compressed data, was "data2.bin", last modified: Thu Sep 19 07:08:15 2024, max compression, from Unix, original size modulo 2^32 574
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data data_unhexed.gz # Rename the file to be able to follow the steps taken better
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed.gz
+   ```
+3. We see that the file is a gzip compressed file. We can use `gzip -d` to decompress the file.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed.gz
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data_unhexed
+    data_unhexed: bzip2 compressed data, block size = 900k
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data_unhexed data_unhexed_gunzipped.bz2
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped.bz2
+    ```
+4. The file is a bzip2 compressed file. We can use `bzip2 -d` to decompress the file.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ bzip2 -d data_unhexed_gunzipped.bz2
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data_unhexed_gunzipped
+    data_unhexed_gunzipped: gzip compressed data, was "data4.bin", last modified: Thu Sep 19 07:08:15 2024, max compression, from Unix, original size modulo 2^32 20480
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data_unhexed_gunzipped data_unhexed_gunzipped_bunzipped.gz
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped_bunzipped.gz
+    ```
+5. The file is a gzip compressed file, again. Repeat step 3.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed_gunzipped_bunzipped.gz
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped_bunzipped
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data_unhexed_gunzipped_bunzipped
+    data_unhexed_gunzipped_bunzipped: POSIX tar archive (GNU)
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data_unhexed_gunzipped_bunzipped data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    ```
+6. The file is a tar archive. We can use `tar -xf` to extract the contents of the file.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data5.bin  data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data5.bin
+    data5.bin: POSIX tar archive (GNU)
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data5.bin data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar  data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    ```
+7. The new file is still a tar archive. Repeat step 6 again.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
+    data6.bin  data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar  data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data6.bin
+    data6.bin: bzip2 compressed data, block size = 900k
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data6.bin data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred.bz2
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 40
+    -rw-r----- 1 bandit12 bandit12  2583 Jan  7 16:08 data.hex
+    -rw-rw-r-- 1 bandit12 bandit12 20480 Jan  7 16:16 data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    -rw-r--r-- 1 bandit12 bandit12   221 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred.bz2
+   ```
+8. The file is a bzip2 compressed file. Repeat step 4.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ bzip2 -d data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred.bz2
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 48
+    -rw-r----- 1 bandit12 bandit12  2583 Jan  7 16:08 data.hex
+    -rw-rw-r-- 1 bandit12 bandit12 20480 Jan  7 16:16 data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred
+    data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred: POSIX tar archive (GNU)
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
+    ```
+9. The file is, once again, a tar archive. Repeat step 6.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 52
+    -rw-r--r-- 1 bandit12 bandit12    79 Sep 19 07:08 data8.bin
+    -rw-r----- 1 bandit12 bandit12  2583 Jan  7 16:08 data.hex
+    -rw-rw-r-- 1 bandit12 bandit12 20480 Jan  7 16:16 data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data8.bin
+    data8.bin: gzip compressed data, was "data9.bin", last modified: Thu Sep 19 07:08:15 2024, max compression, from Unix, original size modulo 2^32 49
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data8.bin data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred.gz
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 52
+    -rw-r----- 1 bandit12 bandit12  2583 Jan  7 16:08 data.hex
+    -rw-rw-r-- 1 bandit12 bandit12 20480 Jan  7 16:16 data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12    79 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred.gz
+    ```
+10. The file is, again, a gzip file, so we decompress once more.
+    ```bash
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred.gz
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
+    total 52
+    -rw-r----- 1 bandit12 bandit12  2583 Jan  7 16:08 data.hex
+    -rw-rw-r-- 1 bandit12 bandit12 20480 Jan  7 16:16 data_unhexed_gunzipped_bunzipped_gunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
+    -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
+    -rw-r--r-- 1 bandit12 bandit12    49 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred
+    data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred: ASCII text
+    bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ cat data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred
+    The password is FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn
+    ```
+
+The password is FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn.
+
+This was quite a tedious process, but it was a good exercise in using the `file` command to determine the type of file and then
+using the appropriate command to decompress the file. It was also good to rename the files to keep track of the steps taken.
+
+---
