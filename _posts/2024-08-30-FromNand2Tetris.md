@@ -6,16 +6,16 @@ tags: [software, hardware, courses, certificates] # TAG names should always be l
 description: A course in which you build a computer (hardware and software) from scratch.
 ---
 
-## Overview
+# Overview
 
 In this [famous course](https://www.nand2tetris.org/) (often regarded as one of the best courses ever designed for Computer Science), we build a computer
 from scratch, and then, using a higher-level programming language that we design ourselves, develop a program that runs on
 that very computer.
 
-This means that we go through all the building blocks a modern computer needs to be able to run software. In Part I we design
-the hardware, and in Part II we focus on the software.
+This means that we go through all the building blocks a modern computer needs to be able to run software. In the first we design
+the hardware, and in the second part we focus on the software.
 
-## Part I
+# Part I
 
 Part I consists of six projects:
 
@@ -28,14 +28,25 @@ Part I consists of six projects:
 
 Feel free to check out my [repo for the course](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/).
 
-### Highlights and Notes on Project 1
+## Project 1
 
-I really enjoyed designing the chips using the HDL (Figure 1). One thing one needs to keep in mind is that the multi-bit buses are indexed from right to left, so the opposite from what one is used to. I especially enjoyed designing the Mux4Way16 and Mux8Way16 and the Dmux4Way and Dmux8Way chips. It helped to actually draw out the sketches for the designs to get a better understanding. Another interesting thing happened around this time. I saw a post by [Andrej Karpathy](https://github.com/karpathy) about [Cursor](https://www.cursor.com/), a fork of VS Code, but with a built-in AI assistant (basically similar to GitHub Copilot, the only difference being that Cursor offers the chance to choose between various models, such as ChatGPT4o, Claude Sonnet 3.5, etc.). It looked pretty good and I really enjoyed using it but it would automatically produce solutions for me for the first couple of chips. After a few minutes I realized I wasn't solving the problems myself, and was therefore not learning anything. I deleted all the solutions and re-implemented everything myself from scratch. This could lead to a further debate on how to properly use LLMs for both work and learning, but my general feeling at the moment is simply: Don't use them to give you solutions. Only use them as a form of quicker and more comprehensive research, or as a complement to Googling and reading the documentation. That is, if you actually want to learn anything, of course.
+I really enjoyed designing the chips using the HDL (Figure 1). One thing one needs to keep in mind is that the multi-bit buses 
+are indexed from right to left, so the opposite from what one is used to. I especially enjoyed designing the Mux4Way16 and Mux8Way16,
+and the Dmux4Way and Dmux8Way chips. It helped to actually draw out the sketches for the designs to get a better understanding. 
+Another interesting thing happened around this time. I saw a post by [Andrej Karpathy](https://github.com/karpathy) 
+about [Cursor](https://www.cursor.com/), a fork of VS Code, but with a built-in AI assistant 
+(basically similar to GitHub Copilot, the only difference being that Cursor offers the chance to choose between various models, 
+such as ChatGPT4o, Claude Sonnet 3.5, etc.). It looked pretty good and I really enjoyed using it, but it would automatically produce 
+solutions for me for the first couple of chips. After a few minutes I realized I wasn't solving the problems myself, 
+and was therefore not learning anything. I deleted all the solutions and re-implemented everything myself from scratch. 
+This could lead to a further debate on how to properly use LLMs for both work and learning, but my general feeling at the moment is
+simply: Don't use them to give you solutions. Only use them as a form of quicker and more comprehensive research, 
+or as a complement to Googling and reading the documentation. That is, if you actually want to learn anything, of course.
 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400" }
 _Figure 1: Design for a Dmux4Way and a Dmux8Way chip_
 
-### Highlights and Notes on Project 2
+## Project 2
 
 In this project we built an ALU (Arithmetic Logic Unit). We built a family of adders (half-adder, full adder, add16, inc16), and then we used those to build a full ALU. The ALU computes a function on two inputs, and outputs the result.
 It can perform a family of 18 functions, including setting an integer to 0, negating it, addition, multiplication and division of two integers, etc. It is a simple and elegant design.
@@ -112,7 +123,7 @@ CHIP ALU {
 }
 ```
 
-### Highlights and Notes on Project 3
+## Project 3
 
 In this part we built the computer's main memory unit, Random Access Memory, or RAM. This marks the point where we move from combinational logic to a clock-based sequential logic.
 
@@ -134,7 +145,7 @@ I must admit that the program counter is the first thing in this course where I 
 ![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p3-pc.jpg){: w="700" h="400" }
 _Figure 2: Design for a Program Counter (PC)_
 
-### Highlights and Notes on Project 4
+## Project 4
 
 This project was all about writing assembly programs using the Hack machine language, designed specifically for this course. I love writing low-level code, and find it intellectually much more interesting to high-level coding. The feeling of steering the computer at a very granular, basic level, gives a greater feeling of intelectual satisfaction, and reminds us of what computing is all about: zeroes and ones. It is important to note the difference between a machine language and an assembly language. The former is the zeroes and ones, the binary code that the CPU can execute. The assembly language is a level higher, a human-readable representation of machine language, which uses symbolic names (called mnemonics) instead of binary code. This makes it quite a bit easier to understand and write machine instructions. As such, there is a direct, one-to-one mapping between an assembly language and machine code, and the former is translated into the later by an assembler.
 
@@ -259,7 +270,7 @@ D;JNE
 0;JMP
 ```
 
-### Highlights and Notes on Project 5
+## Project 5
 
 In this part we had to finish and tie together the entire computer architecture. First we build the memory module, consisting of RAM, Screen and Keyboard parts. Then we design the central processing unit (CPU), which we connect to the memory and the ROM (the module that stores whatever program we decide to run.) Naturally, the most challenging part of this project was designing the CPU. The CPU essentially performs two main tasks:
 
@@ -334,11 +345,11 @@ CHIP CPU {
 
 The rest was quite simple, and the final Hack computer implementation can then be done in only a few lines of HDL code. Feel free to check out [this part of my course repository](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project5) for more detail.
 
-### Highlights and Notes on Project 6
+## Project 6
 
 In this part we had to implement the assembler for the Hack assembly language. This was a proper, albeit small, software project, and I thoroughly enjoyed it. An assembler is, in essence, just a parsing and translation tool. I implemented the parsing without doing any rigorous validation of the instructions. This was part of the contract for the project, namely that the instructions provided would be valid. I have also, once again, pondered the value of coding with an AI assistant. As much as it might speed up the process to a certain degree, I really find it quite harmful to the learning process. I enjoy the convenience of being able to ask an LLM questions directly in the editor (I use [Cursor](https://www.cursor.com/)), but I dislike the use of tab completion. (expect sometimes when you have to code some really tedious parts of a program). I don't want a model to be generating code for me. I want to have an AI assistant that I can discuss the various aspects of my code with, but in the end I want the decisions and conclusions to be my own. The beauty of designing software, just like with writing a novel or a poem, is that there are many ways of doing it, and they all have their advantages and disadvantages. The important thing is that you thoroughly understand your design and its strenghts and shortcomings. This becomes rather impossible with excessive use of AI assistants. And it isn't just about the general design of code, most lines of code can be implemented in several ways. It is important to implement things in suboptimal ways also, so that you can learn and understand why they are suboptimal. 
 
-Anyways, I digress. The assembler can most certainly be improved, on both the design and practical-implementation level. But I am happy with it for now, since it simply does the job, and I have learned what I wanted to learn about assemblers. For now. Here is my main program implementation, which follows the recommendation to pass through the program twice; in the first pass, we handle the labels, and in the second pass we handle the rest.
+Anyway, I digress. The assembler can most certainly be improved, on both the design and practical-implementation level. But I am happy with it for now, since it simply does the job, and I have learned what I wanted to learn about assemblers. For now. Here is my main program implementation, which follows the recommendation to pass through the program twice; in the first pass, we handle the labels, and in the second pass we handle the rest.
 
 ```csharp
 namespace Assembler;
@@ -461,4 +472,8 @@ internal abstract class Program
 }
 ```
 
-Check out [my code for the HACK assembler](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project6/Assembler), or [my repository for this course](https://github.com/aljazkovac/from-nand-to-tetris), and thanks for reading! See you in the next one!
+Check out [my code for the HACK assembler](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project6/Assembler), or [my repository for this course](https://github.com/aljazkovac/from-nand-to-tetris), and thanks for reading! 
+
+## Certificate
+![Certificate for Part I](../assets/images/fromnand2tetris/fromnand2tetris-1-certificate.png){: w="700" h="400" }
+_Figure 3: Certificate for Part I of the course_
