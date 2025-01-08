@@ -6,7 +6,7 @@ tags: [software, full stack, courses, certificates]     # TAG names should alway
 description: A course on modern full stack web development.
 ---
 
-# Overview
+## Overview
 
 [Full Stack Open - Deep Dive Into Modern Web Development](https://fullstackopen.com/en/) is a great course that covers the full spectrum of modern full stack web development. It gives a good foundation in everything from the basics of React and Javascript to Redux, MongoDB, GraphQL, Typescript, Docker containers and relational databases. It even touches on modern mobile development with React Native and the basics of CI/CD with GitHub Actions.
 
@@ -21,7 +21,7 @@ Please check out my [main repo for the course](https://github.com/aljazkovac/ful
 Unfortunately, I don't have the time to condense my rather extensive notes on the course into a blog post.
 I started this blog after I was already done with the course. 
 
-# Certificates
+## Certificates
 
 ![Full Stack Open Certificate Part 0 - Part 7](/assets/images/fullstackopen/certificate-fullstack-part0-part7-react.png)
 _Certificate for completing Part 0 - Part 7 (React) of the Full Stack Open course._
