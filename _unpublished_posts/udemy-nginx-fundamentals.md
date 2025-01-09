@@ -12,7 +12,9 @@ This Udemy course covers the following topics:
   * Secure NGINX with some security best practises
   * Learn about NGINX load balancing and reverse proxying
 
-## Overview of Nginx
+## Overview
+
+### Introduction
 
 Nginx is a high performance web server that is responsible for handling the load of some of the largest sites on the internet.
 
@@ -20,15 +22,35 @@ The benefits of Nginx:
 1. High performance
 2. Low resource usage
 
-Nginx vs. Apache:
+### About Nginx
+
+
+### Nginx vs. Apache
+
+There are some key differences between Nginx and Apache:
+
 1. Nginx can serve static resources much faster
 2. Nginx can dandle a much larger amount of concurrent requests
 3. In Nginx requests are interpreted as URI locations first whereas Apache defaults to and favours file-system locations 
    => Nginx can easily function as not only a web server but anything from a load balancer to a mail server
 
-## Installing Nginx
+### Quiz 1
 
-### With a package manager
+
+
+## Installation
+
+### Server overview
+
+I have set up a Digital Ocean droplet with the following specs:
+  * 512 MB RAM
+  * 1 vCPU
+  * 10 GB SSD
+  * Ubuntu 24.04 (LTS) x64
+
+I have also set up [SSH key-based authentication](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server) to access the droplet.
+
+### Installing with a package manager
 
 1. Install with `apt-get install nginx`
 2. Run `ps aux | grep nginx` to get the list of nginx processes
@@ -37,27 +59,92 @@ Nginx vs. Apache:
 The downside of installing with a package manager is that we cannot install any additional modules. 
 Therefore, we will install Nginx from source.
 
-### From source
+### Building Nginx from source & adding modules
 
-### Preamble: Setting up ssh keys
+### Adding an Nginx service
 
+### Nginx for Windows
 
+### Quiz 2
 
-The authorized_keys in the droplet server contains my public ssh key!
+## Configuration
 
-	1. apt-get update
-	2. Nginx.org (the majority of the docs) vs. Nginx.com (the flashier product website)
-	3. Wget <link to mainstream version of nginx> (find here: https://nginx.org/en/download.html)
-	4. tar -zxvf <file>
-	5.  Enter extracted directory
-	6. Run the configure script => we don't have a C compiler!
-	7. Apt-get install build-essential && run configure script again
-	8. Install some additional libraries, e.g., libpcre3, libpcre3-dev, etc.
-	9. Customise install with:
-		./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
-	10. Run make
-	11. Run make install
-	
+### Understanding configuration terms
+
+### Creating a virtual host
+
+### Location blocks
+
+### Variables
+
+### Rewrites & redirects
+
+### Try files & named locations
+
+### Logging
+
+### Inheritance & directive types
+
+### PHP processing
+
+### Workers processes
+
+### Buffers & timeouts
+
+### Adding dynamic modules
+
+### Quiz 3
+
+## Performance
+
+### Headers & expires
+
+### Compressed responses with gzip
+
+### FastCGI_cache
+
+### HTTP2
+
+### Server push
+
+## Security
+
+### HTTPS(SSL)
+
+### Rate limiting
+
+### Basic authentication
+
+### Hardening Nginx
+
+### Quiz 4
+
+### Let's Encrypt - SSL certificates
+
+## Reverse proxy & load balancing
+
+### Prerequisites
+
+### Reverse proxy
+
+### Load balancer
+
+### Load balancer options
+
+### Documentations & resources
+
+## Outro
+
+### Bonus lecture: feedback & Stackacademy.tv courses
+
+## Archive
+
+### Adding an Nginx Init service
+
+### GeoIP
+
+### Video streaming
+
 
 
 
