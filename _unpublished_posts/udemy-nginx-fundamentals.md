@@ -1,11 +1,12 @@
 # The course Nginx Fundamentals: High performance servers from scratch
 
-[Nginx](https://github.com/nginx/nginx) is a high performance web server that is responsible for handling the load of some of the largest sites on the internet. 
-It is a very flexible web server that can be configured to serve a variety of purposes, from simple sites to complex applications.
-At its core, Nginx is a web server that can serve static and dynamic content using a variety of protocols, including HTTP, HTTPS, and SPDY.
-Nginx is also a reverse proxy server that can be used to load balance traffic between multiple servers, and a caching server that can cache content to improve performance.
+[Nginx](https://github.com/nginx/nginx) is a high-performance, open-source web server and reverse proxy designed for 
+speed, scalability, and efficient resource use. Its core functionality includes serving static content, load balancing, 
+and acting as a reverse proxy to forward client requests to backend servers. Nginx excels at handling large numbers of 
+concurrent connections, making it ideal for high-traffic websites and applications. Additionally, it supports features like 
+caching, SSL termination, and URL rewriting, which enhance performance, security, and flexibility in modern web architectures.
 
-This Udemy course covers the following topics:
+[This Udemy course](https://www.udemy.com/course/nginx-fundamentals/) covers the following topics:
   * Learn to customise the NGINX installation
   * Configure NGINX
   * Learn to tweak NGINX for optimal performance 
@@ -14,29 +15,45 @@ This Udemy course covers the following topics:
 
 ## Overview
 
-### Introduction
-
-Nginx is a high performance web server that is responsible for handling the load of some of the largest sites on the internet.
-
-The benefits of Nginx:
-1. High performance
-2. Low resource usage
-
 ### About Nginx
 
+Nginx was built in 2004 by [Igor Sysoev](https://en.wikipedia.org/wiki/Igor_Sysoev) as he was looking for an alternative to Apache, 
+and wanted to build a replacement capable of handling [10000 concurrent connections](https://en.wikipedia.org/wiki/C10k_problem),
+with a focus on:
+
+  * High performance
+  * High concurrency
+  * Low memory usage
+
+Today, Nginx serves the majority of the world's websites, not only because of its performance but also because of its relative ease of use.
+At its core, Nginx is a reverse proxy server.
 
 ### Nginx vs. Apache
 
 There are some key differences between Nginx and Apache:
 
 1. Nginx can serve static resources much faster
-2. Nginx can dandle a much larger amount of concurrent requests
+2. Nginx can handle a much larger amount of concurrent requests
 3. In Nginx requests are interpreted as URI locations first whereas Apache defaults to and favours file-system locations 
    => Nginx can easily function as not only a web server but anything from a load balancer to a mail server
 
+Apache spawns a certain number of processes, each of which can serve a single request at a time. Nginx deals with requests
+asynchronously, meaning that a single Nginx process can serve multiple requests concurrently. Because of this, Nginx cannot
+embed PHP or other languages directly into the server like Apache can. Instead, all requests for dynamic content are dealt with
+by a separate process, such as PHP-FPM, and then reverse proxied back to the client via Nginx.
+
+In terms of performance, Nginx can do the following better than Apache:
+1. Serve static content much faster
+2. Handle a much larger number of concurrent requests (Apache will accept requests up to the pre-configured limit, then reject the rest)
+
+Nginx and Apache also differ in terms of configuration. Nginx interprets requests as URI locations first, whereas Apache 
+defaults to and favours file-system locations. Because of this very design, Nginx can easily function as not only a web server
+but anything from a load balancer to a mail server.
+
 ### Quiz 1
 
-
+![Quiz 1](../assets/images/nginx/nginx-quiz1.png){: w="700" h="400"}
+_Figure 1: Quiz 1_
 
 ## Installation
 
@@ -144,7 +161,3 @@ Therefore, we will install Nginx from source.
 ### GeoIP
 
 ### Video streaming
-
-
-
-
