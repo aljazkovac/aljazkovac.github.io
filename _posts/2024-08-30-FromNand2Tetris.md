@@ -43,7 +43,7 @@ This could lead to a further debate on how to properly use LLMs for both work an
 simply: Don't use them to give you solutions. Only use them as a form of quicker and more comprehensive research, 
 or as a complement to Googling and reading the documentation. That is, if you actually want to learn anything, of course.
 
-![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400" }
+![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400"}
 _Figure 1: Design for a Dmux4Way and a Dmux8Way chip_
 
 ### Project 2
