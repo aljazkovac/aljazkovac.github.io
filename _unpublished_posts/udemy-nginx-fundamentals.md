@@ -59,13 +59,24 @@ _Figure 1: Quiz 1_
 
 ### Server overview
 
-I have set up a Digital Ocean droplet with the following specs:
+I have set up a [Digital Ocean](https://www.digitalocean.com/) droplet with the following specs:
   * 512 MB RAM
   * 1 vCPU
   * 10 GB SSD
   * Ubuntu 24.04 (LTS) x64
 
-I have also set up [SSH key-based authentication](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server) to access the droplet.
+I have also set up SSH key-based authentication by following [this guide on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server).
+
+For a smoother login experience, I added an entry in the `~/.ssh/config` file:
+
+```bash
+Host digitalocean
+    HostName <my-droplet-ip>
+    User root
+    IdentityFile ~/.ssh/<my-private-key>
+```
+
+This allows me to log in with `ssh digitalocean`.
 
 ### Installing with a package manager
 
@@ -74,7 +85,7 @@ I have also set up [SSH key-based authentication](https://www.digitalocean.com/c
 3. Run `ifconfig` to see the network interfaces on your system. Grab the IP address from there and go to it.
 
 The downside of installing with a package manager is that we cannot install any additional modules. 
-Therefore, we will install Nginx from source.
+Therefore, we install Nginx from source.
 
 ### Building Nginx from source & adding modules
 
