@@ -201,7 +201,61 @@ _Figure 2: Quiz 2_
 
 ### Understanding configuration terms
 
+There are two main configuration terms in Nginx:
+
+1. Context: A block of configuration directives (sections within a configuration) that apply to a specific part of the server. 
+   For example, the `http` context contains directives that apply to the entire server, while the `server` context contains 
+   directives that apply to a specific server block. Contexts are enclosed in curly braces `{}`, and can be nested within each other.
+   Nested contexts inherit directives from their parent contexts. The top-most context is the configuration file itself (the main context),
+   which is where we define the global directives that apply to the master process. Other important contexts include `events`, `http`,
+   the `server`, and `location` contexts.
+2. Directive: specific configuration options that control how Nginx behaves. Directives are placed inside contexts and are
+   followed by a value or a block of values. For example, the `server_name` directive specifies the domain name that the server
+   block should respond to.
+
 ### Creating a virtual host
+
+We will create a virtual host to serve a simple HTML page. To do this, I followed these steps:
+
+1. Asked ChatGTP to create a simple webpage consisting of three files: `index.html`, `style.css`, and `image.png`
+2. Went to the root directory with `cd /` (your home directory you can reach with `cd ~` or just `cd`)
+3. Created a new directory with `mkdir sites` and then `cd sites` and `mkdir demo`
+4. Copied the files `index.html`and `style.css` from ChatGTP to the `demo` directory manually
+5. Copied the image `image.png` to the `demo` directory with this command: `scp /Users/aljazkovac/Desktop/courses/nginx-fundamentals/image.png digitalocean:/sites/demo/`
+   (the `scp` command copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file)
+6. Edit the file `/etc/nginx/nginx.conf` and add the following configuration:
+    ```bash
+      events {
+      }
+
+      http {
+          server {
+            listen 80;
+            server_name 206.189.100.37;
+            root /sites/demo;
+          }
+      }
+    ```
+7. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+8. Open a browser and navigate to the IP address. There I could see the simple webpage but without the CSS styling.
+9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong MIME type for the CSS file
+   You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`)
+10. To fix this, one can add a `types` block to the `http` context in the configuration file:
+    ```bash
+      http {
+          types {
+              text/css css;
+          }
+    ```
+    However, this is not the best solution because it requires manually adding MIME types for each file type. A better solution 
+    is to use the `include` directive to include the `mime.types` file:
+    ```bash
+      http {
+          include mime.types;
+    ```
+11. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+12. Open a browser and navigate to the IP address. There I could see the simple webpage with the CSS styling.
+13. Check the stylesheet header with curl to see that the `Content-Type` header is now `text/css`
 
 ### Location blocks
 
