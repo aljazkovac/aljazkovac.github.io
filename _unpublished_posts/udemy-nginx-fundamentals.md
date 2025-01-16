@@ -259,6 +259,87 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
 
 ### Location blocks
 
+Location blocks are used to define how Nginx should handle requests for specific URIs. They are defined within the `server` context
+
+There are different types of location blocks (listed in order of priority):
+
+1. Exact match (= <uri>) : The URI must match the location exactly
+2. Preferential prefix match (^~ <uri>) : The URI must start with the specified prefix, and no other location block can match the URI
+3. Regular expression match (~ <uri> => case-sensitive) or (~* <uri> => case-insensitive) : The URI must match the specified regular expression
+4. Prefix match (<uri>) : The URI must start with the specified prefix
+
+Here is the priority order for location blocks:
+
+Each of the location modifiers below is assigned a priority in the following order:
+
+1. Exact match (=)
+2. Preferential prefix match (^~)
+3. REGEX match (~*)
+4. Prefix match ()
+
+Here are some examples of location blocks:
+
+```bash
+events {
+}
+
+
+http {
+
+	include mime.types;
+
+	server {
+		listen 80;
+		server_name 206.189.100.37;
+
+		root /sites/demo;
+
+		# PREFIX MATCH
+		# This matches any location that start with "greet", e.g., greet, greeting, etc.
+		location /greet {
+			return 200 "Hello from Nginx greet location! => PREFIX MATCH!";
+
+		}
+
+		# PREFIX MATCH
+		# This shows that the REGEX match takes priority over this match.
+		location /Greet2 {
+			return 200 "Hello from Nginx Greet2 location! => PREFIX MATCH PRIORITY PROOF!";
+
+		}
+
+		# PREFERENTIAL PREFIX MATCH
+		# The same as a PREFIX MATCH, but takes precedence over REGEX matches.
+		location ^~ Greet2 {
+			return 200 "Hello from Nginx Greet2 location! => PREFERENTIAL PREFIX MATCH!";
+
+		}
+
+		# EXACT MATCH
+		# This matches the exact location.
+		location = /greet {
+			return 200 "Hello from Nginx greet location => EXACT MATCH!";
+
+		}
+
+		# REGEX MATCH - CASE-SENSITIVE
+		# This matches the REGEX expression, but is sensitive to lower vs. uppercase.
+		location ~ /greet[0-8] {
+			return 200 "Hello from Nginx greet location => REGEX MATCH - CASE SENSITIVE!";
+
+		}
+
+		# REGEX MATCH - CASE-INSENSITIVE
+		# This matches the REGEX expression (lower or uppercase).
+		location ~* /greet[0-8] {
+			return 200 "Hello from Nginx greet location => REGEX MATCH - CASE INSENSITIVE!";
+
+		}
+
+	    }
+}
+```
+
 ### Variables
 
 ### Rewrites & redirects
