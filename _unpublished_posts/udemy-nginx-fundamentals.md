@@ -412,6 +412,136 @@ http {
 
 ### Rewrites & redirects
 
+There are two rewrite directives in Nginx:
+
+1. The rewrite directive: ```bash rewrite pattern URI;```
+    ```bash
+    events {}
+
+    http {
+
+            include mime.types;
+
+            server {
+
+                    listen 80;
+                    server_name 206.189.100.37;
+
+                    root /sites/demo;
+
+                    # Starting with user and more than one-word character
+                    rewrite ^/user/\w+ /greet;
+
+                    location /greet{
+                            return 200 "Hello User";
+                    }
+            }
+    }
+    ```
+   The URI here does not change in the browser, although the request is rewritten to the `/greet` location.
+2. The return directive: ```bash return status URI;``` => if the status is a 3xx, the return directive behaviour becomes 
+   a redirect, and it accepts a URI as the second argument:
+   ```bash
+    events {}
+    http {
+
+            include mime.types;
+
+            server {
+
+                    listen 80;
+                    server_name 206.189.100.37;
+
+                    root /sites/demo;
+                    
+                    location /logo {
+                            return 307 /image.png;
+                    }
+            }
+    }
+    ```
+    The URI changes in the browser with the redirect, and points to the `/image.png` location.
+
+**NOTE** With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
+
+**PERFORMANCE REWRITES vs. REDIRECTS** The rewrite directive is used to rewrite the URI before it is processed by Nginx. When a URI is rewritten, it gets reevaluated.
+The return directive, on the other hand, does not reevaluate the URI but instead sends a redirect to the client.
+Therefore, a rewrite directive is more resource-intensive than a return directive.
+
+With rewrites, we can capture parts of the original URI. For example, if we have a URI `/user/john`, 
+we can capture the username `john` with a regex pattern and rewrite it to `/greet`:
+  
+  ```bash
+  events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                # Starting with user and more than one-word character
+                rewrite ^/user/(\w+) /greet/$1;
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+
+                location = /greet/john {
+                        return 200 "Hello John";
+                }
+        }
+}
+```
+What happens here is the following:
+1. We go to the URI `/user/john`
+2. The URI gets rewritten to `/greet/john` and reevaluated
+3. The new URI skips the `/greet` location block and goes directly to the `/greet/john` location block because the exact match has priority
+
+**OPTIONAL FLAGS** The rewrite directive can take optional flags, such as `last`, `break`, `redirect`, and `permanent`.
+The `last` flag makes sure that the location cannot be rewritten again after the current rewrite and reevaluation. 
+In the example below, without the `last` flag, the URI would be reevaluated after the rewrite, and would then be rewritten again to `/image.png`.
+With the `last` flag set, the URI is rewritten to `/greet/john`, reevaluated, and is then not rewritten again, which 
+means that we get the response "Hello John" instead of the image.
+  
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                # Starting with user and more than one-word character
+                rewrite ^/user/(\w+) /greet/$1 last;
+                rewrite ^/greet/john /image.png;
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+
+                location = /greet/john {
+                        return 200 "Hello John";
+                }
+        }
+}
+```
+
 ### Try files & named locations
 
 ### Logging
