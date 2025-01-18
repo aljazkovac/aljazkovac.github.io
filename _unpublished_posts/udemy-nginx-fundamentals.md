@@ -342,6 +342,74 @@ http {
 
 ### Variables
 
+There are two types of variables in Nginx:
+
+1. Configuration variables (variables we define in the configuration file), e.g., `set $var "value";`
+2. [Nginx module variables](https://nginx.org/en/docs/varindex.html) (variables provided by Nginx modules), e.g., `$uri`, `$args`, `$request_uri`
+
+**NOTE** The use of conditionals inside location blocks is [discouraged because it can lead to unexpected behaviour](https://github.com/nginxinc/nginx-wiki/blob/master/source/start/topics/depth/ifisevil.rst).
+
+Here is a simple example of using Nginx built-in variables:
+
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                location /inspect {
+
+                        return 200 "$host\n$uri\n$args";
+                }
+
+                location /inspectarg {
+
+                        return 200 "Name: $arg_name";
+                }
+        }
+}
+```
+
+Here is an example of using a configuration variable and a conditional in Nginx:
+
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                set $weekend 'No';
+
+                # Check if day is weekend
+                if ($date_local ~ 'Saturday|Sunday' ) {
+                        set $weekend 'Yes';
+                }
+
+                location /isweekend {
+                        return 200 $weekend;
+                }
+        }
+}
+```
+
 ### Rewrites & redirects
 
 ### Try files & named locations
