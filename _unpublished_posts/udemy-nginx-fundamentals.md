@@ -544,6 +544,159 @@ http {
 
 ### Try files & named locations
 
+The `try_files` directive can be used within a server context, or inside a location block. 
+It is used to try different files or URIs in a specific order until one is found.
+
+`try_files path1 path2 ... final`
+
+In the example below, since the resource image.png exists, the server will return the image regardless of the URI (even if
+we go to the /greet location).
+
+```bash
+events {}
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                try_files /image.png /greet;
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+        }
+}
+```
+
+If we, however, change the resource to something that does not exist, the server will return the response "Hello User".
+To try the current URI first, add the `$uri` variable to the `try_files` directive:
+
+```bash
+try_files $uri /notexist.png /greet;
+```
+
+The last argument in the `try_files` directive is the final URI to try, and should ideally be something that won't ever fail,
+e.g., a 404 page:
+
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                try_files $uri /image2.png /friendly_404;
+
+                location /friendly_404 {
+                        return 404 "Sorry, that file could not be found.";
+                }
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+        }
+}
+```
+
+Named locations simply means assigning a name to a location context:
+
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                try_files $uri /image2.png @friendly_404;
+
+                location @friendly_404 {
+                        return 404 "Sorry, that file could not be found.";
+                }
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+        }
+}
+```
+
+Here are some key differences between regular and named locations:
+
+Key Differences Between Regular and Named Locations:
+
+| Aspect          | Named Location (@friendly_404)           | Regular Location (/friendly_404)            |
+|-----------------|------------------------------------------|---------------------------------------------|
+| Access          | Internal only                            | Publicly accessible                         |
+| Visibility      | Hidden from clients                      | Visible and addressable by clients          |
+| Routing         | Handled entirely within Nginx            | Can be requested directly by users          |
+| URI Redirection | No change to client-visible URI          | URI changes to /friendly_404                |
+| Use Case        | Internal error handling or routing logic | Publicly exposed endpoints for custom logic |
+
+Here is an example showcasing the difference:
+
+```bash
+
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                try_files $uri /image2.png @friendly_404;
+
+                location /friendly_404 {
+                        return 200 "Hello from friendly_404 location";
+                }
+
+                location @friendly_404 {
+                        return 404 "Sorry, that file could not be found.";
+                }
+
+                location /greet {
+
+                        return 200 "Hello User";
+                }
+        }
+}
+```
+
+If I go to the URI /friendly_404, I will get the response "Hello from friendly_404 location". If I go to the URI /notexist.png,
+I will get the response "Sorry, that file could not be found." A named location is not directly accessible.
+
 ### Logging
 
 ### Inheritance & directive types
