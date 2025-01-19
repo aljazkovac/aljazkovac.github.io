@@ -1,3 +1,22 @@
+---
+title: "Nginx Fundamentals: High performance servers from scratch"
+date: 2025-19-01 14:38:23 +0200
+categories: [devops, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+tags: [devops, courses, certificates] # TAG names should always be lowercase.
+description: An Udemy course on Nginx fundamentals.
+---
+
+# Introduction
+
+I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been working on a 
+custom reverse proxy at my current job at [Caspeco](https://caspeco.com/), and I wanted to see if we could perhaps 
+replace it with Nginx. Our custom reverse proxy is built with [ProxyKit](https://github.com/ProxyKit/ProxyKit), 
+which has been obsolete for a couple of years already, meaning that we will have to either rewrite it, or replace it with 
+something else in the future. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
+if it could cover all our needs.
+
+Let's dive into the course, and I hope you will enjoy my notes and thoughts on it.
+
 # The course Nginx Fundamentals: High performance servers from scratch
 
 [Nginx](https://github.com/nginx/nginx) is a high-performance, open-source web server and reverse proxy designed for 
