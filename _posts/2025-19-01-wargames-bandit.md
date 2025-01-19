@@ -1,4 +1,21 @@
-# OVERTHEWIRE WARGAMES: BANDIT
+---
+title: "OverTheWire Wargames: Bandit"
+date: 2025-01-19 15:38:23 +0200
+categories: [security, linux] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+tags: [security, devops, linux] # TAG names should always be lowercase.
+description: Learn and practice security concepts in the form of fun-filled games. 
+---
+
+# Introduction
+
+I first heard about [OverTheWire Wargames](https://overthewire.org/wargames/) from a study buddy at Uppsala University 
+([Jakob Nordgren](linkedin.com/in/jakob-nordgren-087273199), a very talented developer), where I was doing my Bachelor's in Computer Science (2019-2022).
+A lot of the students in the program were using Linux, and I wanted to learn more about security, so the Wargames sounded like 
+the perfect way to learn about both. However, I never got around to it until now. 
+
+Sometimes the best time to do the things you want to do is now. Let's dive into it!
+
+# OVERTHEWIRE WARGAMES: Bandit
 
 The wargames are a series of security challenges that test your knowledge of various security concepts.
 You can access the wargames at [OverTheWire](https://overthewire.org/wargames/).
