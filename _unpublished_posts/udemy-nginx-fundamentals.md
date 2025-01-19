@@ -699,6 +699,92 @@ I will get the response "Sorry, that file could not be found." A named location 
 
 ### Logging
 
+Nginx provides two types of logs:
+
+1. Access logs: Log all requests made to the server, including the client's IP address, the request method, the requested URI, 
+   the response status code, and the size of the response.
+2. Error logs: Record anything that failed or didn't work as expected, such as a 404 error or a misconfigured directive.
+
+Logging is enabled by default, but understanding how to configure and customise logs is essential for troubleshooting and monitoring.
+We might also want to disable logging for certain requests to improve performance, or create resource-specific logs to track specific requests.
+
+Run `nginx -V` to see what log paths you set during the installation of Nginx. 
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# nginx -V
+nginx version: nginx/1.27.3
+built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
+built with OpenSSL 3.0.13 30 Jan 2024
+TLS SNI support enabled
+configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
+```
+
+To observer and learn about the logging process, I followed these steps:
+
+1. Clear both logs by running:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > access.log
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > error.log
+    ```
+2. Go to the browser and request `<IP>/image.png`
+3. Check the access log with `cat access.log` and the error log with `cat error.log`
+4. The access log will show the request, the response code, and the size of the response:
+    ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# cat access.log
+   176.10.144.208 - - [19/Jan/2025:14:40:23 +0000] "GET /image.png HTTP/1.1" 200 1438718 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) 
+   AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+    ```
+5. A common misconception is that 404s get logged in the error log. However, properly handled 404s are not errors. If they 
+   are not properly handled, then they get logged to error.log.
+
+To customise or disabling logging for a given context, we can use the `access_log` and `error_log` directives:
+
+```bash
+events {}
+
+
+http {
+
+        include mime.types;
+
+        server {
+
+                listen 80;
+                server_name 206.189.100.37;
+
+                root /sites/demo;
+
+                location /secure {
+                        access_log /var/log/nginx/secure.access.log;
+                        # By adding this, we log to both the access.log and the secure.access.log
+                        access_log /var/log/nginx/access.log;
+                        return 200 "Welcome to secure area.";
+                }
+        }
+}
+```
+
+As soon as we reload the above configuration, a custom log file will be created in the `/var/log/nginx` directory:
+  
+  ```bash
+  root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# ls -l
+  total 8
+  -rw-r--r-- 1 root root 1253 Jan 19 14:50 access.log
+  -rw-r--r-- 1 root root  895 Jan 19 14:54 error.log
+  -rw-r--r-- 1 root root    0 Jan 19 14:55 secure.access.log
+  ```
+
+To disable logging for a specific context, we can set the `access_log off` directive:
+
+```bash
+location /secure {
+        access_log off;
+        return 200 "Welcome to secure area.";
+}
+```
+
+Read more about [configuring logging in the Nginx documentation](https://docs.nginx.com/nginx/admin-guide/monitoring/logging/).
+
 ### Inheritance & directive types
 
 ### PHP processing
