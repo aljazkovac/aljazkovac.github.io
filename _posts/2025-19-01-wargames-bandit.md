@@ -8,7 +8,7 @@ description: Learn and practice security concepts in the form of fun-filled game
 
 # Introduction
 
-I first heard about [OverTheWire Wargames](https://overthewire.org/wargames/) from a study buddy at Uppsala University 
+I first heard about [OverTheWire Wargames](https://overthewire.org/wargames/) from a study buddy at [Uppsala University](https://www.uu.se/en)
 ([Jakob Nordgren](https://www.linkedin.com/in/jakob-nordgren-087273199/), a very talented developer), where I was doing my Bachelor's in Computer Science (2019-2022).
 A lot of the students in the program were using Linux, and I wanted to learn more about security, so the Wargames sounded like 
 the perfect way to learn about both. However, I never got around to it until now. 
