@@ -806,6 +806,76 @@ Read more about [configuring logging in the Nginx documentation](https://docs.ng
 
 ### Inheritance & directive types
 
+As with scope in a typical programming language, a Nginx context inherits configurations from its parent context.
+For example, if we set a directive in the `http` context, it will apply to all server blocks within that context.
+However, inheritance will vary depending on the directive type:
+
+1. Array directive
+2. Standard directive
+3. Action directive
+
+```bash
+events {}
+
+######################
+# (1) Array Directive
+######################
+# Can be specified multiple times without overriding a previous setting
+# Gets inherited by all child contexts
+# Child context can override inheritance by re-declaring directive
+# In this case, the access_log directive is an array directive
+access_log /var/log/nginx/access.log;
+access_log /var/log/nginx/custom.log.gz custom_format;
+
+http {
+
+  # Include statement - non directive
+  include mime.types;
+
+  server {
+    listen 80;
+    server_name site1.com;
+
+    # Inherits access_log from parent context (1)
+  }
+
+  server {
+    listen 80;
+    server_name site2.com;
+
+    #########################
+    # (2) Standard Directive
+    #########################
+    # Can only be declared once. A second declaration overrides the first
+    # Gets inherited by all child contexts
+    # Child context can override inheritance by re-declaring directive
+    # In this case, the root directive is a standard directive
+    root /sites/site2;
+
+    # Completely overrides inheritance from (1)
+    # This entire context (site2.com server) and all its child contexts will have logs disabled
+    # (unless one of them declares a new access_log directive)
+    access_log off;
+
+    location /images {
+
+      # Uses root directive inherited from (2)
+      try_files $uri /stock.png;
+    }
+
+    location /secret {
+      #######################
+      # (3) Action Directive
+      #######################
+      # Invokes an action such as a rewrite or redirect
+      # Inheritance does not apply as the request is either stopped (redirect/response) or re-evaluated (rewrite)
+      # In this case, the return directive is an action directive
+      return 403 "You do not have permission to view this.";
+    }
+  }
+}
+```
+
 ### PHP processing
 
 ### Workers processes
