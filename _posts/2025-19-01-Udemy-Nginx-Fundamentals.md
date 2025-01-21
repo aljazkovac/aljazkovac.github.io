@@ -971,9 +971,81 @@ I followed these steps to set up PHP processing:
 
 To learn more about PHP processing in Nginx, read this DigitalOcean article, [Understanding and Implementing FastCGI Proxying in Nginx](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx).
 
-### Workers processes
+### Worker processes
+
+If I check the status of the Nginx service with `systemctl status nginx`, I see the following:
+
+```bash
+nginx.service - The NGINX HTTP and reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Sun 2025-01-12 19:24:02 UTC; 1 week 1 day ago
+    Process: 94234 ExecReload=/bin/kill -s HUP $MAINPID (code=exited, status=0/SUCCESS)
+   Main PID: 766 (nginx)
+      Tasks: 2 (limit: 509)
+     Memory: 2.7M (peak: 5.5M)
+        CPU: 1.728s
+     CGroup: /system.slice/nginx.service
+             ├─  766 "nginx: master process /usr/bin/nginx"
+             └─94236 "nginx: worker process"
+```
+
+The `nginx: master process` is the the actual Nginx service or software instance. The master process then spawns
+`nginx: worker process` instances, which are responsible for handling client requests. The number of worker processes is
+by default set to one. To change the number of processes, we can set the `worker_processes` directive:
+
+```bash
+user www-data;
+
+worker_processes 2;
+
+events {}
+
+http {}
+```
+
+The worker processes are asynchronous, meaning they will handle incoming requests as fast as the hardware allows. Since CPU
+cores cannot share processes, the number of worker processes should be equal to the number of CPU cores. To check the number
+of CPU cores, run `nproc` or `lscpu`. The best practice is to set the number of worker processes to `auto`, which will
+automatically set the number of worker processes to the number of CPU cores.
+
+Then we can also set the number of connections each worker process can accept. Your server has a limit on the number of
+files that can be open at once for each CPU core. Check the open-file limit by running `ulimit -n`. To set the number of
+connections, use the `worker_connections` directive:
+
+```bash
+events {
+    worker_connections 1024;
+}
+```
+
+The maximum number of concurrent requests our server should be able to accept is calculated as 
+`max_nr_concurrent requests = worker_processes * worker_connections`.
+
+---
+**A note on the PID directive**
+
+Recall that we set the PID path in the `nginx.conf` file during the installation of Nginx:
+  
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# nginx -V
+nginx version: nginx/1.27.3
+built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
+built with OpenSSL 3.0.13 30 Jan 2024
+TLS SNI support enabled
+configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
+```
+
+We can reconfigure the process ID location by changing the `pid` directive in the `nginx.conf` file.
+At the moment, our PID file is located at `/var/run/nginx.pid`. If we want to change the location without rebuilding Nginx, 
+we can do so like this:
+  
+```bash
+pid /var/run/new_nginx.pid;
+```
+---
 
 ### Buffers & timeouts
+
 
 ### Adding dynamic modules
 
