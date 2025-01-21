@@ -1046,6 +1046,78 @@ pid /var/run/new_nginx.pid;
 
 ### Buffers & timeouts
 
+We can optimize performance by configuring buffers and timeouts. 
+
+A buffer is when a process reads data into memory or RAM before writing it to its next destination. If the buffer is too small,
+the process will write some of the data to disk.
+
+Timeouts specify a cut-off time for a given event. If the event does not complete within the specified time, the connection
+is closed.
+
+```bash
+user www-data;
+
+worker_processes auto;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  # Buffer size for POST submissions
+  client_body_buffer_size 10K;
+  client_max_body_size 8m; # If larger than this, the server will respond with a 413 Request Entity Too Large error.
+
+  # Buffer size for Headers (the amount of memory allocated to reading request headers)
+  client_header_buffer_size 1k;
+
+  # Max time to receive client headers/body (in milliseconds)
+  # Nginx syntax for time units: 
+  # default (milliseconds) 
+  # s (seconds), e.g., 10s
+  # m (minutes), e.g., 10m
+  # h (hours), e.g., 10h
+  # d (days), e.g., 10d
+  client_body_timeout 12;
+  client_header_timeout 12;
+
+  # Max time to keep a connection open for
+  keepalive_timeout 15;
+
+  # Max time for the client accept/receive a response
+  send_timeout 10;
+
+  # Skip buffering for static files
+  sendfile on;
+
+  # Optimise sendfile packets
+  tcp_nopush on;
+
+  server {
+
+    listen 80;
+    server_name 167.99.93.26;
+
+    root /sites/demo;
+
+    index index.php index.html;
+
+    location / {
+      try_files $uri $uri/ =404;
+    }
+
+    location ~\.php$ {
+      # Pass php requests to the php-fpm service (fastcgi)
+      include fastcgi.conf;
+      fastcgi_pass unix:/run/php/php7.1-fpm.sock;
+    }
+
+  }
+}
+```
 
 ### Adding dynamic modules
 
