@@ -895,7 +895,7 @@ I followed these steps to set up PHP processing:
 3. Check that the service exists with `systemctl list-units | grep php` => my version is `php8.3-fpm`
 4. Check the status of the service with `systemctl status php8.3-fpm`
 5. Create the following nginx configuration:
-    ```bash
+    ```nginx
     events {}
 
     http {
@@ -993,7 +993,7 @@ The `nginx: master process` is the the actual Nginx service or software instance
 `nginx: worker process` instances, which are responsible for handling client requests. The number of worker processes is
 by default set to one. To change the number of processes, we can set the `worker_processes` directive:
 
-```bash
+```nginx
 user www-data;
 
 worker_processes 2;
@@ -1012,7 +1012,7 @@ Then we can also set the number of connections each worker process can accept. Y
 files that can be open at once for each CPU core. Check the open-file limit by running `ulimit -n`. To set the number of
 connections, use the `worker_connections` directive:
 
-```bash
+```nginx
 events {
     worker_connections 1024;
 }
@@ -1054,7 +1054,7 @@ the process will write some of the data to disk.
 Timeouts specify a cut-off time for a given event. If the event does not complete within the specified time, the connection
 is closed.
 
-```bash
+```nginx
 user www-data;
 
 worker_processes auto;
