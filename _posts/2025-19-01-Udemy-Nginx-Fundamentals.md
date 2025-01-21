@@ -112,7 +112,10 @@ I followed these steps:
 1. Update the package list with `apt-get update`
 2. Install with `apt-get install nginx`
 3. Run `ps aux | grep nginx` to get the list of nginx processes 
-    (the command `ps` lists the processes, `aux` lists all processes (all users + boot processes), and `grep` filters the output):
+    (the command `ps` lists the processes, `aux` lists all processes
+    (a = show processes for all users
+    u = display the process's user/owner
+    x = also show processes not attached to a terminal), and `grep` filters the output):
     ```bash
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~# ps aux | grep nginx
     root       49899  0.0  0.3  11156  1716 ?        Ss   12:50   0:00 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
@@ -877,6 +880,96 @@ http {
 ```
 
 ### PHP processing
+
+Up to now we have configured Nginx to serve static files, leaving the rendering of that file to be handled by the client,
+based on its content type or MIME type. However, a cricial part of a web server is to be able to serve dynamic content, 
+that has been generated on the server side (by a server-side language such as PHP). Nginx does not have the capability to
+embed PHP or other languages directly into the server like Apache can. Instead, all requests for dynamic content are dealt with
+by a separate process, such as [PHP-FPM](https://www.php.net/manual/en/install.fpm.php), and then reverse proxied back to the client via Nginx.
+Nginx will therefore pass the request for processing to php-fpm, and then return the response (typically as HTML) to the client.
+
+I followed these steps to set up PHP processing:
+
+1. Update the package list with `apt-get update`
+2. Install PHP-FPM with `apt-get install php-fpm`
+3. Check that the service exists with `systemctl list-units | grep php` => my version is `php8.3-fpm`
+4. Check the status of the service with `systemctl status php8.3-fpm`
+5. Create the following nginx configuration:
+    ```bash
+    events {}
+
+    http {
+
+            include mime.types;
+
+            server {
+
+                    listen 80;
+                    server_name 206.189.100.37;
+
+                    root /sites/demo;
+
+                    # Load index.php first if it exists
+                    index index.php index.html;
+
+                    # Take care of any request with static content
+                    location / {
+                            try_files $uri $uri/ =404;
+                    }
+
+                    location ~\.php$ {
+                            # Pass php-requests to the php-fpm service (fastcgi)
+                            include fastcgi.conf;
+                            # Pass to a UNIX socket which we can find like this:
+                            # find / -name *fpm.sock
+                            fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+                    }
+            }
+    }
+    ```
+6. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+7. Create a new file `index.php` in the `/sites/demo` directory like this:
+    ```bash
+    echo '<?php phpinfo(); ?>' > /sites/demo/info.php
+    ```
+8. Open a browser and navigate to the IP address followed by `/info.php`. There I got a 502 Bad Gateway error.
+9. Check the last entry of the error log:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# tail -n 1 /var/log/nginx/error.log
+    2025/01/19 19:58:16 [crit] 94182#0: *1547 connect() to unix:/run/php/php8.3-fpm.sock failed (13: Permission denied) while connecting to upstream, client: 176.10.144.208, server: 206.189.100.37, request: "GET /index.php HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.3-fpm.sock:", host: "206.189.100.37"
+    ```
+10. The error message indicates that the Nginx process does not have permission to access the PHP-FPM socket => check the user
+    that Nginx is running as:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# ps aux | grep nginx
+    root         766  0.0  0.6  10808  3204 ?        Ss   Jan12   0:00 nginx: master process /usr/bin/nginx
+    nobody     94182  0.0  0.9  12160  4612 ?        S    19:54   0:00 nginx: worker process
+    root       94213  0.0  0.4   7076  2048 pts/0    S+   20:01   0:00 grep --color=auto nginx
+    ```
+11. The Nginx worker process is running as the `nobody` user, which does not have permission to access the PHP-FPM socket.
+12. Check the php process permissions:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# ps aux | grep php
+    root       93854  0.0  4.4 206824 20736 ?        Ss   19:37   0:00 php-fpm: master process (/etc/php/8.3/fpm/php-fpm.conf)
+    www-data   93855  0.0  1.7 207332  8072 ?        S    19:37   0:00 php-fpm: pool www
+    www-data   93856  0.0  1.7 207332  8072 ?        S    19:37   0:00 php-fpm: pool www
+    root       94226  0.0  0.4   7076  2048 pts/0    S+   20:05   0:00 grep --color=auto php
+    ```
+13. The PHP-FPM process is running as the `www-data` user, which has permission to access the PHP-FPM socket => configure
+    Nginx to run as the same user: add `user www-data;` in the `http` context in Nginx configuration
+14. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+15. Open a browser and navigate to the IP address followed by `/info.php`. There I could see the PHP info page.
+    What happened is the following: Nginx received the request, matched it on the location block with the PHP extension,
+    and passed it to the PHP-FPM service. PHP-FPM processed the request and returned the response to Nginx, which then 
+    served it to the client.
+16. Now let's create an `index.php` file that will display the current date and time:
+    ```bash
+    echo '<h1>Date: <?php echo date("l js F"); ?><h1>' > /sites/demo/index.php
+    ```
+17. Open a browser and navigate to the IP address. There I could see the current date and time displayed => the index directive
+    is set to `index index.php index.html`, so Nginx will look for the `index.php` file first, and if it exists, it will be served.
+
+To learn more about PHP processing in Nginx, read this DigitalOcean article, [Understanding and Implementing FastCGI Proxying in Nginx](https://www.digitalocean.com/community/tutorials/understanding-and-implementing-fastcgi-proxying-in-nginx).
 
 ### Workers processes
 
