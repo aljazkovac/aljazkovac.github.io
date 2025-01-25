@@ -659,8 +659,6 @@ http {
 
 Here are some key differences between regular and named locations:
 
-Key Differences Between Regular and Named Locations:
-
 | Aspect          | Named Location (@friendly_404)           | Regular Location (/friendly_404)            |
 |-----------------|------------------------------------------|---------------------------------------------|
 | Access          | Internal only                            | Publicly accessible                         |
@@ -1218,7 +1216,6 @@ I asked [DeepSeek](https://www.deepseek.com/) - a really cool alternative to [Ch
 It said that the error message indicates that the image_filter module is rejecting the image because it exceeds the default size limit 
 for image processing. By default, the image_filter module has a size limit for the images it processes (according to [the documentation](https://nginx.org/en/docs/http/ngx_http_image_filter_module.html#image_filter_buffer),
 the default is 1M), and my image.png file (1.4 MB) is too large for the default settings. I therefore increased the buffer size to 2M.
-
 
 ## Performance
 
