@@ -69,11 +69,6 @@ Nginx and Apache also differ in terms of configuration. Nginx interprets request
 defaults to and favours file-system locations. Because of this very design, Nginx can easily function as not only a web server
 but anything from a load balancer to a mail server.
 
-### Quiz 1
-
-![Quiz 1](../assets/images/nginx/nginx-quiz1.png){: w="700" h="400"}
-_Figure 1: Quiz 1_
-
 ## Installation
 
 ### Server overview
@@ -181,7 +176,7 @@ I followed these steps:
 1. Run `nginx -h` to see the available commands
 2. Run `nginx -s stop` to stop the Nginx process
 3. Create a new file in `/lib/systemd/system/nginx.service` with the following content:
-    ```bash
+    ```nginx
     [Unit]
     Description=The NGINX HTTP and reverse proxy server
     After=syslog.target network.target remote-fs.target nss-lookup.target
@@ -214,11 +209,6 @@ has some limitations compared to the Unix version, such as:
 
 I wasn't interested in installing Nginx on Windows, so I skipped this section.
 
-### Quiz 2
-
-![Quiz 2](../assets/images/nginx/nginx-quiz2.png){: w="700" h="400"}
-_Figure 2: Quiz 2_
-
 ## Configuration
 
 ### Understanding configuration terms
@@ -246,34 +236,34 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
 5. Copied the image `image.png` to the `demo` directory with this command: `scp /Users/aljazkovac/Desktop/courses/nginx-fundamentals/image.png digitalocean:/sites/demo/`
    (the `scp` command copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file)
 6. Edit the file `/etc/nginx/nginx.conf` and add the following configuration:
-    ```bash
-      events {
-      }
+    ```nginx
+    events {
+    }
 
-      http {
-          server {
-            listen 80;
-            server_name 206.189.100.37;
-            root /sites/demo;
-          }
-      }
+    http {
+        server {
+          listen 80;
+          server_name 206.189.100.37;
+          root /sites/demo;
+        }
+    }
     ```
 7. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
 8. Open a browser and navigate to the IP address. There I could see the simple webpage but without the CSS styling.
 9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong MIME type for the CSS file
    You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`)
 10. To fix this, one can add a `types` block to the `http` context in the configuration file:
-    ```bash
-      http {
-          types {
-              text/css css;
-          }
+    ```nginx
+    http {
+        types {
+            text/css css;
+        }
     ```
     However, this is not the best solution because it requires manually adding MIME types for each file type. A better solution 
     is to use the `include` directive to include the `mime.types` file:
-    ```bash
-      http {
-          include mime.types;
+    ```nginx
+    http {
+        include mime.types;
     ```
 11. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
 12. Open a browser and navigate to the IP address. There I could see the simple webpage with the CSS styling.
@@ -301,7 +291,7 @@ Each of the location modifiers below is assigned a priority in the following ord
 
 Here are some examples of location blocks:
 
-```bash
+```nginx
 events {
 }
 
@@ -373,7 +363,7 @@ There are two types of variables in Nginx:
 
 Here is a simple example of using Nginx built-in variables:
 
-```bash
+```nginx
 events {}
 
 
@@ -403,7 +393,7 @@ http {
 
 Here is an example of using a configuration variable and a conditional in Nginx:
 
-```bash
+```nginx
 events {}
 
 
@@ -436,8 +426,8 @@ http {
 
 There are two rewrite directives in Nginx:
 
-1. The rewrite directive: ```bash rewrite pattern URI;```
-    ```bash
+1. The rewrite directive: `rewrite pattern URI`
+    ```nginx
     events {}
 
     http {
@@ -461,9 +451,9 @@ There are two rewrite directives in Nginx:
     }
     ```
    The URI here does not change in the browser, although the request is rewritten to the `/greet` location.
-2. The return directive: ```bash return status URI;``` => if the status is a 3xx, the return directive behaviour becomes 
+2. The return directive: `return status URI` => if the status is a 3xx, the return directive behaviour becomes 
    a redirect, and it accepts a URI as the second argument:
-   ```bash
+   ```nginx
     events {}
     http {
 
@@ -493,9 +483,8 @@ Therefore, a rewrite directive is more resource-intensive than a return directiv
 With rewrites, we can capture parts of the original URI. For example, if we have a URI `/user/john`, 
 we can capture the username `john` with a regex pattern and rewrite it to `/greet`:
   
-  ```bash
-  events {}
-
+```nginx
+events {}
 
 http {
 
@@ -533,7 +522,7 @@ In the example below, without the `last` flag, the URI would be reevaluated afte
 With the `last` flag set, the URI is rewritten to `/greet/john`, reevaluated, and is then not rewritten again, which 
 means that we get the response "Hello John" instead of the image.
   
-```bash
+```nginx
 events {}
 
 
@@ -574,7 +563,7 @@ It is used to try different files or URIs in a specific order until one is found
 In the example below, since the resource image.png exists, the server will return the image regardless of the URI (even if
 we go to the /greet location).
 
-```bash
+```nginx
 events {}
 
 http {
@@ -608,7 +597,7 @@ try_files $uri /notexist.png /greet;
 The last argument in the `try_files` directive is the final URI to try, and should ideally be something that won't ever fail,
 e.g., a 404 page:
 
-```bash
+```nginx
 events {}
 
 
@@ -639,7 +628,7 @@ http {
 
 Named locations simply means assigning a name to a location context:
 
-```bash
+```nginx
 events {}
 
 
@@ -682,10 +671,8 @@ Key Differences Between Regular and Named Locations:
 
 Here is an example showcasing the difference:
 
-```bash
-
+```nginx
 events {}
-
 
 http {
 
@@ -761,7 +748,7 @@ To observer and learn about the logging process, I followed these steps:
 
 To customise or disabling logging for a given context, we can use the `access_log` and `error_log` directives:
 
-```bash
+```nginx
 events {}
 
 
@@ -817,7 +804,7 @@ However, inheritance will vary depending on the directive type:
 2. Standard directive
 3. Action directive
 
-```bash
+```nginx
 events {}
 
 ######################
@@ -1059,69 +1046,183 @@ user www-data;
 
 worker_processes auto;
 
+load_module /etc/nginx/modules/ngx_http_image_filter_module.so;
+
 events {
-  worker_connections 1024;
+worker_connections 1024;
 }
 
 http {
 
-  include mime.types;
+include mime.types;
 
-  # Buffer size for POST submissions
-  client_body_buffer_size 10K;
-  client_max_body_size 8m; # If larger than this, the server will respond with a 413 Request Entity Too Large error.
+# Buffer size for POST submissions
+client_body_buffer_size 10K;
+client_max_body_size 8m;
 
-  # Buffer size for Headers (the amount of memory allocated to reading request headers)
-  client_header_buffer_size 1k;
+# Buffer size for Headers
+client_header_buffer_size 1k;
 
-  # Max time to receive client headers/body (in milliseconds)
-  # Nginx syntax for time units: 
-  # default (milliseconds) 
-  # s (seconds), e.g., 10s
-  # m (minutes), e.g., 10m
-  # h (hours), e.g., 10h
-  # d (days), e.g., 10d
-  client_body_timeout 12;
-  client_header_timeout 12;
+# Max time to receive client headers/body
+client_body_timeout 12;
+client_header_timeout 12;
 
-  # Max time to keep a connection open for
-  keepalive_timeout 15;
+# Max time to keep a connection open for
+keepalive_timeout 15;
 
-  # Max time for the client accept/receive a response
-  send_timeout 10;
+# Max time for the client accept/receive a response
+send_timeout 10;
 
-  # Skip buffering for static files
-  sendfile on;
+# Skip buffering for static files
+sendfile on;
 
-  # Optimise sendfile packets
-  tcp_nopush on;
+# Optimise sendfile packets
+tcp_nopush on;
 
   server {
 
-    listen 80;
-    server_name 167.99.93.26;
+      listen 80;
+      server_name 206.189.100.37;
 
-    root /sites/demo;
+      root /sites/demo;
 
-    index index.php index.html;
+      index index.php index.html;
 
-    location / {
-      try_files $uri $uri/ =404;
-    }
+      location / {
+        try_files $uri $uri/ =404;
+      }
 
-    location ~\.php$ {
-      # Pass php requests to the php-fpm service (fastcgi)
-      include fastcgi.conf;
-      fastcgi_pass unix:/run/php/php7.1-fpm.sock;
-    }
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
 
+      location = /image.png {
+        image_filter rotate 180;
+      }
   }
 }
 ```
 
 ### Adding dynamic modules
+TODO: Change all Nginx code snippets to Nginx!
+TODO: Change all Hack code snippets to Hack in FromNand2Tetris!
+https://github.com/rouge-ruby/rouge/wiki/list-of-supported-languages-and-lexers
 
-### Quiz 3
+In order to add dynamic modules to Nginx, we need to recompile Nginx from source. I followed these steps:
+
+1. Go to the directory where the Nginx source code is located. In my case, it is `/root/nginx-1.27.3`
+2. Make sure we don't change the existing configuration, so let's run ´nginx -V´ to see the current configuration:
+    ```bash
+    nginx version: nginx/1.27.3
+    built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
+    built with OpenSSL 3.0.13 30 Jan 2024
+    TLS SNI support enabled
+    configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log 
+                         --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~/nginx-1.27.3#
+    ```
+3. See the list of available dynamic modules with `./configure --help | grep dynamic`
+4. Use the same configure arguments as before and add the chose dynamic module:
+   ```bash
+   ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log 
+               --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module 
+               --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules # Add the modules path in the same directory as the configuration files
+   ```
+5. We get the following error:
+   ```bash
+   ./configure: error: the HTTP image filter module requires the GD library.
+   You can either do not enable the module or install the libraries.
+   ```
+6. Run `apt-get install libgd-dev` to install the GD library
+7. Run `./configure` again with the same arguments
+8. Run `make` to compile the source code
+9. Run `make install` to install the compiled source code
+10. Check the current build's configuration with `nginx -V`
+11. Reload the Nginx service with `systemctl reload nginx`
+12. Check the Nginx status with `systemctl status nginx`
+13. Use the new dynamic module in the Nginx configuration:
+    ```nginx
+    user www-data;
+
+    worker_processes auto;
+
+    load_module /etc/nginx/modules/ngx_http_image_filter_module.so;
+
+    events {
+    worker_connections 1024;
+    }
+
+    http {
+
+    include mime.types;
+
+    # Buffer size for POST submissions
+    client_body_buffer_size 10K;
+    client_max_body_size 8m;
+
+    # Buffer size for Headers
+    client_header_buffer_size 1k;
+
+    # Max time to receive client headers/body
+    client_body_timeout 12;
+    client_header_timeout 12;
+
+    # Max time to keep a connection open for
+    keepalive_timeout 15;
+
+    # Max time for the client accept/receive a response
+    send_timeout 10;
+
+    # Skip buffering for static files
+    sendfile on;
+
+    # Optimise sendfile packets
+    tcp_nopush on;
+
+      server {
+
+          listen 80;
+          server_name 206.189.100.37;
+
+          root /sites/demo;
+
+          index index.php index.html;
+
+          location / {
+            try_files $uri $uri/ =404;
+          }
+
+          location ~\.php$ {
+            # Pass php requests to the php-fpm service (fastcgi)
+            include fastcgi.conf;
+            fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+          }
+
+          location = /image.png {
+            image_filter_buffer 2M; 
+            image_filter rotate 180;
+          }
+      }
+    }
+    ```
+14. Reload the Nginx service with `systemctl reload nginx`
+15. Check the browser to see if the image is rotated by 180 degrees
+
+Here I encountered an issue: I was getting a 415 (Unsupported Media Type) error. I checked the error log with `tail -n 1 /var/log/nginx/error.log` and saw the following:
+  
+```bash
+2025/01/25 19:50:28 [error] 200345#0: *3719 image filter: too big response: 1438718 while sending response to client, 
+client: 176.10.144.208, server: 206.189.100.37, request: "GET /image.png HTTP/1.1", host: "206.189.100.37"
+```
+
+I asked [DeepSeek](https://www.deepseek.com/) - a really cool alternative to [ChatGPT](https://chatgpt.com/) - for help. 
+It said that the error message image filter: too big response: 1438718 indicates that the image_filter module is rejecting the image
+because it exceeds the default size limit for image processing. By default, the image_filter module has a size limit for the images it processes, 
+and my image.png file (1.4 MB) is too large for the default settings. It suggested to increase the buffer size for the image_filter module 
+using the image_filter_buffer directive.
+
 
 ## Performance
 
@@ -1144,8 +1245,6 @@ http {
 ### Basic authentication
 
 ### Hardening Nginx
-
-### Quiz 4
 
 ### Let's Encrypt - SSL certificates
 
