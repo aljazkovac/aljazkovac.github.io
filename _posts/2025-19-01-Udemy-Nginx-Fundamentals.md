@@ -1106,9 +1106,6 @@ tcp_nopush on;
 ```
 
 ### Adding dynamic modules
-TODO: Change all Nginx code snippets to Nginx!
-TODO: Change all Hack code snippets to Hack in FromNand2Tetris!
-https://github.com/rouge-ruby/rouge/wiki/list-of-supported-languages-and-lexers
 
 In order to add dynamic modules to Nginx, we need to recompile Nginx from source. I followed these steps:
 
