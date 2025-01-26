@@ -1041,30 +1041,30 @@ worker_connections 1024;
 
 http {
 
-include mime.types;
+  include mime.types;
 
-# Buffer size for POST submissions
-client_body_buffer_size 10K;
-client_max_body_size 8m;
+  # Buffer size for POST submissions
+  client_body_buffer_size 10K;
+  client_max_body_size 8m;
 
-# Buffer size for Headers
-client_header_buffer_size 1k;
+  # Buffer size for Headers
+  client_header_buffer_size 1k;
 
-# Max time to receive client headers/body
-client_body_timeout 12;
-client_header_timeout 12;
+  # Max time to receive client headers/body
+  client_body_timeout 12;
+  client_header_timeout 12;
 
-# Max time to keep a connection open for
-keepalive_timeout 15;
+  # Max time to keep a connection open for
+  keepalive_timeout 15;
 
-# Max time for the client accept/receive a response
-send_timeout 10;
+  # Max time for the client accept/receive a response
+  send_timeout 10;
 
-# Skip buffering for static files
-sendfile on;
+  # Skip buffering for static files
+  sendfile on;
 
-# Optimise sendfile packets
-tcp_nopush on;
+  # Optimise sendfile packets
+  tcp_nopush on;
 
   server {
 
@@ -1140,30 +1140,30 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
 
     http {
 
-    include mime.types;
+      include mime.types;
 
-    # Buffer size for POST submissions
-    client_body_buffer_size 10K;
-    client_max_body_size 8m;
+      # Buffer size for POST submissions
+      client_body_buffer_size 10K;
+      client_max_body_size 8m;
 
-    # Buffer size for Headers
-    client_header_buffer_size 1k;
+      # Buffer size for Headers
+      client_header_buffer_size 1k;
 
-    # Max time to receive client headers/body
-    client_body_timeout 12;
-    client_header_timeout 12;
+      # Max time to receive client headers/body
+      client_body_timeout 12;
+      client_header_timeout 12;
 
-    # Max time to keep a connection open for
-    keepalive_timeout 15;
+      # Max time to keep a connection open for
+      keepalive_timeout 15;
 
-    # Max time for the client accept/receive a response
-    send_timeout 10;
+      # Max time for the client accept/receive a response
+      send_timeout 10;
 
-    # Skip buffering for static files
-    sendfile on;
+      # Skip buffering for static files
+      sendfile on;
 
-    # Optimise sendfile packets
-    tcp_nopush on;
+      # Optimise sendfile packets
+      tcp_nopush on;
 
       server {
 
@@ -1210,6 +1210,164 @@ the default is 1M), and my `image.png` file (1.4 MB) is too large for the defaul
 ## Performance
 
 ### Headers & expires
+
+Let's look at some useful modules and directives outside the fundamental Nginx configuration that can help improve performance.
+
+A good starting point is configuring [`expires` headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Expires). 
+These headers contain the date/time after which the response is considered expired in the client's cache.
+
+```nginx
+user www-data;
+
+worker_processes auto;
+
+events {
+worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  server {
+
+      listen 80;
+      server_name 206.189.100.37;
+
+      root /sites/demo;
+
+      index index.php index.html;
+
+      location / {
+        try_files $uri $uri/ =404;
+      }
+
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
+
+      location = /image.png {
+        add_header my_header "Hello World!";
+      }
+  }
+}
+```
+
+We have added a custom header to the image file using the [`add_header`directive](https://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header). To check the headers, we can use the `curl` command:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/image.png
+HTTP/1.1 200 OK
+Server: nginx/1.27.3
+Date: Sun, 26 Jan 2025 20:04:27 GMT
+Content-Type: image/png
+Content-Length: 1438718
+Last-Modified: Tue, 14 Jan 2025 04:53:52 GMT
+Connection: keep-alive
+ETag: "6785ede0-15f3fe"
+my_header: Hello World!
+Accept-Ranges: bytes
+```
+
+And we see the custom header `my_header: Hello World!` in the response.
+
+Now that we know how to set headers, let's set a few of them:
+
+```nginx
+user www-data;
+
+worker_processes auto;
+
+events {
+worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  server {
+
+      listen 80;
+      server_name 206.189.100.37;
+
+      root /sites/demo;
+
+      index index.php index.html;
+
+      location / {
+        try_files $uri $uri/ =404;
+      }
+
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
+
+      location = /image.png {
+        add_header Cache-Control public;
+        add_header Pragma public;
+        add_header Vary Accept-Encoding;
+        expires 1M;
+      }
+  }
+}
+```
+
+Let's curl again to see the headers:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/image.png
+HTTP/1.1 200 OK
+Server: nginx/1.27.3
+Date: Sun, 26 Jan 2025 20:08:37 GMT
+Content-Type: image/png
+Content-Length: 1438718
+Last-Modified: Tue, 14 Jan 2025 04:53:52 GMT
+Connection: keep-alive
+ETag: "6785ede0-15f3fe"
+Expires: Tue, 25 Feb 2025 20:08:37 GMT
+Cache-Control: max-age=2592000
+Cache-Control: public
+Pragma: public
+Vary: Accept-Encoding
+Accept-Ranges: bytes
+```
+
+Let's see how a typical location for static files might look like:
+
+```nginx
+location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+  access_log off;
+  add_header Cache-Control public;
+  add_header Pragma public;
+  add_header Vary Accept-Encoding;
+  expires 1M;
+}
+```
+
+Curl again, this time for a CSS file:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx#  curl -I http://206.189.100.37/style.css
+HTTP/1.1 200 OK
+Server: nginx/1.27.3
+Date: Sun, 26 Jan 2025 20:17:17 GMT
+Content-Type: text/css
+Content-Length: 519
+Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
+Connection: keep-alive
+ETag: "6785ec2a-207"
+Expires: Tue, 25 Feb 2025 20:17:17 GMT
+Cache-Control: max-age=2592000
+Cache-Control: public
+Pragma: public
+Vary: Accept-Encoding
+Accept-Ranges: bytes
+```
 
 ### Compressed responses with gzip
 
