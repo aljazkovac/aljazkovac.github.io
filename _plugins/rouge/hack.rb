@@ -3,10 +3,10 @@ require 'rouge'
 
 module Rouge
   module Lexers
-    class Hack < RegexLexer
-      tag 'hack'
+    class HackAssembly < RegexLexer
+      tag 'hackassembly'
       filenames '*.hack', '*.asm'
-      mimetypes 'text/x-hack'
+      mimetypes 'text/x-hackassembly'
 
       # Registers and predefined symbols
       registers = %w(A D M AM AD AMD)

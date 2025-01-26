@@ -172,7 +172,7 @@ into the latter by an assembler.
 In this project, I wrote two simple assembly programs, one that blackens the screen if any key is pressed, 
 and whitens it if the key is released; and one that multiples two numbers. Here is the first program:
 
-```hack
+```hackassembly
 // This file is part of www.nand2tetris.org
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
@@ -309,7 +309,7 @@ we had to come up with a logic gate architecture that realizes the following beh
 
 Here is my rather simplistic implementation:
 
-```hack
+```hackassembly
 CHIP CPU {
 
     IN  inM[16],         // M value input  (M = contents of RAM[A])
