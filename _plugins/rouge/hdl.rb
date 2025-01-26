@@ -3,10 +3,10 @@ require 'rouge'
 
 module Rouge
   module Lexers
-    class HDL < RegexLexer
-      tag 'hdl'
+    class HDLTetris < RegexLexer
+      tag 'hdltetris'
       filenames '*.hdl'
-      mimetypes 'text/x-hdl'
+      mimetypes 'text/x-hdltetris'
 
       # Keywords
       keywords = %w(

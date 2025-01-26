@@ -55,7 +55,7 @@ and division of two integers, etc. It is a simple and elegant design.
 
 Here is my implementation in less than twenty lines of HDL code:
 
-```hdl
+```hdltetris
  * ALU (Arithmetic Logic Unit):
  * Computes out = one of the following functions:
  *                0, 1, -1,
@@ -172,7 +172,7 @@ into the latter by an assembler.
 In this project, I wrote two simple assembly programs, one that blackens the screen if any key is pressed, 
 and whitens it if the key is released; and one that multiples two numbers. Here is the first program:
 
-```hackassembly
+```hacktetris
 // This file is part of www.nand2tetris.org
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
@@ -309,7 +309,7 @@ we had to come up with a logic gate architecture that realizes the following beh
 
 Here is my rather simplistic implementation:
 
-```hackassembly
+```hdltetris
 CHIP CPU {
 
     IN  inM[16],         // M value input  (M = contents of RAM[A])
