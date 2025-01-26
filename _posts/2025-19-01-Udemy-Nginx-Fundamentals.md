@@ -17,24 +17,23 @@ if it could cover all our needs.
 
 Let's dive into the course, and I hope you will enjoy my notes and thoughts on it.
 
-# The course Nginx Fundamentals: High performance servers from scratch
-
-[Nginx](https://github.com/nginx/nginx) is a high-performance, open-source web server and reverse proxy designed for 
-speed, scalability, and efficient resource use. Its core functionality includes serving static content, load balancing, 
-and acting as a reverse proxy to forward client requests to backend servers. Nginx excels at handling large numbers of 
-concurrent connections, making it ideal for high-traffic websites and applications. Additionally, it supports features like 
-caching, SSL termination, and URL rewriting, which enhance performance, security, and flexibility in modern web architectures.
-
-[This Udemy course](https://www.udemy.com/course/nginx-fundamentals/) covers the following topics:
-  * Learn to customise the NGINX installation
-  * Configure NGINX
-  * Learn to tweak NGINX for optimal performance 
-  * Secure NGINX with some security best practises
-  * Learn about NGINX load balancing and reverse proxying
-
 ## Overview
 
+[This Udemy course](https://www.udemy.com/course/nginx-fundamentals/) covers the following topics:
+
+* Learn to customise the NGINX installation
+* Configure NGINX
+* Learn to tweak NGINX for optimal performance
+* Secure NGINX with some security best practises
+* Learn about NGINX load balancing and reverse proxying
+
 ### About Nginx
+
+[Nginx](https://github.com/nginx/nginx) is a high-performance, open-source web server and reverse proxy designed for
+speed, scalability, and efficient resource use. Its core functionality includes serving static content, load balancing,
+and acting as a reverse proxy to forward client requests to backend servers. Nginx excels at handling large numbers of
+concurrent connections, making it ideal for high-traffic websites and applications. Additionally, it supports features like
+caching, SSL termination, and URL rewriting, which enhance performance, security, and flexibility in modern web architectures.
 
 Nginx was built in 2004 by [Igor Sysoev](https://en.wikipedia.org/wiki/Igor_Sysoev) as he was looking for an alternative to Apache, 
 and wanted to build a replacement capable of handling [10000 concurrent connections](https://en.wikipedia.org/wiki/C10k_problem),
@@ -81,7 +80,7 @@ I have set up a [Digital Ocean](https://www.digitalocean.com/) droplet with the 
   * Ubuntu 24.04 (LTS) x64
 
 I have also set up SSH key-based authentication by following [this guide on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server).
-To summarize, I followed the following steps:
+To summarize, I followed these steps:
 
 1. Generate a new SSH key pair with `ssh-keygen`
 2. Access the server via the console in the Digital Ocean dashboard
@@ -108,9 +107,9 @@ I followed these steps:
 2. Install with `apt-get install nginx`
 3. Run `ps aux | grep nginx` to get the list of nginx processes 
     (the command `ps` lists the processes, `aux` lists all processes
-    (a = show processes for all users
-    u = display the process's user/owner
-    x = also show processes not attached to a terminal), and `grep` filters the output):
+    (`a` = show processes for all users,
+    `u` = display the process's user/owner,
+    `x` = also show processes not attached to a terminal), and `grep` filters the output):
     ```bash
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~# ps aux | grep nginx
     root       49899  0.0  0.3  11156  1716 ?        Ss   12:50   0:00 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
@@ -132,12 +131,11 @@ the droplet to start from scratch. Then I followed these steps:
 1. Update the package list with `apt-get update`
 2. Download the source code with `wget https://nginx.org/download/nginx-1.27.3.tar.gz`
 3. Extract the source code with `tar -zxvf nginx-1.27.3.tar.gz`
-4. Try and run `./configure` to see if there are any missing dependencies => get the error: 
+4. Try and run `./configure` to see if there are any missing dependencies => get the error:
     ```bash
     checking for OS
       + Linux 6.8.0-51-generic x86_64
     checking for C compiler ... not found
-
     ./configure: error: C compiler cc is not found
     ```
 5. Install the build-essential package with `apt-get install build-essential`
@@ -215,13 +213,13 @@ I wasn't interested in installing Nginx on Windows, so I skipped this section.
 
 There are two main configuration terms in Nginx:
 
-1. Context: A block of configuration directives (sections within a configuration) that apply to a specific part of the server. 
+1. **Context**: A block of configuration directives (sections within a configuration) that apply to a specific part of the server. 
    For example, the `http` context contains directives that apply to the entire server, while the `server` context contains 
    directives that apply to a specific server block. Contexts are enclosed in curly braces `{}`, and can be nested within each other.
    Nested contexts inherit directives from their parent contexts. The top-most context is the configuration file itself (the main context),
    which is where we define the global directives that apply to the master process. Other important contexts include `events`, `http`,
    the `server`, and `location` contexts.
-2. Directive: specific configuration options that control how Nginx behaves. Directives are placed inside contexts and are
+2. **Directive**: specific configuration options that control how Nginx behaves. Directives are placed inside contexts and are
    followed by a value or a block of values. For example, the `server_name` directive specifies the domain name that the server
    block should respond to.
 
@@ -229,12 +227,13 @@ There are two main configuration terms in Nginx:
 
 We will create a virtual host to serve a simple HTML page. To do this, I followed these steps:
 
-1. Asked ChatGTP to create a simple webpage consisting of three files: `index.html`, `style.css`, and `image.png`
-2. Went to the root directory with `cd /` (your home directory you can reach with `cd ~` or just `cd`)
-3. Created a new directory with `mkdir sites` and then `cd sites` and `mkdir demo`
-4. Copied the files `index.html`and `style.css` from ChatGTP to the `demo` directory manually
+1. Asked ChatGTP to create a simple webpage consisting of three files: `index.html`, `style.css`, and `image.png`.
+2. Went to the root directory with `cd /` (your home directory you can reach with `cd ~` or just `cd`).
+3. Created a new directory with `mkdir sites` and then `cd sites` and `mkdir demo`.
+4. Copied the files `index.html`and `style.css` from ChatGTP to the `demo` directory manually.
 5. Copied the image `image.png` to the `demo` directory with this command: `scp /Users/aljazkovac/Desktop/courses/nginx-fundamentals/image.png digitalocean:/sites/demo/`
-   (the `scp` command copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file)
+   (the [SCP command](https://go.lightnode.com/tech/scp-linux?ref=b7022283&id=58&gad_source=1&gclid=Cj0KCQiA19e8BhCVARIsALpFMgFWgB53pwnAgSFmIOTh_rxr4hYy4J7fW1XxKsTVOLkK6koCZAQxRWgaAlwkEALw_wcB) 
+    copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file).
 6. Edit the file `/etc/nginx/nginx.conf` and add the following configuration:
     ```nginx
     events {
@@ -243,15 +242,15 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
     http {
         server {
           listen 80;
-          server_name 206.189.100.37;
+          server_name <IP>;
           root /sites/demo;
         }
     }
     ```
-7. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+7. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`.
 8. Open a browser and navigate to the IP address. There I could see the simple webpage but without the CSS styling.
-9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong MIME type for the CSS file
-   You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`)
+9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types) 
+    for the CSS file. You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`).
 10. To fix this, one can add a `types` block to the `http` context in the configuration file:
     ```nginx
     http {
@@ -265,29 +264,20 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
     http {
         include mime.types;
     ```
-11. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
+11. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`.
 12. Open a browser and navigate to the IP address. There I could see the simple webpage with the CSS styling.
-13. Check the stylesheet header with curl to see that the `Content-Type` header is now `text/css`
+13. Check the stylesheet header with curl to see that the `Content-Type` header is now `text/css`.
 
 ### Location blocks
 
-Location blocks are used to define how Nginx should handle requests for specific URIs. They are defined within the `server` context
+Location blocks are used to define how Nginx should handle requests for specific URIs. They are defined within the `server` context.
 
 There are different types of location blocks (listed in order of priority):
 
-1. Exact match (= <uri>) : The URI must match the location exactly
-2. Preferential prefix match (^~ <uri>) : The URI must start with the specified prefix, and no other location block can match the URI
-3. Regular expression match (~ <uri> => case-sensitive) or (~* <uri> => case-insensitive) : The URI must match the specified regular expression
-4. Prefix match (<uri>) : The URI must start with the specified prefix
-
-Here is the priority order for location blocks:
-
-Each of the location modifiers below is assigned a priority in the following order:
-
-1. Exact match (=)
-2. Preferential prefix match (^~)
-3. REGEX match (~*)
-4. Prefix match ()
+1. **Exact match (= <uri>)** : The URI must match the location exactly.
+2. **Preferential prefix match (^~ <uri>)** : The URI must start with the specified prefix, and no other location block can match the URI.
+3. **Regular expression match (~ <uri> => case-sensitive)** or **(~* <uri> => case-insensitive)** : The URI must match the specified regular expression.
+4. **Prefix match (<uri>)** : The URI must start with the specified prefix.
 
 Here are some examples of location blocks:
 
@@ -356,10 +346,10 @@ http {
 
 There are two types of variables in Nginx:
 
-1. Configuration variables (variables we define in the configuration file), e.g., `set $var "value";`
-2. [Nginx module variables](https://nginx.org/en/docs/varindex.html) (variables provided by Nginx modules), e.g., `$uri`, `$args`, `$request_uri`
+1. **Configuration variables** (variables we define in the configuration file), e.g., `set $var "value";`
+2. **[Nginx module variables]**(https://nginx.org/en/docs/varindex.html) (variables provided by Nginx modules), e.g., `$uri`, `$args`, `$request_uri`
 
-**NOTE** The use of conditionals inside location blocks is [discouraged because it can lead to unexpected behaviour](https://github.com/nginxinc/nginx-wiki/blob/master/source/start/topics/depth/ifisevil.rst).
+**NOTE**: The use of conditionals inside location blocks is [discouraged because it can lead to unexpected behaviour](https://github.com/nginxinc/nginx-wiki/blob/master/source/start/topics/depth/ifisevil.rst).
 
 Here is a simple example of using Nginx built-in variables:
 
@@ -426,7 +416,7 @@ http {
 
 There are two rewrite directives in Nginx:
 
-1. The rewrite directive: `rewrite pattern URI`
+1. The **rewrite** directive: `rewrite pattern URI`
     ```nginx
     events {}
 
@@ -451,7 +441,7 @@ There are two rewrite directives in Nginx:
     }
     ```
    The URI here does not change in the browser, although the request is rewritten to the `/greet` location.
-2. The return directive: `return status URI` => if the status is a 3xx, the return directive behaviour becomes 
+2. The **return** directive: `return status URI` => if the status is a 3xx, the return directive behaviour becomes 
    a redirect, and it accepts a URI as the second argument:
    ```nginx
     events {}
@@ -474,11 +464,13 @@ There are two rewrite directives in Nginx:
     ```
     The URI changes in the browser with the redirect, and points to the `/image.png` location.
 
-**NOTE** With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
+**NOTE**: With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
 
-**PERFORMANCE REWRITES vs. REDIRECTS** The rewrite directive is used to rewrite the URI before it is processed by Nginx. When a URI is rewritten, it gets reevaluated.
-The return directive, on the other hand, does not reevaluate the URI but instead sends a redirect to the client.
-Therefore, a rewrite directive is more resource-intensive than a return directive.
+**REWRITES vs. REDIRECTS**
+
+The rewrite directive is used to rewrite the URI before it is processed by Nginx. 
+When a URI is rewritten, it gets reevaluated. The return directive, on the other hand, does not reevaluate the URI but instead 
+sends a redirect to the client. *Therefore, a rewrite directive is more resource-intensive than a return directive.*
 
 With rewrites, we can capture parts of the original URI. For example, if we have a URI `/user/john`, 
 we can capture the username `john` with a regex pattern and rewrite it to `/greet`:
@@ -511,12 +503,16 @@ http {
         }
 }
 ```
-What happens here is the following:
-1. We go to the URI `/user/john`
-2. The URI gets rewritten to `/greet/john` and reevaluated
-3. The new URI skips the `/greet` location block and goes directly to the `/greet/john` location block because the exact match has priority
 
-**OPTIONAL FLAGS** The rewrite directive can take optional flags, such as `last`, `break`, `redirect`, and `permanent`.
+What happens here is the following:
+
+1. We go to the URI `/user/john`.
+2. The URI gets rewritten to `/greet/john` and reevaluated.
+3. The new URI skips the `/greet` location block and goes directly to the `/greet/john` location block because the exact match has priority.
+
+**OPTIONAL FLAGS** 
+
+The rewrite directive can take optional flags, such as `last`, `break`, `redirect`, and `permanent`.
 The `last` flag makes sure that the location cannot be rewritten again after the current rewrite and reevaluation. 
 In the example below, without the `last` flag, the URI would be reevaluated after the rewrite, and would then be rewritten again to `/image.png`.
 With the `last` flag set, the URI is rewritten to `/greet/john`, reevaluated, and is then not rewritten again, which 
@@ -560,8 +556,8 @@ It is used to try different files or URIs in a specific order until one is found
 
 `try_files path1 path2 ... final`
 
-In the example below, since the resource image.png exists, the server will return the image regardless of the URI (even if
-we go to the /greet location).
+In the example below, since the resource `image.png` exists, the server will return the image regardless of the URI (even if
+we go to the `/greet` location).
 
 ```nginx
 events {}
@@ -657,15 +653,7 @@ http {
 }
 ```
 
-Here are some key differences between regular and named locations:
-
-| Aspect          | Named Location (@friendly_404)           | Regular Location (/friendly_404)            |
-|-----------------|------------------------------------------|---------------------------------------------|
-| Access          | Internal only                            | Publicly accessible                         |
-| Visibility      | Hidden from clients                      | Visible and addressable by clients          |
-| Routing         | Handled entirely within Nginx            | Can be requested directly by users          |
-| URI Redirection | No change to client-visible URI          | URI changes to /friendly_404                |
-| Use Case        | Internal error handling or routing logic | Publicly exposed endpoints for custom logic |
+The difference between a named location and a regular location is that a named location is not directly accessible.
 
 Here is an example showcasing the difference:
 
@@ -689,7 +677,7 @@ http {
                         return 200 "Hello from friendly_404 location";
                 }
 
-                location @friendly_404 {
+                location @friendlier_404 {
                         return 404 "Sorry, that file could not be found.";
                 }
 
@@ -701,16 +689,16 @@ http {
 }
 ```
 
-If I go to the URI /friendly_404, I will get the response "Hello from friendly_404 location". If I go to the URI /notexist.png,
+If I go to the URI `/friendly_404`, I will get the response "Hello from friendly_404 location". If I go to the URI `/friendlier_404`,
 I will get the response "Sorry, that file could not be found." A named location is not directly accessible.
 
 ### Logging
 
 Nginx provides two types of logs:
 
-1. Access logs: Log all requests made to the server, including the client's IP address, the request method, the requested URI, 
+1. **Access logs**: Log all requests made to the server, including the client's IP address, the request method, the requested URI, 
    the response status code, and the size of the response.
-2. Error logs: Record anything that failed or didn't work as expected, such as a 404 error or a misconfigured directive.
+2. **Error logs**: Record anything that failed or didn't work as expected, such as a 404 error or a misconfigured directive.
 
 Logging is enabled by default, but understanding how to configure and customise logs is essential for troubleshooting and monitoring.
 We might also want to disable logging for certain requests to improve performance, or create resource-specific logs to track specific requests.
@@ -726,7 +714,7 @@ TLS SNI support enabled
 configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
 ```
 
-To observer and learn about the logging process, I followed these steps:
+To observe and learn about the logging process, I followed these steps:
 
 1. Clear both logs by running:
     ```bash
@@ -742,32 +730,31 @@ To observer and learn about the logging process, I followed these steps:
    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
     ```
 5. A common misconception is that 404s get logged in the error log. However, properly handled 404s are not errors. If they 
-   are not properly handled, then they get logged to error.log.
+   are not properly handled, then they get logged to `error.log`.
 
 To customise or disabling logging for a given context, we can use the `access_log` and `error_log` directives:
 
 ```nginx
 events {}
 
-
 http {
 
-        include mime.types;
+      include mime.types;
 
-        server {
+      server {
 
-                listen 80;
-                server_name 206.189.100.37;
+            listen 80;
+            server_name 206.189.100.37;
 
-                root /sites/demo;
+            root /sites/demo;
 
-                location /secure {
-                        access_log /var/log/nginx/secure.access.log;
-                        # By adding this, we log to both the access.log and the secure.access.log
-                        access_log /var/log/nginx/access.log;
-                        return 200 "Welcome to secure area.";
-                }
-        }
+            location /secure {
+                    access_log /var/log/nginx/secure.access.log;
+                    # By adding this, we log to both the access.log and the secure.access.log
+                    access_log /var/log/nginx/access.log;
+                    return 200 "Welcome to secure area.";
+            }
+      }
 }
 ```
 
