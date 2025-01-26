@@ -55,7 +55,7 @@ and division of two integers, etc. It is a simple and elegant design.
 
 Here is my implementation in less than twenty lines of HDL code:
 
-```hdlcustom
+```hdl
  * ALU (Arithmetic Logic Unit):
  * Computes out = one of the following functions:
  *                0, 1, -1,

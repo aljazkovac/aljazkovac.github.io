@@ -1,7 +1,10 @@
+# _plugins/rouge/hdl.rb
+require 'rouge'
+
 module Rouge
   module Lexers
-    class HDLCustom < RegexLexer
-      tag 'hdlcustom'
+    class HDL < RegexLexer
+      tag 'hdl'
       filenames '*.hdl'
       mimetypes 'text/x-hdl'
 
