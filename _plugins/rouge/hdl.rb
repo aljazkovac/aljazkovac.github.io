@@ -32,6 +32,7 @@ module Rouge
         rule %r/\d+/, Num
         rule %r/[\[\]\(\)\{\},;=]/, Punctuation
         rule %r/[\.:&|<>]/, Operator  # Treat these as operators
+        rule %r/[+\-*\/!]/, Operator  # Explicitly handle +, -, *, /, and !
         rule %r/\s+/, Text::Whitespace
       end
 
