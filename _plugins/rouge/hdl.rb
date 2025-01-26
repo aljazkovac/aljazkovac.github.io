@@ -31,13 +31,14 @@ module Rouge
         rule %r/[a-zA-Z_]\w*/, Name::Variable
         rule %r/\d+/, Num
         rule %r/[\[\]\(\)\{\},;=]/, Punctuation
+        rule %r/[\.:&|<>]/, Operator  # Treat these as operators
         rule %r/\s+/, Text::Whitespace
       end
 
       state :comment do
-        rule %r/\*\//, Comment::Multiline, :pop!
+        rule %r/\*\//, Comment::Multiline, :pop!  # Highlight '*/' as part of the comment
         rule %r/[^\*]+/, Comment::Multiline
-        rule %r/\*/, Comment::Multiline
+        rule %r/\*/, Comment::Multiline  # Highlight '*' as part of the comment
       end
     end
   end
