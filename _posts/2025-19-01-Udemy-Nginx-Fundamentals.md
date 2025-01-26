@@ -466,6 +466,7 @@ There are two rewrite directives in Nginx:
 
 **NOTE**: With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
 
+---
 **REWRITES vs. REDIRECTS**
 
 The rewrite directive is used to rewrite the URI before it is processed by Nginx. 
@@ -509,6 +510,7 @@ What happens here is the following:
 1. We go to the URI `/user/john`.
 2. The URI gets rewritten to `/greet/john` and reevaluated.
 3. The new URI skips the `/greet` location block and goes directly to the `/greet/john` location block because the exact match has priority.
+---
 
 **OPTIONAL FLAGS** 
 
@@ -961,7 +963,7 @@ nginx.service - The NGINX HTTP and reverse proxy server
              └─94236 "nginx: worker process"
 ```
 
-The `nginx: master process` is the the actual Nginx service or software instance. The master process then spawns
+The `nginx: master process` is the actual Nginx service or software instance. The master process then spawns
 `nginx: worker process` instances, which are responsible for handling client requests. The number of worker processes is
 by default set to one. To change the number of processes, we can set the `worker_processes` directive:
 
@@ -1095,7 +1097,7 @@ tcp_nopush on;
 In order to add dynamic modules to Nginx, we need to recompile Nginx from source. I followed these steps:
 
 1. Go to the directory where the Nginx source code is located. In my case, it is `/root/nginx-1.27.3`
-2. Make sure we don't change the existing configuration, so let's run ´nginx -V´ to see the current configuration:
+2. Make sure we don't change the existing configuration, so let's run `nginx -V` to see the current configuration:
     ```bash
     nginx version: nginx/1.27.3
     built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
@@ -1106,7 +1108,7 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~/nginx-1.27.3#
     ```
 3. See the list of available dynamic modules with `./configure --help | grep dynamic`
-4. Use the same configure arguments as before and add the chose dynamic module:
+4. Use the same configure arguments as before and add the chosen dynamic module:
    ```bash
    ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log 
                --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module 
@@ -1192,7 +1194,8 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
 14. Reload the Nginx service with `systemctl reload nginx`
 15. Check the browser to see if the image is rotated by 180 degrees
 
-Here I encountered an issue: I was getting a 415 (Unsupported Media Type) error. I checked the error log with `tail -n 1 /var/log/nginx/error.log` and saw the following:
+**PROBLEM ALERT**: Instead of a rotated image I got a `415 (Unsupported Media Type)` error. 
+I checked the error log with `tail -n 1 /var/log/nginx/error.log` and saw the following:
   
 ```bash
 2025/01/25 19:50:28 [error] 200345#0: *3719 image filter: too big response: 1438718 while sending response to client, 
@@ -1200,9 +1203,9 @@ client: 176.10.144.208, server: 206.189.100.37, request: "GET /image.png HTTP/1.
 ```
 
 I asked [DeepSeek](https://www.deepseek.com/) - a really cool alternative to [ChatGPT](https://chatgpt.com/) - for help. 
-It said that the error message indicates that the image_filter module is rejecting the image because it exceeds the default size limit 
-for image processing. By default, the image_filter module has a size limit for the images it processes (according to [the documentation](https://nginx.org/en/docs/http/ngx_http_image_filter_module.html#image_filter_buffer),
-the default is 1M), and my image.png file (1.4 MB) is too large for the default settings. I therefore increased the buffer size to 2M.
+It said that the error message indicates that the `image_filter` module is rejecting the image because it exceeds the default size limit 
+for image processing. By default, the `image_filter` module has a size limit for the images it processes (according to [the documentation](https://nginx.org/en/docs/http/ngx_http_image_filter_module.html#image_filter_buffer),
+the default is 1M), and my `image.png` file (1.4 MB) is too large for the default settings. I therefore increased the buffer size to 2M.
 
 ## Performance
 
