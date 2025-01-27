@@ -1371,6 +1371,73 @@ Accept-Ranges: bytes
 
 ### Compressed responses with gzip
 
+When a client requests a resource, e.g., a static file, that client can indicate its ability to accept compressed data.
+We can compress a response on the server, typically using gzip, which greatly reduces its size and the time it takes to transfer it.
+
+Following are the steps to enable gzip compression:
+
+1. Add `gzip on;` to the `http` context in the Nginx configuration file.
+2. Add `gzip_comp_level` to set the compression level (lower number means larger files but requiring less resources) => *3 or 4 is a good value*.
+3. Add `gzip_types` to specify the MIME types that should be compressed.
+4. Add header `Vary Accept-Encoding` to the location block to indicate that the response [varies based on the `Accept-Encoding` header](https://stackoverflow.com/questions/7848796/what-does-varyaccept-encoding-mean).
+5. Reload the Nginx service and check the headers with `curl -I http://206.189.100.37/style.css`.
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/style.css
+    HTTP/1.1 200 OK
+    Server: nginx/1.27.3
+    Date: Mon, 27 Jan 2025 20:12:54 GMT
+    Content-Type: text/css
+    Content-Length: 519
+    Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
+    Connection: keep-alive
+    ETag: "6785ec2a-207"
+    Expires: Wed, 26 Feb 2025 20:12:54 GMT
+    Cache-Control: max-age=2592000
+    Cache-Control: public
+    Pragma: public
+    Vary: Accept-Encoding
+    Accept-Ranges: bytes
+    ```
+6. Now set the header `Accept-Encoding` to `gzip` and curl again:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
+    HTTP/1.1 200 OK
+    Server: nginx/1.27.3
+    Date: Mon, 27 Jan 2025 20:14:14 GMT
+    Content-Type: text/css
+    Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
+    Connection: keep-alive
+    ETag: W/"6785ec2a-207"
+    Expires: Wed, 26 Feb 2025 20:14:14 GMT
+    Cache-Control: max-age=2592000
+    Cache-Control: public
+    Pragma: public
+    Vary: Accept-Encoding
+    Content-Encoding: gzip
+    ```
+    We see that the response is now compressed with gzip.
+7. We can see the difference if we download the file with `curl http://206.189.100.37/style.css` =>
+   we get the stylesheet in plain text. If we download the file with `curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css`
+   then we get this:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
+    Warning: Binary output can mess up your terminal. Use "--output -" to tell
+    Warning: curl to output it to your terminal anyway, or consider "--output
+    Warning: <FILE>" to save to a file.
+    ```
+8. Compare how much data we saved:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl http://206.189.100.37/style.css > style.css
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+    Dload  Upload   Total   Spent    Left  Speed
+    100   519  100   519    0     0   516k      0 --:--:-- --:--:-- --:--:--  506k
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css > style.min.css
+    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+    Dload  Upload   Total   Spent    Left  Speed
+    100   273    0   273    0     0   224k      0 --:--:-- --:--:-- --:--:--  266k
+    ```
+   **We compressed the file to approximately half its size.**
+
 ### FastCGI_cache
 
 ### HTTP2
