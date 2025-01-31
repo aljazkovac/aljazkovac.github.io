@@ -1440,7 +1440,366 @@ Following are the steps to enable gzip compression:
 
 ### FastCGI_cache
 
+An Nginx micro cache is a small cache that stores responses for a short period of time. It is useful for caching dynamic content. 
+This cache can provide great performance benefits for websites that rely heavily on server side languages and database access.
+
+To set up a micro cache, we need to set a few directives, something like this:
+
+```nginx
+user www-data;
+
+worker_processes auto;
+
+events {
+worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  # Configure microcache (fastcgi)
+  # This configures the depth of directories to split the cache entries into
+  fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
+  # Adding the scheme will create one entry for https, and another for http
+  fastcgi_cache_key "$scheme$request_method$host$request_uri";
+
+  server {
+
+      listen 80;
+      server_name 206.189.100.37;
+
+      root /sites/demo;
+
+      index index.php index.html;
+
+      location / {
+        try_files $uri $uri/ =404;
+      }
+
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
+
+      # Enable cache
+      fastcgi_cache MYCACHE;
+      fastcgi_cache_valid 200 60m;
+  }
+}
+```
+
+Let's compare the performance with and without the cache:
+
+1. Install Apache Benchmark with `apt-get install apache2-utils`
+2. Let's create 100 requests in 10 concurrent connections with `ab -n 100 -c 10 http://206.189.100.37/`:
+    ```bash
+    Benchmarking 206.189.100.37 (be patient).....done
+    Server Software:        nginx/1.27.3
+    Server Hostname:        206.189.100.37
+    Server Port:            80
+
+    Document Path:          /
+    Document Length:        35 bytes
+
+    Concurrency Level:      10
+    Time taken for tests:   0.054 seconds
+    Complete requests:      100
+    Failed requests:        0
+    Total transferred:      17200 bytes
+    HTML transferred:       3500 bytes
+    Requests per second:    1842.43 [#/sec] (mean)
+    Time per request:       5.428 [ms] (mean)
+    Time per request:       0.543 [ms] (mean, across all concurrent requests)
+    Transfer rate:          309.47 [Kbytes/sec] received
+
+    Connection Times (ms)
+    min  mean[+/-sd] median   max
+    Connect:        0    0   0.1      0       0
+    Processing:     2    4   1.1      4      14
+    Waiting:        2    4   1.0      4      12
+    Total:          3    4   1.1      4      14
+
+    Percentage of the requests served within a certain time (ms)
+    50%      4
+    66%      4
+    75%      4
+    80%      4
+    90%      5
+    95%      5
+    98%      6
+    99%     14
+    100%     14 (longest request)
+    ```
+   The two most important metrics are `Requests per second` and `Time per request`.
+3. Let us simulate a longer response time with `sleep(1)` in the PHP file:
+    ```bash
+    echo '<?php sleep(1); ?>' > /sites/demo/index.php
+    ```
+   This simulates a slow response time from the server, such as a database query or a slow API call.
+4. Run the test again, and now the results are very much different:
+    ```bash
+    Benchmarking 206.189.100.37 (be patient)... ..done
+    Server Software:        nginx/1.27.3
+    Server Hostname:        206.189.100.37
+    Server Port:            80
+
+    Document Path:          /
+    Document Length:        35 bytes
+
+    Concurrency Level:      10
+    Time taken for tests:   22.022 seconds
+    Complete requests:      100
+    Failed requests:        0
+    Total transferred:      17200 bytes
+    HTML transferred:       3500 bytes
+    Requests per second:    4.54 [#/sec] (mean)
+    Time per request:       2202.179 [ms] (mean)
+    Time per request:       220.218 [ms] (mean, across all concurrent requests)
+    Transfer rate:          0.76 [Kbytes/sec] received
+
+    Connection Times (ms)
+    min  mean[+/-sd] median   max
+    Connect:        0    0   0.3      0       1
+    Processing:  1001 2017 283.4   2002    3235
+    Waiting:     1001 2016 283.4   2001    3235
+    Total:       1002 2017 283.4   2002    3236
+
+    Percentage of the requests served within a certain time (ms)
+    50%   2002
+    66%   2002
+    75%   2002
+    80%   2003
+    90%   2019
+    95%   2251
+    98%   3004
+    99%   3236
+    100%   3236 (longest request)
+    ```
+5. Now let's enable the cache and run the test again:
+    ```bash
+    Benchmarking 206.189.100.37 (be patient).....done
+    Server Software:        nginx/1.27.3
+    Server Hostname:        206.189.100.37
+    Server Port:            80
+
+    Document Path:          /
+    Document Length:        35 bytes
+
+    Concurrency Level:      10
+    Time taken for tests:   0.014 seconds
+    Complete requests:      100
+    Failed requests:        0
+    Total transferred:      17200 bytes
+    HTML transferred:       3500 bytes
+    Requests per second:    7048.21 [#/sec] (mean)
+    Time per request:       1.419 [ms] (mean)
+    Time per request:       0.142 [ms] (mean, across all concurrent requests)
+    Transfer rate:          1183.88 [Kbytes/sec] received
+
+    Connection Times (ms)
+    min  mean[+/-sd] median   max
+    Connect:        0    0   0.2      0       1
+    Processing:     0    1   0.3      1       2
+    Waiting:        0    1   0.3      1       2
+    Total:          1    1   0.3      1       3
+
+    Percentage of the requests served within a certain time (ms)
+    50%      1
+    66%      2
+    75%      2
+    80%      2
+    90%      2
+    95%      2
+    98%      2
+    99%      3
+    100%      3 (longest request)
+   ```
+    The performance is much better now. Requests per second increased from 4.54 to 7048, and the time per request decreased from 2202.179 ms to 1.419 ms.
+6. But how to know if a response was served from the cache? We can add the following header:
+    ```nginx
+    # Configure microcache (fastcgi)
+    # This configures the depth of directories to split the cache entries into
+    fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
+    # Adding the scheme will create one entry for https, and another for http
+    fastcgi_cache_key "$scheme$request_method$host$request_uri";
+    # Add a header to indicate if the response was served from the cache
+    add_header X-Cache $upstream_cache_status;
+    ```
+7. Test with curl:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/
+    HTTP/1.1 200 OK
+    Server: nginx/1.27.3
+    Date: Fri, 31 Jan 2025 19:38:06 GMT
+    Content-Type: text/html; charset=UTF-8
+    Connection: keep-alive
+    X-Cache: HIT
+    ```
+8. Since we included the `request_uri` in the cache key, the cache will be unique for each request URI. 
+    Therefore, to see a cache miss we can curl with a different URI:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/index.php
+    HTTP/1.1 200 OK
+    Server: nginx/1.27.3
+    Date: Fri, 31 Jan 2025 19:39:10 GMT
+    Content-Type: text/html; charset=UTF-8
+    Connection: keep-alive
+    X-Cache: MISS
+    ```
+9. To add cache exceptions, set up something like this:
+    ```nginx
+    user www-data;
+
+    worker_processes auto;
+
+    events {
+    worker_connections 1024;
+    }
+
+    http {
+
+    include mime.types;
+
+    # Configure microcache (fastcgi)
+    # This configures the depth of directories to split the cache entries into
+    fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
+    # Adding the scheme will create one entry for https, and another for http
+    fastcgi_cache_key "$scheme$request_method$host$request_uri";
+    add_header X-Cache $upstream_cache_status;
+
+      server {
+
+            listen 80;
+            server_name 206.189.100.37;
+
+            root /sites/demo;
+
+            index index.php index.html;
+
+            # Cache by default
+            set $no_cache 0;
+
+            # Check for cache bypass
+            if ($arg_skipcache = 1) {
+              set $no_cache 1;
+            }
+
+            location / {
+              try_files $uri $uri/ =404;
+            }
+
+            location ~\.php$ {
+              # Pass php requests to the php-fpm service (fastcgi)
+              include fastcgi.conf;
+              fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        # If no_cache is 1, bypass serving from the cache, and don't write the response to the cache either.
+        fastcgi_cache_bypass $no_cache;
+        fastcgi_no_cache $no_cache;
+            }
+
+            # Enable cache
+            fastcgi_cache MYCACHE;
+            fastcgi_cache_valid 200 60m;
+      }
+    }
+    ```
+10. Now we can curl like this:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/?skipcache=1
+    HTTP/1.1 200 OK
+    Server: nginx/1.27.3
+    Date: Fri, 31 Jan 2025 19:44:06 GMT
+    Content-Type: text/html; charset=UTF-8
+    Connection: keep-alive
+    X-Cache: BYPASS
+    ```
+
 ### HTTP2
+
+HTTP/2 is a major revision of the HTTP network protocol used by the World Wide Web. It is based on the SPDY protocol developed by Google.
+
+| HTTP2 vs HTTP1.1 | Advantages of HTTP2                                                  |
+|------------------|----------------------------------------------------------------------|
+| Binary protocol  | HTTP1 is a text-based protocol                                       |
+| Compression      | Compression of headers                                               |
+| Persistent       | Persistent connections                                               |
+| Multiplex        | Multiple assets can be combined into a single stream of binary data  |
+| Server push      | Server can push assets to the client before the client requests them |
+
+To load a simple website with HTTP1, we need to establish at least 3 connections: 1 for the HTML file, 1 for the CSS file, and 1 for the JavaScript file.
+With HTTP2, we can load all these assets with a single connection (after receiving the HTML file, the connection persists and the server pushes the CSS and JavaScript files).
+
+To configure HTTP2 in Nginx, we need to first enable SSL, but that has already been done before (`with-http_ssl_module`).
+To add the HTTP2 module, we need to recompile Nginx from source:
+
+1. Check the build arguments with `nginx -V`.
+2. Copy the build arguments and add `--with-http_v2_module` to the `./configure` command and run it.
+3. Run `make` and `make install`.
+4. Restart Nginx and check its status.
+5. Add a self-signed SSL certificate and private key:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# openssl req -x509 -days 30 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/self.key -out /etc/nginx/ssl/self.crt
+    ```
+6. Add the SSL configuration to the server block:
+    ```nginx
+    user www-data;
+    worker_processes auto;
+    events {
+    worker_connections 1024;
+    }
+
+    http {
+
+    include mime.types;
+
+      server {
+
+            listen 443 ssl; # This is the standard SSL port.
+            server_name 206.189.100.37;
+
+            root /sites/demo;
+
+            index index.php index.html;
+
+            ssl_certificate /etc/nginx/ssl/self.crt;
+            ssl_certificate_key /etc/nginx/ssl/self.key;
+
+            location / {
+              try_files $uri $uri/ =404;
+            }
+
+            location ~\.php$ {
+              # Pass php requests to the php-fpm service (fastcgi)
+              include fastcgi.conf;
+              fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+            }
+      }
+    }
+    ```
+7. In the browser, change to `https://...` and check the SSL certificate.
+8. Enable HTTP2 in the server block:
+    ```nginx
+      server {
+
+            listen 443 ssl http2; # Enable HTTP2
+            server_name <IP_ADDRESS>;
+            ...
+     }
+   ```
+9. Reload Nginx and curl:
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/index.html
+    HTTP/2 200
+    server: nginx/1.27.3
+    date: Fri, 31 Jan 2025 20:52:55 GMT
+    content-type: text/html
+    content-length: 571
+    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+    etag: "6785f3fc-23b"
+    accept-ranges: bytes
+    ```
 
 ### Server push
 
