@@ -1801,7 +1801,111 @@ To add the HTTP2 module, we need to recompile Nginx from source:
     accept-ranges: bytes
     ```
 
+**NOTE**: The course here is a bit outdated, as the most modern version of the HTTP protocol is [HTTP3](https://en.wikipedia.org/wiki/HTTP/3).
+
 ### Server push
+
+Server push is a feature of HTTP/2 that allows the server to push resources to the client before the client requests them.
+This is an extensive subject, which you can read more about [here](https://www.f5.com/company/blog/nginx/nginx-1-13-9-http2-server-push).
+
+Since browser tools aren't good at displaying how pushed files are delivered, so let's install the [`nghttp2` module](https://nghttp2.org/) with `apt-get install nghttp2-client`.
+Then run `nghttp -nys https://206.189.100.37/index.html` (`n` to discard responses, `y`to ignore the self-signed certificate, and `s` to print the response statistics).
+
+We get this:
+
+```bash
+***** Statistics *****
+Request timing:
+  responseEnd: the  time  when  last  byte of  response  was  received
+               relative to connectEnd
+ requestStart: the time  just before  first byte  of request  was sent
+               relative  to connectEnd.   If  '*' is  shown, this  was
+               pushed by server.
+      process: responseEnd - requestStart
+         code: HTTP status code
+         size: number  of  bytes  received as  response  body  without
+               inflation.
+          URI: request URI
+
+see http://www.w3.org/TR/resource-timing/#processing-model
+
+sorted by 'complete'
+
+id  responseEnd requestStart  process code size request path
+ 13      +605us       +247us    358us  200  571 /index.html
+```
+
+Then run this again but add also an `a` flag to request the linked resources (assets) in the request, and we get this:
+
+```bash
+***** Statistics *****
+Request timing:
+  responseEnd: the  time  when  last  byte of  response  was  received
+               relative to connectEnd
+ requestStart: the time  just before  first byte  of request  was sent
+               relative  to connectEnd.   If  '*' is  shown, this  was
+               pushed by server.
+      process: responseEnd - requestStart
+         code: HTTP status code
+         size: number  of  bytes  received as  response  body  without
+               inflation.
+          URI: request URI
+
+see http://www.w3.org/TR/resource-timing/#processing-model
+
+sorted by 'complete'
+
+id  responseEnd requestStart  process code size request path
+ 13     +6.80ms       +128us   6.67ms  200  571 /index.html
+ 15     +7.55ms      +7.29ms    251us  200  519 /style.css
+ 17    +15.97ms      +7.30ms   8.67ms  200   1M /image.png
+```
+
+**NOTE**: The course here is a bit outdated, as it wants you to add the following to your Nginx configuration:
+
+```nginx
+location = /index.html {
+              http2_push /style.css;
+              http2_push /image.png;
+      }
+```
+
+However, if you run `nginx -t` you will get an error that `http2_push` is obsolete. Instead, you should use `add_header Link` like this:
+
+```nginx
+location = /index.html {
+    add_header Link "</style.css>; as=style; rel=preload";
+    add_header Link "</image.png>; as=image; rel=preload";
+}
+```
+
+If we run `nghttp -nysa https://206.189.100.37/index.html` again, we can see that the response time for loading the assets is much faster now:
+
+```bash
+***** Statistics *****
+
+Request timing:
+  responseEnd: the  time  when  last  byte of  response  was  received
+               relative to connectEnd
+ requestStart: the time  just before  first byte  of request  was sent
+               relative  to connectEnd.   If  '*' is  shown, this  was
+               pushed by server.
+      process: responseEnd - requestStart
+         code: HTTP status code
+         size: number  of  bytes  received as  response  body  without
+               inflation.
+          URI: request URI
+
+see http://www.w3.org/TR/resource-timing/#processing-model
+
+sorted by 'complete'
+
+id  responseEnd requestStart  process code size request path
+ 13      +624us       +106us    518us  200  571 /index.html
+ 15      +894us       +722us    172us  200  519 /style.css
+ 17     +7.07ms       +723us   6.34ms  200   1M /image.png
+```
+
 
 ## Security
 
