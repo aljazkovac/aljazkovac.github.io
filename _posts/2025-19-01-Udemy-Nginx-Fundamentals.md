@@ -1906,10 +1906,165 @@ id  responseEnd requestStart  process code size request path
  17     +7.07ms       +723us   6.34ms  200   1M /image.png
 ```
 
-
 ## Security
 
-### HTTPS(SSL)
+### HTTPS (SSL)
+
+We will continue to work on our SSL configuration and see how to optimize our HTTPS connections. 
+
+First off, if we go to our landing page at `http://206.189.100.37/` then we get an error because we have set up the server to only listen on port 443 (SSL).
+To redirect all HTTP traffic to HTTPS, we can add a new server block that listens on port 80 and redirects to port 443:
+
+```nginx
+# Redirect all traffic to HTTPS.
+server {
+        listen 80;
+        server_name 206.189.100.37;
+        return 301 https://$host$request_uri;
+}
+```
+Test with curl:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik http://206.189.100.37
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.27.3
+Date: Sun, 02 Feb 2025 17:33:15 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: https://206.189.100.37/
+```
+
+Now we can see that the server redirects all HTTP traffic to HTTPS.
+
+We will continue by disabling SSL in favor of [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0), 
+optimising our [cipher suites](https://en.wikipedia.org/wiki/Cipher_suite), and enabling [Diffie-Hellman key exchange](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).
+
+```nginx
+# Disable SSL
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+# Optimise cipher suits
+ssl_prefer_server_ciphers on;
+ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+
+# Enable DH Params
+ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+```
+
+Now let's generate the DH params:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+```
+
+Now let's enable HSTS (HTTP Strict Transport Security) to force the browser to use HTTPS:
+
+```nginx
+# Enable HSTS
+add_header Strict-Transport-Security "max-age=31536000" always;
+
+# SSL sessions
+ssl_session_cache shared:SSL:40m;
+ssl_session_timeout 4h;
+ssl_session_tickets on;
+```
+
+In summary, we have done the following:
+
+1. Disabled SSL in favor of TLS.
+2. Optimised the cipher suites.
+3. Enabled DH params.
+4. Enabled HSTS.
+5. Cached SSL sessions.
+
+Our final configuration looks like this:
+
+```nginx
+user www-data;
+
+worker_processes auto;
+
+events {
+worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  # Redirect all traffic to HTTPS.
+  server {
+	  listen 80;
+	  server_name 206.189.100.37;
+	  return 301 https://$host$request_uri;
+  }
+
+  server {
+
+      listen 443 ssl; # This is the standard SSL port.
+      http2 on;
+      server_name 206.189.100.37;
+
+      root /sites/demo;
+
+      index index.html;
+
+      ssl_certificate /etc/nginx/ssl/self.crt;
+      ssl_certificate_key /etc/nginx/ssl/self.key;
+
+      # Disable SSL
+      ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+      # Optimise cipher suits
+      ssl_prefer_server_ciphers on;
+      ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+
+      # Enable DH Params
+      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+      # Enable HSTS
+      add_header Strict-Transport-Security "max-age=31536000" always;
+
+      # SSL sessions
+      ssl_session_cache shared:SSL:40m;
+      ssl_session_timeout 4h;
+      ssl_session_tickets on;
+
+      location / {
+        try_files $uri $uri/ =404;
+      }
+
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
+  }
+}
+```
+
+And if we test with curl we get this:
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37
+HTTP/2 200
+server: nginx/1.27.3
+date: Sun, 02 Feb 2025 20:33:38 GMT
+content-type: text/html
+content-length: 571
+last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+etag: "6785f3fc-23b"
+strict-transport-security: max-age=31536000
+accept-ranges: bytes
+```
+
+**NOTE**: The course is a bit outdated in this section:
+
+1. TLSv1 and TLSv1.1: These protocols are deprecated and vulnerable to attacks like [POODLE](https://en.wikipedia.org/wiki/POODLE) and [BEAST](https://www.invicti.com/blog/web-security/how-the-beast-attack-works/).
+2. Weak Ciphers: The inclusion of DH+3DES and the lack of modern ciphers like AES-GCM and ChaCha20 make the configuration less secure.
+3. No TLSv1.3: TLSv1.3 is the most modern and secure version of TLS, offering faster handshakes and improved security.
 
 ### Rate limiting
 
