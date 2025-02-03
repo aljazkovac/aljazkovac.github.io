@@ -2068,6 +2068,205 @@ accept-ranges: bytes
 
 ### Rate limiting
 
+Rate limiting is a technique used to control the rate of traffic sent or received by a network interface controller and is used 
+for the following reasons:
+
+1. Security against brute force attacks.
+2. Reliability by preventing server overload.
+3. Shaping traffic, e.g., restrict users to a service tier.
+
+To test the rate limiting, we will use a tool called [Siege](https://www.joedog.org/siege-home/), which can be installed with `apt-get install siege`.
+
+Let's run a basic test to check that the tool is working:
+
+```bash
+siege -v -r 2 -c 5 https://206.189.100.37/image.png
+```
+
+This will run two tests of five concurrent connections to the image file, with verbose output.
+
+We get this:
+
+```bash
+{
+    "transactions":              10,
+    "availability":              100.00,
+    "elapsed_time":              0.11,
+    "data_transferred":          13.72,
+    "response_time":             0.05,
+    "transaction_rate":          90.91,
+    "throughput":                124.73,
+    "concurrency":               4.64,
+    "successful_transactions":   10,
+    "failed_transactions":       0,
+    "longest_transaction":       0.08,
+    "shortest_transaction":      0.03
+}
+```
+
+Now let's add rate limiting to our Nginx configuration:
+
+```nginx
+# Rate limiting
+limit_req_zone $request_uri zone=MYZONE:10m rate=60r/m;
+```
+
+What this does is it limits the number of requests to 60 per minute for each unique request URI. This sets a frequency, meaning
+that `60r/m` is the same as `1r/s`. In other words, this doesn't mean that the server can accept 60 requests at once, and then
+no more for the rest of the minute. Instead, it means that the server can accept 1 request per second.
+
+Now let's add the rate limiting to the location block, so our final configuration would look like this:
+
+```nginx
+user www-data;
+
+worker_processes auto;
+
+events {
+worker_connections 1024;
+}
+
+http {
+
+  include mime.types;
+
+  # Define limit zone
+  limit_req_zone $request_uri zone=MYZONE:10m rate=60r/m;
+
+  # Redirect all traffic to HTTPS.
+  server {
+	  listen 80;
+	  server_name 206.189.100.37;
+	  return 301 https://$host$request_uri;
+  }
+
+  server {
+
+      listen 443 ssl; # This is the standard SSL port.
+      http2 on;
+      server_name 206.189.100.37;
+
+      root /sites/demo;
+
+      index index.html;
+
+      ssl_certificate /etc/nginx/ssl/self.crt;
+      ssl_certificate_key /etc/nginx/ssl/self.key;
+
+      # Disable SSL
+      ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+
+      # Optimise cipher suits
+      ssl_prefer_server_ciphers on;
+      ssl_ciphers ECDH+AESGCM:ECDH+AES256:ECDH+AES128:DH+3DES:!ADH:!AECDH:!MD5;
+
+      # Enable DH Params
+      ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+      # Enable HSTS
+      add_header Strict-Transport-Security "max-age=31536000" always;
+
+      # SSL sessions
+      ssl_session_cache shared:SSL:40m;
+      ssl_session_timeout 4h;
+      ssl_session_tickets on;
+
+      location / {
+	      limit_req zone=MYZONE;
+        try_files $uri $uri/ =404;
+      }
+
+      location ~\.php$ {
+        # Pass php requests to the php-fpm service (fastcgi)
+        include fastcgi.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+      }
+  }
+}
+```
+
+If we now run the same test again we get this:
+
+```bash
+{
+    "transactions":              1,
+    "availability":              10.00,
+    "elapsed_time":              0.04,
+    "data_transferred":          1.37,
+    "response_time":             0.20,
+    "transaction_rate":          25.00,
+    "throughput":                34.34,
+    "concurrency":               5.00,
+    "successful_transactions":   1,
+    "failed_transactions":       9,
+    "longest_transaction":       0.03,
+    "shortest_transaction":      0.01
+}
+```
+
+We see that there were 9 failed transactions, which means that the rate limiting is working.
+
+Now let's also set a burst limit, which is the maximum number of requests that can be made in a single burst. We achieve this
+by adding a `burst` parameter to the `limit_req` directive:
+
+```nginx
+limit_req zone=MYZONE burst=5;
+```
+
+Run the test again and you get:
+
+```bash
+{
+    "transactions":              10,
+    "availability":              100.00,
+    "elapsed_time":              9.03,
+    "data_transferred":          13.72,
+    "response_time":             3.51,
+    "transaction_rate":          1.11,
+    "throughput":                1.52,
+    "concurrency":               3.89,
+    "successful_transactions":   10,
+    "failed_transactions":       0,
+    "longest_transaction":       5.00,
+    "shortest_transaction":      0.03
+}
+```
+
+We see that all transactions were successful, and the traffic shaping is working as expected.
+
+If we now change the test and run it with 15 concurrent connections in one batch, we get this:
+
+```bash
+{
+    "transactions":              6,
+    "availability":              40.00,
+    "elapsed_time":              5.04,
+    "data_transferred":          8.23,
+    "response_time":             2.64,
+    "transaction_rate":          1.19,
+    "throughput":                1.63,
+    "concurrency":               3.14,
+    "successful_transactions":   6,
+    "failed_transactions":       9,
+    "longest_transaction":       5.04,
+    "shortest_transaction":      0.05
+}
+```
+
+We see that there were just 6 successful transactions. Why six and not five? This is because the burst limit allows for 
+the original request plus five extra requests to be made in a single burst.
+
+We can also add the `nodelay` parameter to the `limit_req` directive, which means that the rate limit is applied immediately
+and not after the burst limit is reached.
+
+```nginx
+limit_req zone=MYZONE burst=5 nodelay;
+```
+
+Here are two articles that you can read to learn more about rate limiting:
+1. [Rate Limiting with Nginx](https://www.nginx.com/blog/rate-limiting-nginx/)
+2. [Nginx Rate-Limiting in a Nutshell](https://www.freecodecamp.org/news/nginx-rate-limiting-in-a-nutshell-128fe9e0126c)
+
 ### Basic authentication
 
 ### Hardening Nginx
