@@ -2269,6 +2269,22 @@ Here are two articles that you can read to learn more about rate limiting:
 
 ### Basic authentication
 
+What if you have an area of your site that is not intended for the public? You can use basic authentication to protect it.
+It provides a simple username-password layer of security.
+
+To set up basic authentication, we need to create a password file in the `htpasswd` format.
+We begin by installing the same suite of tools that we used for Apache Bench tools: `apt-get install apache2-utils`.
+
+Now we can create a password file with the `htpasswd` command:
+
+```bash
+htpasswd -c /etc/nginx/.htpasswd user1
+```
+
+The `-c` flag creates a new file, and the `user1` is the username. You will be prompted to enter a password for the user.
+If we now look at the file with `cat /etc/nginx/.htpasswd` we see the username and the hashed password.
+
+
 ### Hardening Nginx
 
 ### Let's Encrypt - SSL certificates
