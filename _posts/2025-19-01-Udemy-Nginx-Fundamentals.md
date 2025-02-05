@@ -2284,8 +2284,83 @@ htpasswd -c /etc/nginx/.htpasswd user1
 The `-c` flag creates a new file, and the `user1` is the username. You will be prompted to enter a password for the user.
 If we now look at the file with `cat /etc/nginx/.htpasswd` we see the username and the hashed password.
 
-
 ### Hardening Nginx
+
+Before we start to further secure Nginx server, let's update the system with `apt-get update` and `apt-get upgrade`.
+Then check your version of Nginx and the [Nginx changelog](https://nginx.org/en/CHANGES) to see if there are any security vulnerabilities that need to be addressed.
+
+Now to further secure your Nginx server:
+
+1. Hide the version number in the server header by adding `server_tokens off;` to the `http` block. The reason is that if an attacker knows the version number, they can look up known vulnerabilities for that version. If we do a curl:
+
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
+    HTTP/2 200
+    server: nginx/1.27.3
+    date: Tue, 04 Feb 2025 20:32:05 GMT
+    content-type: text/html
+    content-length: 571
+    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+    etag: "6785f3fc-23b"
+    strict-transport-security: max-age=31536000
+    accept-ranges: bytes
+    ```
+
+    If we turn off the server tokens then we get this:
+
+    ```bash
+    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
+    HTTP/2 200
+    server: nginx
+    date: Tue, 04 Feb 2025 20:32:05 GMT
+    content-type: text/html
+    content-length: 571
+    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+    etag: "6785f3fc-23b"
+    strict-transport-security: max-age=31536000
+    accept-ranges: bytes
+    ```
+
+    Voilà! The version number is gone.
+2. X-Frame-Options: This header is used to protect against [clickjacking](https://en.wikipedia.org/wiki/Clickjacking) attacks. 
+   It tells the browser whether to allow a page to be displayed in an iframe. Add this to the `server` block:
+
+    ```nginx
+    add_header X-Frame-Options "SAMEORIGIN";
+    ```
+
+   What this does is it tells the browser that the page can only be displayed in a frame on the same origin as the page itself.
+   Test by creating a simple website:
+
+    ```html
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <title>Origin</title>
+      </head>
+      <body>
+        <iframe src="https://206.189.100.37/" width="800" height="400"></iframe>
+      </body>
+    </html>
+    ```
+
+    If you add the `X-Frame-Options` header, then the page will not be displayed in the iframe.
+3. Add the `X-XSS-Protection` header to protect against [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting) attacks:
+
+    ```nginx
+    add_header X-XSS-Protection "1; mode=block";
+    ```
+
+    This header tells the browser to block the page if an XSS attack is detected. `1`means `on`, and `mode=block` means that the browser should block the page.
+4. Rebuild Nginx with the `--without-http_autoindex_module` flag to disable the autoindex module. 
+   This module generates directory listings if there is no index file in a directory. This is a security risk because it can 
+   expose sensitive information. f an index file (such as index.html) isn’t present, the module creates a directory listing that 
+   might expose sensitive files or internal organization details. Disabling autoindex minimizes the risk of accidental exposure of 
+   file system information that could help an attacker plan further exploits. 
+   To rebuild, do the following:
+   * Run `nginx -V` to see the build arguments, then copy them and add `--without-http_autoindex_module` to the `./configure` command.
+   * Run `make` and `make install`.
 
 ### Let's Encrypt - SSL certificates
 
