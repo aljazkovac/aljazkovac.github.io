@@ -2364,6 +2364,61 @@ Now to further secure your Nginx server:
 
 ### Let's Encrypt - SSL certificates
 
+[Let's Encrypt](https://letsencrypt.org/) is a free, automated, and open certificate authority that provides free SSL certificates.
+Plain, insecure http connections are a thing of the past, and it is now expected that all websites use https.
+
+Before setting up an SSL certificate I had to set up a custom domain, which I did with [Namecheap](https://www.namecheap.com/).
+I also had to connect the Digital Ocean's name servers to the custom domain.
+
+In order to generate certificates and automate their renewal, I used the [Certbot](https://certbot.eff.org/) tool.
+To install certbot on Ubuntu, I followed the instructions on the [Certbot website](https://certbot.eff.org/instructions?ws=nginx&os=snap).
+I installed Certbot with [snap](https://en.wikipedia.org/wiki/Snap_(software)), a package manager for Linux. Snaps are self-contained applications with mediated access 
+to the host system.
+
+Because I ran the `sudo certbot --nginx` command Certbot edited my Nginx configuration automatically, and I ended up with this:
+
+```nginx
+events {
+}
+
+http {
+
+  server {
+	  server_name reddsmart.org;
+
+	  location / {
+		  return 200 "Hello from Nginx";
+	  }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/reddsmart.org/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/reddsmart.org/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+  server {
+    if ($host = reddsmart.org) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+	  listen 80;
+	  server_name reddsmart.org;
+    return 404; # managed by Certbot
+}}
+```
+
+As I went to the browser, I could see that the website was now secure and I could inspect the certificate there. 
+
+The last part was making sure that the certificate will be renewed. It is possible to renew the certificate manually by running
+`sudo certbot renew`. But there is no need to automate the renewal of the certificate, as that is the default behaviour, as stated
+in the [Certbot documentation](https://certbot.eff.org/instructions?ws=nginx&os=snap): *"The Certbot packages on your system come with a cron job or systemd timer that will renew 
+your certificates automatically before they expire. You will not need to run Certbot again, unless you change your configuration."*
+
+We could also add a `cronjob` manually with the `crontab -e` command, and by adding the following line there `@daily certbot renew`.
+Then we could list all our cronjobs with the `crontab -l` command.
+
 ## Reverse proxy & load balancing
 
 ### Prerequisites
