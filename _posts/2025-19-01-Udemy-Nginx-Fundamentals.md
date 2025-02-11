@@ -2541,6 +2541,102 @@ array(5) {
 
 ### Load balancer
 
+Nginx makes it easy to configure a [simple and robust load balancer](https://nginx.org/en/docs/http/load_balancing.html). 
+A load balancer should perform two main tasks:
+
+1. Distribute requests to multiple servers, thus reducing the load on those individual servers
+2. Provide redundancy, meaning that if one of the servers fails, the load balancer should recognize that and redirect/proxy requests
+
+Let us begin by firing up three PHP servers. We simply create three different files like this:
+
+```bash
+echo "PHP server 1" > s1
+echo "PHP server 2" > s2
+echo "PHP server 3" > s3
+```
+
+And then we run them with `php -S localhost:<port> <file>`.
+
+Once we have that running we create another Nginx configuration file, e.g., `load-balancer.conf`:
+
+```nginx
+events {}
+
+http {
+
+  server {
+
+    listen 8888;
+
+    location / {
+      proxy_pass "http://localhost:10001/";
+      }
+  }
+}
+```
+
+We can then run that file (instead of the default `nginx.conf`) by using the `-c` flag, like this: `nginx -c <file-path>`.
+We can also test this configuration by running `nginx -t -c <file-path>`.
+
+Since we are proxying to the first PHP server, if we curl our nginx server, we get a response from the first server.
+
+To create the load balancer functionality, we need to create an `upstream`, a block that groups servers and enables us to set 
+options on the block. We will be using the [`http_ustream_module`](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
+for this purpose.
+
+Add and `upstream` block to the `http` context and proxy to it like so:
+
+```nginx
+events {}
+
+http {
+
+	upstream php_servers {
+		server localhost:10001;
+		server localhost:10002;
+		server localhost:10003;
+	}
+
+  server {
+  
+    listen 8888;
+    
+    location / {
+      proxy_pass http://php_servers;
+      }
+  }
+} 
+```
+
+Remember to reload the configuration file like so: `nginx -s reload`. Then run a simple while loop that curls to the Nginx server,
+and you should see something like this:
+
+```bash
+(base) aljazkovac@Aljazs-MBP nginx % while sleep 0.5; do curl http://localhost:8888; done
+PHP Server 1
+PHP Server 2
+PHP Server 3
+PHP Server 3
+PHP Server 2
+PHP Server 1
+PHP Server 3
+PHP Server 2
+PHP Server 1
+PHP Server 3
+PHP Server 2
+PHP Server 1
+PHP Server 3
+PHP Server 2
+PHP Server 1
+PHP Server 3
+PHP Server 2
+etc.
+```
+
+We see that the requests are nicely balanced ([round-robin](https://en.wikipedia.org/wiki/Round-robin_scheduling, as per default).
+We can also test that the load balancer works nicely by running the loop again, perhaps with a slighly larger delay, and killing
+the servers one-by-one. We see that the server balances the requests to the remaining servers nicely.
+
 ### Load balancer options
 
 ### Documentations & resources
