@@ -2423,7 +2423,121 @@ Then we could list all our cronjobs with the `crontab -l` command.
 
 ### Prerequisites
 
+We will be using our local Nginx server here, along with a few simple php servers. I installed my Nginx with homebrew,
+so the Nginx configuration was placed in the /opt/homebrew/etc/nginx folder. There was already a nice setup there, but to test a very 
+simple version, I changed the `location` block to this:
+
+```nginx
+    server {
+        listen       8080;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+#             root   html;
+#             index  index.html index.htm;
+              return 200 "Hello from Nginx";
+        }
+    }
+```
+
+Running `curl` to `http://localhost:8080/` returns the greeting.
+
+Now we can also fire up a simple php server (I had to install php first with `brew install php`). Then I could fire up
+a php server with `php -S localhost:9090`. I also copied an image from the internet into my nginx folder with 
+`sudo curl -o /opt/homebrew/etc/nginx/logo.png <URL>`, so if I go to `locahost:9090/logo.png` I can see the image there.
+
+I then created a `resp.txt` file in the nginx folder, and in the file I simply said **"Hello from PHP!"**. Then I started the 
+PHP server again with `php -S localhost:9090 resp.txt`, and now I am served the greeting from the file at `localhost:9090`.
+
 ### Reverse proxy
+
+A reverse proxy acts as an intermediary between the client (e.g., a browser), and the resource itself. 
+
+I have the following running:
+
+1. Nginx server at `localhost:8080`
+2. PHP server at `localhost:9090`
+
+I have then added the following location block to `nginx.conf`:
+
+```bash
+location /php {
+      proxy_pass http://localhost:9090/;
+}
+```
+
+This means that I can proxy from the Nginx server to the PHP server. So, if I curl to `http://localhost:8080/php` I get the
+**"Hello from PHP"** message from the PHP server. If I curl without the `php` part I get the greeting from Nginx.
+
+We can also pass custom headers to either the proxied server or to the client.
+
+Let's pass headers to the client first:
+
+```nginx
+location /php {
+      add_header proxied nginx;
+      proxy_pass http://localhost:9090/;
+}
+```
+
+If we `curl` now we get this: 
+
+```bash
+HTTP/1.1 200 OK
+Server: nginx/1.27.3
+Date: Mon, 10 Feb 2025 20:42:33 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+Host: localhost:9090
+X-Powered-By: PHP/8.4.3
+proxied: nginx
+```
+
+Now we can add headers to the proxied server. First, let's create a file called `show_request.php`:
+
+```php
+<?php
+
+var_dump(getallheaders());
+```
+
+Then let's start the server with: `php -S localhost:9090 show_request.php`. If we now `curl`to `http://localhost:8080/php` then we get:
+
+```bash
+array(4) {
+  ["Host"]=>
+  string(14) "localhost:9090"
+  ["Connection"]=>
+  string(5) "close"
+  ["User-Agent"]=>
+  string(11) "curl/7.80.0"
+  ["Accept"]=>
+  string(3) "*/*"
+}
+```
+
+All we need to do to add the headers to the proxied server instead is change the `add_header` directive to `proxy_set_header`.
+Then a `curl` returns this:
+
+```bash
+curl http://localhost:8080/php
+array(5) {
+  ["proxied"]=>
+  string(5) "nginx"
+  ["Host"]=>
+  string(14) "localhost:9090"
+  ["Connection"]=>
+  string(5) "close"
+  ["User-Agent"]=>
+  string(11) "curl/7.80.0"
+  ["Accept"]=>
+  string(3) "*/*"
+}
+```
 
 ### Load balancer
 
