@@ -2639,11 +2639,89 @@ the servers one-by-one. We see that the server balances the requests to the rema
 
 ### Load balancer options
 
+Let's look at a few load balancer options:
+
+_Sticky sessions_: the request is bound to a user's IP request and always, when possible, proxied to the same server. 
+This allows us to maintain user sessions for things like login state, etc. 
+
+Add `ip_hash` directive to the `upstream php_servers` block: 
+
+```nginx
+upstream php_servers {
+  ip_hash;
+  server localhost:10001;
+  server localhost:10002;
+  server localhost:10003;
+}
+```
+
+If we run our three PHP servers again and `curl` the nginx server with the `while` loop, as we did before, we will now get 
+proxied to only one server. If that server goes down, nginx will start proxying to the next available server, etc. In the 
+terminal output below you can see where I killed `PHP Server 2`:
+
+```bash
+(base) aljazkovac@Aljazs-MBP nginx % while sleep 1; do curl http://localhost:8888; done
+PHP Server 2
+PHP Server 2
+PHP Server 2
+PHP Server 2
+PHP Server 2
+PHP Server 2
+PHP Server 2
+PHP Server 1
+PHP Server 1
+PHP Server 1
+PHP Server 1
+PHP Server 1
+PHP Server 1
+```
+
+_Active connections / load_: Instead of picking the next server in the queue, nginx will proxy to the server with the least
+active connections.
+
+We can simulate an overloaded server by creating a PHP server that has a delay of 20 seconds:
+
+```php
+<?php
+
+sleep(20);
+
+echo "Sleepy server finally done!";
+```
+
+Then we can start one of the servers with that file, while the other two can be run as before. If we now `curl` in a loop again,
+then we might get stuck on that delayed server. However, if we add the `least_conn` directive to the `upstream php_servers` block,
+then nginx will proxy to the two servers that are not as busy.
+
+```nginx
+events {}
+
+http {
+
+	upstream php_servers {
+    least_conn;
+		server localhost:10001;
+		server localhost:10002;
+		server localhost:10003;
+	}
+
+server {
+
+    listen 8888;
+    
+    location / {
+      proxy_pass http://php_servers;
+      }
+}
+}
+```
+
 ### Documentations & resources
 
-## Outro
+Here are two interesting resources worth looking at:
 
-### Bonus lecture: feedback & Stackacademy.tv courses
+1. [Nginx documentation](https://docs.nginx.com/)
+2. [Nginx resources](https://github.com/fcambus/nginx-resources)
 
 ## Archive
 
