@@ -6,13 +6,13 @@ tags: [devops, courses, certificates] # TAG names should always be lowercase.
 description: An Udemy course on Nginx fundamentals.
 ---
 
-# Introduction
+## Introduction
 
-I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been working on a 
+I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been rewriting a 
 custom reverse proxy at my current job at [Caspeco](https://caspeco.com/), and I wanted to see if we could perhaps 
-replace it with Nginx. Our custom reverse proxy is built with [ProxyKit](https://github.com/ProxyKit/ProxyKit), 
-which has been obsolete for a couple of years already, meaning that we will have to either rewrite it, or replace it with 
-something else in the future. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
+replace it with Nginx in the future. Our custom reverse proxy is built with [ProxyKit](https://github.com/ProxyKit/ProxyKit), 
+which has been obsolete for a couple of years already, meaning that we will have to either rewrite it completely, or replace it with 
+something else. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
 if it could cover all our needs.
 
 Let's dive into the course, and I hope you will enjoy my notes and thoughts on it.
@@ -43,7 +43,7 @@ with a focus on:
   * High concurrency
   * Low memory usage
 
-Today, Nginx serves the majority of the world's websites, not only because of its performance but also because of its relative ease of use.
+Today, Nginx serves the [majority of the world's websites](https://w3techs.com/technologies/details/ws-nginx), not only because of its performance but also because of its relative ease of use.
 At its core, Nginx is a reverse proxy server.
 
 ### Nginx vs. Apache
@@ -61,12 +61,9 @@ embed PHP or other languages directly into the server like Apache can. Instead, 
 by a separate process, such as PHP-FPM, and then reverse proxied back to the client via Nginx.
 
 In terms of performance, Nginx can do the following better than Apache:
+
 1. Serve static content much faster
 2. Handle a much larger number of concurrent requests (Apache will accept requests up to the pre-configured limit, then reject the rest)
-
-Nginx and Apache also differ in terms of configuration. Nginx interprets requests as URI locations first, whereas Apache 
-defaults to and favours file-system locations. Because of this very design, Nginx can easily function as not only a web server
-but anything from a load balancer to a mail server.
 
 ## Installation
 
@@ -88,12 +85,12 @@ To summarize, I followed these steps:
 4. Copy the public key to the server manually (copy to the `~/.ssh/authorized_keys` file) 
 5. For a smoother login experience, I added an entry in the `~/.ssh/config` file:
 
-    ```bash
-    Host digitalocean
-        HostName <my-droplet-ip>
-        User root
-        IdentityFile ~/.ssh/<my-private-key>
-    ```
+```bash
+Host digitalocean
+    HostName <my-droplet-ip>
+    User root
+    IdentityFile ~/.ssh/<my-private-key>
+```
 
 This allows me to log in with `ssh digitalocean`.
 
@@ -227,7 +224,7 @@ There are two main configuration terms in Nginx:
 
 We will create a virtual host to serve a simple HTML page. To do this, I followed these steps:
 
-1. Asked ChatGTP to create a simple webpage consisting of three files: `index.html`, `style.css`, and `image.png`.
+1. Asked [ChatGPT](https://chatgpt.com/) to create a simple webpage consisting of three files: `index.html`, `style.css`, and `image.png`.
 2. Went to the root directory with `cd /` (your home directory you can reach with `cd ~` or just `cd`).
 3. Created a new directory with `mkdir sites` and then `cd sites` and `mkdir demo`.
 4. Copied the files `index.html`and `style.css` from ChatGTP to the `demo` directory manually.
@@ -401,7 +398,7 @@ http {
                 set $weekend 'No';
 
                 # Check if day is weekend
-                if ($date_local ~ 'Saturday|Sunday' ) {
+                if ($date_local ~ 'Saturday|Sunday') {
                         set $weekend 'Yes';
                 }
 
@@ -523,7 +520,6 @@ means that we get the response "Hello John" instead of the image.
 ```nginx
 events {}
 
-
 http {
 
         include mime.types;
@@ -588,7 +584,7 @@ http {
 If we, however, change the resource to something that does not exist, the server will return the response "Hello User".
 To try the current URI first, add the `$uri` variable to the `try_files` directive:
 
-```bash
+```nginx
 try_files $uri /notexist.png /greet;
 ```
 
@@ -597,7 +593,6 @@ e.g., a 404 page:
 
 ```nginx
 events {}
-
 
 http {
 
@@ -624,11 +619,10 @@ http {
 }
 ```
 
-Named locations simply means assigning a name to a location context:
+**Named locations** simply means assigning a name to a location context:
 
 ```nginx
 events {}
-
 
 http {
 
@@ -734,7 +728,7 @@ To observe and learn about the logging process, I followed these steps:
 5. A common misconception is that 404s get logged in the error log. However, properly handled 404s are not errors. If they 
    are not properly handled, then they get logged to `error.log`.
 
-To customise or disabling logging for a given context, we can use the `access_log` and `error_log` directives:
+To customise or disable logging for a given context, we can use the `access_log` and `error_log` directives:
 
 ```nginx
 events {}
@@ -856,7 +850,7 @@ http {
 ### PHP processing
 
 Up to now we have configured Nginx to serve static files, leaving the rendering of that file to be handled by the client,
-based on its content type or MIME type. However, a cricial part of a web server is to be able to serve dynamic content, 
+based on its content type or MIME type. However, a critical part of a web server is to be able to serve dynamic content, 
 that has been generated on the server side (by a server-side language such as PHP). Nginx does not have the capability to
 embed PHP or other languages directly into the server like Apache can. Instead, all requests for dynamic content are dealt with
 by a separate process, such as [PHP-FPM](https://www.php.net/manual/en/install.fpm.php), and then reverse proxied back to the client via Nginx.
@@ -906,7 +900,7 @@ I followed these steps to set up PHP processing:
     ```bash
     echo '<?php phpinfo(); ?>' > /sites/demo/info.php
     ```
-8. Open a browser and navigate to the IP address followed by `/info.php`. There I got a 502 Bad Gateway error.
+8. Open a browser and navigate to the IP address followed by `/info.php`. There I got a `502 Bad Gateway error`.
 9. Check the last entry of the error log:
     ```bash
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# tail -n 1 /var/log/nginx/error.log
@@ -1013,7 +1007,7 @@ We can reconfigure the process ID location by changing the `pid` directive in th
 At the moment, our PID file is located at `/var/run/nginx.pid`. If we want to change the location without rebuilding Nginx, 
 we can do so like this:
   
-```bash
+```nginx
 pid /var/run/new_nginx.pid;
 ```
 ---
@@ -1372,7 +1366,7 @@ Accept-Ranges: bytes
 ### Compressed responses with gzip
 
 When a client requests a resource, e.g., a static file, that client can indicate its ability to accept compressed data.
-We can compress a response on the server, typically using gzip, which greatly reduces its size and the time it takes to transfer it.
+We can compress a response on the server, typically using `gzip`, which greatly reduces its size and the time it takes to transfer it.
 
 Following are the steps to enable gzip compression:
 
@@ -1492,7 +1486,7 @@ http {
 
 Let's compare the performance with and without the cache:
 
-1. Install Apache Benchmark with `apt-get install apache2-utils`
+1. Install [Apache Benchmark](https://httpd.apache.org/docs/2.4/programs/ab.html) with `apt-get install apache2-utils`
 2. Let's create 100 requests in 10 concurrent connections with `ab -n 100 -c 10 http://206.189.100.37/`:
     ```bash
     Benchmarking 206.189.100.37 (be patient).....done
@@ -1718,7 +1712,7 @@ Let's compare the performance with and without the cache:
 
 ### HTTP2
 
-HTTP/2 is a major revision of the HTTP network protocol used by the World Wide Web. It is based on the SPDY protocol developed by Google.
+HTTP/2 is a major revision of the HTTP network protocol used by the World Wide Web. It is based on the [SPDY](https://en.wikipedia.org/wiki/SPDY) protocol developed by Google.
 
 | HTTP2 vs HTTP1.1 | Advantages of HTTP2                                                  |
 |------------------|----------------------------------------------------------------------|
@@ -1808,7 +1802,7 @@ To add the HTTP2 module, we need to recompile Nginx from source:
 Server push is a feature of HTTP/2 that allows the server to push resources to the client before the client requests them.
 This is an extensive subject, which you can read more about [here](https://www.f5.com/company/blog/nginx/nginx-1-13-9-http2-server-push).
 
-Since browser tools aren't good at displaying how pushed files are delivered, so let's install the [`nghttp2` module](https://nghttp2.org/) with `apt-get install nghttp2-client`.
+Since browser tools aren't good at displaying how pushed files are delivered, let's install the [`nghttp2` module](https://nghttp2.org/) with `apt-get install nghttp2-client`.
 Then run `nghttp -nys https://206.189.100.37/index.html` (`n` to discard responses, `y`to ignore the self-signed certificate, and `s` to print the response statistics).
 
 We get this:
@@ -2264,6 +2258,7 @@ limit_req zone=MYZONE burst=5 nodelay;
 ```
 
 Here are two articles that you can read to learn more about rate limiting:
+
 1. [Rate Limiting with Nginx](https://www.nginx.com/blog/rate-limiting-nginx/)
 2. [Nginx Rate-Limiting in a Nutshell](https://www.freecodecamp.org/news/nginx-rate-limiting-in-a-nutshell-128fe9e0126c)
 
@@ -2286,12 +2281,13 @@ If we now look at the file with `cat /etc/nginx/.htpasswd` we see the username a
 
 ### Hardening Nginx
 
-Before we start to further secure Nginx server, let's update the system with `apt-get update` and `apt-get upgrade`.
+Before we start to further secure our Nginx server, let's update the system with `apt-get update` and `apt-get upgrade`.
 Then check your version of Nginx and the [Nginx changelog](https://nginx.org/en/CHANGES) to see if there are any security vulnerabilities that need to be addressed.
 
 Now to further secure your Nginx server:
 
-1. Hide the version number in the server header by adding `server_tokens off;` to the `http` block. The reason is that if an attacker knows the version number, they can look up known vulnerabilities for that version. If we do a curl:
+1. Hide the version number in the server header by adding `server_tokens off;` to the `http` block. 
+   The reason is that if an attacker knows the version number, they can look up known vulnerabilities for that version. 
 
     ```bash
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
@@ -2322,7 +2318,7 @@ Now to further secure your Nginx server:
     ```
 
     Voilà! The version number is gone.
-2. X-Frame-Options: This header is used to protect against [clickjacking](https://en.wikipedia.org/wiki/Clickjacking) attacks. 
+2. `X-Frame-Options`: This header is used to protect against [clickjacking](https://en.wikipedia.org/wiki/Clickjacking) attacks. 
    It tells the browser whether to allow a page to be displayed in an iframe. Add this to the `server` block:
 
     ```nginx
@@ -2353,9 +2349,9 @@ Now to further secure your Nginx server:
     ```
 
     This header tells the browser to block the page if an XSS attack is detected. `1`means `on`, and `mode=block` means that the browser should block the page.
-4. Rebuild Nginx with the `--without-http_autoindex_module` flag to disable the autoindex module. 
+4. Rebuild Nginx with the `--without-http_autoindex_module` flag to disable the `autoindex` module. 
    This module generates directory listings if there is no index file in a directory. This is a security risk because it can 
-   expose sensitive information. f an index file (such as index.html) isn’t present, the module creates a directory listing that 
+   expose sensitive information. f an index file (such as `index.html`) isn’t present, the module creates a directory listing that 
    might expose sensitive files or internal organization details. Disabling autoindex minimizes the risk of accidental exposure of 
    file system information that could help an attacker plan further exploits. 
    To rebuild, do the following:
@@ -2365,7 +2361,7 @@ Now to further secure your Nginx server:
 ### Let's Encrypt - SSL certificates
 
 [Let's Encrypt](https://letsencrypt.org/) is a free, automated, and open certificate authority that provides free SSL certificates.
-Plain, insecure http connections are a thing of the past, and it is now expected that all websites use https.
+Plain, insecure http connections are a thing of the past, and it is now expected that all websites use `https`.
 
 Before setting up an SSL certificate I had to set up a custom domain, which I did with [Namecheap](https://www.namecheap.com/).
 I also had to connect the Digital Ocean's name servers to the custom domain.
@@ -2375,7 +2371,7 @@ To install certbot on Ubuntu, I followed the instructions on the [Certbot websit
 I installed Certbot with [snap](https://en.wikipedia.org/wiki/Snap_(software)), a package manager for Linux. Snaps are self-contained applications with mediated access 
 to the host system.
 
-Because I ran the `sudo certbot --nginx` command Certbot edited my Nginx configuration automatically, and I ended up with this:
+Because I ran the `sudo certbot --nginx` command, Certbot edited my Nginx configuration automatically, and I ended up with this:
 
 ```nginx
 events {
@@ -2424,7 +2420,7 @@ Then we could list all our cronjobs with the `crontab -l` command.
 ### Prerequisites
 
 We will be using our local Nginx server here, along with a few simple php servers. I installed my Nginx with homebrew,
-so the Nginx configuration was placed in the /opt/homebrew/etc/nginx folder. There was already a nice setup there, but to test a very 
+so the Nginx configuration was placed in the `/opt/homebrew/etc/nginx` folder. There was already a nice setup there, but to test a very 
 simple version, I changed the `location` block to this:
 
 ```nginx
@@ -2634,8 +2630,8 @@ etc.
 ```
 
 We see that the requests are nicely balanced ([round-robin](https://en.wikipedia.org/wiki/Round-robin_scheduling, as per default).
-We can also test that the load balancer works nicely by running the loop again, perhaps with a slighly larger delay, and killing
-the servers one-by-one. We see that the server balances the requests to the remaining servers nicely.
+We can also test that the load balancer works by running the loop again, perhaps with a slightly larger delay, and killing
+the servers one-by-one. We see that the server balances the requests to the remaining servers.
 
 ### Load balancer options
 
@@ -2689,7 +2685,7 @@ sleep(20);
 echo "Sleepy server finally done!";
 ```
 
-Then we can start one of the servers with that file, while the other two can be run as before. If we now `curl` in a loop again,
+Then we can start one of the servers with that file, while the other two can be run as before. If we now curl in a loop again,
 then we might get stuck on that delayed server. However, if we add the `least_conn` directive to the `upstream php_servers` block,
 then nginx will proxy to the two servers that are not as busy.
 
@@ -2716,17 +2712,23 @@ server {
 }
 ```
 
-### Documentations & resources
+### Documentation & resources
 
 Here are two interesting resources worth looking at:
 
 1. [Nginx documentation](https://docs.nginx.com/)
-2. [Nginx resources](https://github.com/fcambus/nginx-resources)
+2. [Nginx resources](https://github.com/fcambus/nginx-resources): a great list of various resources, including an [interview with the creator of Nginx](https://web.archive.org/web/20180614224054/http://mindend.com/interview-with-the-creator-of-nginx/), and much more.
 
-## Archive
+## Final thoughts and certificate
 
-### Adding an Nginx Init service
+I really enjoyed this course. I learned a lot about Nginx and its powerful capabilities. The course is a bit outdated in
+some sections, e.g., Security, but that is to be expected. The initial motivation was to take the course to learn more 
+about reverse proxying, and I would have liked for that section to be longer and more in-depth, but I certainly feel I have
+enough knowledge now to set things up myself and start experimenting. And that is really the best way to learn anything. 
 
-### GeoIP
+And I even got a nice little certificate from Udemy!
 
-### Video streaming
+![Udemy Certificate](../assets/images/nginx/udemy-nginx-certificate.jpg){: w="700" h="400" }
+_Figure 1: Certificate after the completion of the course_
+
+
