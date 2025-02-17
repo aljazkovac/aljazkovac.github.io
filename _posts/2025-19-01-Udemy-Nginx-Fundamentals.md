@@ -464,7 +464,8 @@ There are two rewrite directives in Nginx:
 **NOTE**: With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
 
 ---
-**REWRITES vs. REDIRECTS**
+
+**Rewrites vs. redirects**
 
 The rewrite directive is used to rewrite the URI before it is processed by Nginx. 
 When a URI is rewritten, it gets reevaluated. The return directive, on the other hand, does not reevaluate the URI but instead 
@@ -507,6 +508,7 @@ What happens here is the following:
 1. We go to the URI `/user/john`.
 2. The URI gets rewritten to `/greet/john` and reevaluated.
 3. The new URI skips the `/greet` location block and goes directly to the `/greet/john` location block because the exact match has priority.
+
 ---
 
 **OPTIONAL FLAGS** 
