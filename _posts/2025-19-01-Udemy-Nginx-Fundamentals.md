@@ -10,9 +10,7 @@ description: An Udemy course on Nginx fundamentals.
 
 I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been rewriting a 
 custom reverse proxy at my current job at [Caspeco](https://caspeco.com/), and I wanted to see if we could perhaps 
-replace it with Nginx in the future. Our custom reverse proxy is built with [ProxyKit](https://github.com/ProxyKit/ProxyKit), 
-which has been obsolete for a couple of years already, meaning that we will have to either rewrite it completely, or replace it with 
-something else. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
+replace it with Nginx in the future. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
 if it could cover all our needs.
 
 Let's dive into the course, and I hope you will enjoy my notes and thoughts on it.
