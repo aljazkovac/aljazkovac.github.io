@@ -17,7 +17,7 @@ Let's dive into the course, and I hope you will enjoy my notes and thoughts on i
 
 ## Overview
 
-[This Udemy course](https://www.udemy.com/course/nginx-fundamentals/) covers the following topics:
+The course covers the following topics:
 
 * Learn to customise the NGINX installation
 * Configure NGINX
