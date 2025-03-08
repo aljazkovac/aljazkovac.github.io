@@ -1,6 +1,6 @@
 ---
-title: Adventures With Raspberry Pi - Running an Nginx server
-date: 2025-03-02 17:30:00 +0200
+title: Adventures with Raspberry Pi - Running an Nginx Server
+date: 2025-03-08 09:30:00 +0200
 categories: [devops, raspberry pi] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [devops, raspberry pi, nginx, linux] # TAG names should always be lowercase.
 description: Home Lab - How to Set Up a Nginx Server On a Raspberry Pi
@@ -67,6 +67,7 @@ I installed the Raspberry Pi Imager on my Mac as recommended on the [RaspberryPi
 I chose the recommended image from there: _Bookworm 64-bit with desktop_. I also added some custom settings, e.g., SSH with private keys. 
 But it turned out to be incredibly slow. So I checked with ChatGPT and got this recommendation:
 
+```
 __Best OS for Raspberry Pi 3 Model B (Rev 1.2)__
 
 ✅ Recommended: Raspberry Pi OS Bookworm (Debian 12)
@@ -84,6 +85,7 @@ __Best OS for Raspberry Pi 3 Model B (Rev 1.2)__
 •	End of Life (EOL)
 •	No security updates.
 •	Many modern packages and software will not work.
+```
 
 I decided to go for the 32-bit Bullseye. This turned out to work much better.
 
@@ -163,10 +165,10 @@ reboot the router and a few minutes later I could see the new IP in my router we
 
 ---
 
-### Set up an Nginx redirect from https://reddsmart.org to https://aljazkovac.github.io
+### Set up an Nginx redirect
 
-In order to be able to have my Pi redirect from my custom domain to my GitHub Pages, I needed to enable port forwarding on my router 
-so that when a client requests my custom domain Namecheap's DNS servers forward the request to my Raspberry Pi. 
+In order to be able to have my Pi redirect from my [custom domain](https://reddsmart.org) to my [GitHub Pages](https://aljazkovac.github.io, 
+I needed to enable port forwarding on my router so that when a client requests my custom domain Namecheap's DNS servers forward the request to my Raspberry Pi. 
 
 ---
 
@@ -212,14 +214,14 @@ __TROUBLE ALERT!__
 As I was following the setup instructions, I got an error: the domain _reddsmart.org_ and www.reddsmart.org could not be fetched!
 I realized that my Pi's private IP had changed! But why? The reason is the router's __DHCP (Dynamic Host Configuration Protocol)__,
 which automatically reassigns IP addresses to devices on the local network. I logged into my router and manually assigned an IP
-address (basically a static IP address) to the Raspberry Pi. This should prevent the router from changing it. And voila! 
+address (basically a static IP address) to the Raspberry Pi. This should prevent the router from changing it. And voilà! 
 https://reddsmart.org and https://www.reddsmart.org are now up and running and both redirect to my GitHub Pages https://aljazkovac.github.io.
 
 ---
 
 But it isn't only the router at home that can dynamically change an IP address. Your ISP's servers can (and will) do that as well!
 So, my public IP (which I was lucky enough to be able to get since I was behind CGNAT at first) might change at some point. Obviously,
-I could also ask my ISP provider for a static IP but I simply didn't want to bother them again, it might cost me something extra, 
+I could also ask my ISP provider for a static IP, but I simply couldn't be bothered, it might cost me something extra, 
 and I also thought it would be fun to learn how to set up dynamic DNS handling.
 
 ---
@@ -244,13 +246,15 @@ But it didn't work out of the box, I was getting an error that a "record was not
 `https://dynamicdns.park-your-domain.com/update?host=reddsmart.org&domain=reddsmart.org&password=<passwd>&ip=<current_ip>`
 
 (This was when I used dynamicdns werver instead of ipify), I could see that the host was incorrect. So my final config was this:
-`
+
+```
 protocol=namecheap
 use_web, web=https://api.ipify.org
 login=reddsmart.org
 password=<passwd>
 @
-`
+```
+
 I tested with `sudo service ddclient restart` and `sudo ddclient -force`, and got `SUCCESS: updating @: good: IP address
 set to <ip-addr>`. Sweet!
 
@@ -258,38 +262,52 @@ set to <ip-addr>`. Sweet!
 
 ### Set up SSH to the Pi
 
-CONTINUE FROM HERE!
-
 The last thing I wanted to do for this little project was to set up an SSH connection to my Raspberry Pi, so I could 
 access it from my MacBook.
 
 First, run `sudo raspi-config`. This opens a GUI menu where you can navigate to Interface -> SSH -> Enable. Then it is a good
 idea to reboot the Pi with `sudo reboot`. 
 
-Then, for extra security, use port 2222 instead of 22. To be able to connect from outside your network, enable port forwarding
-on your router (similar to what I did for http and https, see above). 
+Then, for extra security, use some other port instead of the standard 22. To be able to connect from outside your network, enable port forwarding
+on your router (similar to what I did for `http` and `https`, see above). 
 
 Then follow these steps:
 
-1. SSH keys
-2. Copy public key to PI
+1. Generate SSH keys (Google is your friend)
+2. Copy public key to Pi
 3. Disable password authentication for extra security
 
-Basically my ssh config file (located in `/.ssh/config`) has this entry:
+Actually, I realized that my public key was already in my Pi. Why? Because I used the Pi Imager when setting up my Pi, and there
+I chose the SSH keys to be enabled.
+
+On my Pi in `/etc/ssh/sshd_config` I changed some SSH settings: port 22 to something else (I'm not telling you) and `PasswordAuthentication No`. 
+Then I restarted ssh with `sudo systemctl restart ssh`.
+
+I also added an entry to my ssh config file (located in `/.ssh/config`) on my MacBook:
 
 ```bash
 Host pi
 HostName <pi-public-ip>
 User aljazkovac
-Port 2222
+Port <secret-port>
 IdentityFile ~/.ssh/id_rsa
 ```
 
-On my Pi in `/etc/ssh/sshd_config` I changed some SSH settings: port 22 to 2222 and PasswordAuthentication No. Then I restarted
-ssh with `sudo systemctl restart ssh`
+And voilà! Now I can ssh into my Pi by running `ssh pi`. 
 
-Resources:
-https://www.whatsmydns.net/
-https://ap.www.namecheap.com/
+## Summary
 
-http://reddsmart.org/
+I loved this little project. Such a simple and easy thing I set out to do, but it sure threw a couple of challenges my way!
+Here is a little overview of what I did and learned:
+
+1. How to set up Pi with a fresh OS from scratch
+2. How to set up a custom domain
+3. The difference between a private IP and a public IP
+4. The difference between having a shared public IP (if you are behind CGNAT) and your own public IP
+5. How to set up port forwarding and assign a certain client a static IP in my router (the latter is needed due to the router's DHCP or Dynamic Host Configuration Protocol)
+6. How to set up dynamic DNS handling
+7. How to set up an SSH connection to my Pi
+
+That is a full bag of tricks! With such a simple, little project. The benefit of doing projects (as opposed to taking courses, for example),
+is that in projects your learn the stuff that you really need for your specific goals, instead of learning stuff in a very 
+generalized way. It is a very practical, straight-forward way of gaining new information and solving problems. 
