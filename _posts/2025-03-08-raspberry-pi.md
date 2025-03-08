@@ -1,5 +1,5 @@
 ---
-title: Adventures with Raspberry Pi - Running an Nginx Server
+title: Adventures with Raspberry Pi - Running a Nginx Server
 date: 2025-03-08 09:30:00 +0200
 categories: [devops, raspberry pi] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [devops, raspberry pi, nginx, linux] # TAG names should always be lowercase.
@@ -26,7 +26,7 @@ Simple enough, one would think, right? Stick around to find out!
 
 Let's break down the steps I was going to take:
 
-1. Run an Nginx server on my Pi
+1. Run a Nginx server on my Pi
 2. Buy and set up the custom domain _reddsmart.org_
 3. Make the Nginx server do a redirect from https://reddsmart.org to https://aljazkovac.github.io
 4. Set up SSH from my MacBook to the Pi
@@ -37,16 +37,20 @@ I first needed to fire up my dusty Pi (only a figure of speech, the Pi was actua
 in a cozy box all its life). Once I got the Pi fired up I ran `sudo apt update` to update the packages. I immediately ran into
 an error which I at first disregarded: 
 
-_"The repository http.//mirrordirector.raspbian.org/raspbian stretch Release does 
+```
+The repository http.//mirrordirector.raspbian.org/raspbian stretch Release does 
 no longer have a Release file. Updating from such a repository cant be done securely, and is therefore disabled by default. 
-See apt-secure manpage for repository creation and user configuration details."_
+See apt-secure manpage for repository creation and user configuration details.
+```
 
 I don't know why I disregarded the error, but that's what I did. I then ran `sudo apt upgrade` and then I followed [the 
 instructions from my notes on the Nginx course I took recently](https://aljazkovac.github.io/posts/Udemy-Nginx-Fundamentals/#building-nginx-from-source--adding-modules) 
 to build Nginx from source (I downloaded the latest stable version of Nginx, 1.26). I then ran into an issue installing the PCRE library: 
 
-_"Err: 1 http://mirrordirector.raspbian.org/raspbian stretch/main armhf libpcre2-32-0 armhf 10.22-3 404 Not Found
-E: Failed to fetch ..."_
+```
+"Err: 1 http://mirrordirector.raspbian.org/raspbian stretch/main armhf libpcre2-32-0 armhf 10.22-3 404 Not Found
+E: Failed to fetch ..."
+```
 
 At which point I understood I would have to address the issue I got when I ran `sudo apt update`.
 
@@ -129,12 +133,14 @@ You can also run two commands on your Pi to get the public and the private IP of
 Once you have updated an A-record it is a good idea to check if the changes have been propagated (it might take a while,
 even a few days). I ran `nslookup reddsmart.org` and got this:
 
+```
 Server:		192.168.50.1
 Address:	192.168.50.1#53
 
 Non-authoritative answer:
 Name:	reddsmart.org
 Address: 192.64.119.248
+```
 
 Ran `whois 192.63.119.248` and saw that it was Namecheap's server. Hm! I then asked Google's DNS server directly: 
 `nslookup reddsmart.org 8.8.8.8` and got my Pi's public IP! 
@@ -235,11 +241,13 @@ the password (the one that was generated in Namecheap before), and various other
 
 Then I got the following `ddclient.conf` file:
 
-`protocol=namecheap
+```
+protocol=namecheap
 use=web, web=https://api.ipify.org
 login=reddsmart.org
 password=<passwd>
-reddsmart.org`
+reddsmart.org
+```
 
 But it didn't work out of the box, I was getting an error that a "record was not found". I investigated what gets sent to the server:
 
