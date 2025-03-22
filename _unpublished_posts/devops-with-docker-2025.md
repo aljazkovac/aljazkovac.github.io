@@ -337,7 +337,8 @@ If you have the same image with several tags, then you need to specify the image
 
 #### Building images
 
-To build an image, we use a [Dockerfile](https://docs.docker.com/reference/dockerfile/), which is simply a set of instructions for an image.
+To build an image, we use a [Dockerfile](https://docs.docker.com/reference/dockerfile/), which is simply 
+a set of instructions for an image.
 
 Let us generate this script:
 
@@ -387,11 +388,11 @@ This command:
 The build output shows three steps, which correspond to three layers that constitute this image:
 
 ```bash
- => [1/3] FROM docker.io/library/alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c                                                        0.0s
- => [internal] load build context                                                                                                                                           0.0s
- => => transferring context: 66B                                                                                                                                            0.0s
- => CACHED [2/3] WORKDIR /usr/src/app                                                                                                                                       0.0s
- => CACHED [3/3] COPY hello.sh .                                                                                                                                            0.0s
+ => [1/3] FROM docker.io/library/alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88
+ => [internal] load build context                                                                                  
+ => => transferring context: 66B                                                                                   
+ => CACHED [2/3] WORKDIR /usr/src/app                                                                              
+ => CACHED [3/3] COPY hello.sh .                                                                                   
 ```
 
 Layers can act as cache, which means that if we just change the last lines of our Dockerfile, the first two layers of the image can 
@@ -421,25 +422,28 @@ A /usr/src/app/additional.txt
 
 We can then commit the changes with the command `docker commit <container> <new-image-name>`.
 
-However, it is much better to simply change the Dockerfile and add the new text file there. We add this to the Dockerfile:
+However, it is much better to simply change the Dockerfile and add the new text file there. We add this 
+to the Dockerfile:
 
 ```dockerfile
 RUN touch additional.txt
 ```
 
-We can build a new image with `docker build . -t hello-docker:v2`. Then we can run `docker run hello-docker:v2 ls` and see that the file has been added.
+We can build a new image with `docker build . -t hello-docker:v2`. Then we can run `docker run hello-docker:v2 ls` 
+and see that the file has been added.
 
 ---
 
 _Important commands_:
 
-| Command         | Explain                           | Shorthand |
-|-----------------|-----------------------------------|-----------|
-| `docker search` | Searches for images on Docker hub |           |
-| `docker diff` | Lists file changes in a container |           |
-| `docker commit` | Commits a container's file changes |           |
+| Command          | Explain                            | Shorthand |
+|------------------|----------------------------------- |-----------|
+| `docker search`  | Searches for images on Docker hub  |           |
+| `docker diff`    | Lists file changes in a container  |           |
+| `docker commit`  | Commits a container's file changes |           |
 
-__Note__: All commands in a Dockerfile except `CMD` and TODO: FILL HERE! are executed during build time. CMD and FILL HERE is executed at runtime.
+__Note__: All commands in a Dockerfile except `CMD` and TODO: FILL HERE! are executed during build time. 
+CMD and FILL HERE is executed at runtime.
 
 ---
 
@@ -487,6 +491,193 @@ FROM devopsdockeruh/simple-web-service:alpine
 CMD server
 
 ---
+
+### Defining start conditions for the container
+
+Instead of simply adding stuff to the Dockerfile, without really knowing if it's going to work, 
+let's try another approach: test stuff first before committing it to our Dockerfile.
+
+Once we know what we need, we add it to the Dockerfile. __Important__: Add the stuff that is most prone
+to change at the bottom. This way we can save our cached layers.
+
+---
+
+__CMD vs Entrypoint__
+
+The difference between CMD and ENTRYPOINT:
+
+- `ENTRYPOINT` defines the executable that will always run when the container starts
+- `CMD` provides default arguments to the `ENTRYPOINT`, or specifies the entire command if no `ENTRYPOINT` is defined
+- `CMD` can be overridden from the command line, while `ENTRYPOINT` requires the --entrypoint flag to override
+
+Use `docker inspect`to inspect the image and its defined `CMD`and `ENTRYPOINT`.
+
+For example, observe the following Dockerfile:
+
+```dockerfile
+FROM ubuntu:24.04
+
+WORKDIR /mydir
+
+RUN apt-get update && apt-get install -y curl python3
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+RUN chmod a+x /usr/local/bin/yt-dlp
+
+# If we used CMD instead of ENTRYPOINT:
+# - Any arguments passed to 'docker run' would completely override the command
+# - With ENTRYPOINT, arguments are appended to the command instead
+ENTRYPOINT ["/usr/local/bin/yt-dlp"]
+
+# If we add a command here then we can run the container without a specific argument
+# If we do specify an argument then it overrides this, the default, one
+CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"]
+```
+
+__Shell vs Exec form__
+
+_Shell form_ (`ENTRYPOINT command param1 param2`):
+- Runs command in a shell (`/bin/sh -c`)
+- Can use shell features (environment variables, pipes, etc.)
+- Example: `ENTRYPOINT echo "Hello $NAME"`
+
+_Exec form_ (`ENTRYPOINT ["command", "param1", "param2"]`):
+- Runs command directly without shell
+- More efficient (no shell overhead)
+- Cannot use shell features directly
+- Example: `ENTRYPOINT ["/usr/local/bin/app", "--port", "8080"]`
+
+_Example_:
+
+```dockerfile
+# Shell form - using && and environment variable
+ENTRYPOINT mkdir -p /data/$FOLDER && echo "Created folder" && ls /data
+```
+
+If we run 
+```bash
+docker run -e FOLDER=logs myimage
+# Creates /data/logs, prints "Created folder", and lists contents
+```
+then this would work.
+
+Exec form would not work:
+```dockerfile
+# Exec form - cannot use && or $FOLDER
+ENTRYPOINT ["mkdir", "-p", "/data/$FOLDER", "&&", "echo", "Created folder", "&&", "ls", "/data"]
+```
+
+This would fail because:
+1. $FOLDER won't be evaluated
+2. && isn't valid as a command argument
+
+To use environment variables with exec form, you'd need to define the shell explicitly:
+
+```dockerfile
+ENTRYPOINT ["/bin/sh", "-c", "mkdir -p /data/$FOLDER && echo 'Created folder' && ls /data"]
+```
+
+__Best practice__: Use exec form unless shell features are needed, and keep the same form for both ENTRYPOINT and CMD.
+
+---
+
+_Important commands_:
+
+| Command                                        | Explain                                                                 | Shorthand |
+|------------------------------------------------|-------------------------------------------------------------------------|-----------|
+| `docker inspect <container/image>`             | Shows detailed information about a container or image in JSON format    |           |
+| `docker cp <container>:<src-path> <dest-path>` | Copies files/folders between a container and local filesystem           |           |
+
+### Interacting with the container via volumes and ports
+
+Instead of using the `docker cp` command to copy files from a container to local disk, we can use 
+[Docker volumes](https://docs.docker.com/engine/storage/volumes/) and [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/):
+
+--- 
+
+__Docker Storage: Volumes vs Bind Mounts__
+
+_Volumes_
+- Managed by Docker (`/var/lib/docker/volumes/`)
+- Portable and easier to backup
+- Independent of host machine directory structure
+- Ideal for production use
+
+Use _Volumes_ for:
+- Persisting application data
+- Sharing data between containers
+- Production environments
+- Data backups and migrations
+
+_Bind Mounts_
+- Direct mapping to host machine paths
+- Files accessible directly on host system
+- Perfect for development environments
+- Host machine directory structure dependent
+
+Use _Bind Mounts_ for:
+- Development environments
+- Quick code changes
+- Configuration files
+- When direct host machine access is needed
+
+---
+
+We can run a container from the `yt-dlp` image and bind our local directory to it like so:
+
+```bash
+$ docker run -v "$(pwd):/mydir" yt-dlp https://www.youtube.com/watch?v=saEpkcVi1d4
+```
+
+We have mounted our current folder as `/mydir`in the container, so that the video is saved to our
+local machine instead of the `/mydir`folder in the container. We could also mount just a specific file,
+e.g., `-v "$(pwd)/material.md:/mydir/material.md"`.
+
+
+#### Allowing external connections into containers
+
+Programs can send messages to URL addresses, and they can be assigned to listen to any available port.
+The address `127.0.0.1` is also known as `localhost`. They always refer to the host on which they are
+sent or received.
+
+To open a connection to a Docker container we do the following:
+
+1. Expose port (add `EXPOSE <port>` to the Dockerfile)
+2. Publish port (run the container with `-p <host-port>:<container-port>`)
+
+__CAREFUL__: this shorty snytax, `-p <host-port>:<container-port>` basically results in 
+`-p 0.0.0.0:<host-port>:<container-port>`, which opens the port to anyone!
+
+You can also limit connections to a certain protocol, e.g., `EXPORT <port>/UDP` and `p <host-port>:<container-port>/udp`.
+
+#### Exercises
+
+---
+
+__Ex. 1.9.__
+
+_Solution_
+
+I created the `logs.log` file first with `touch logs.log`, otherwise the `-v flag` command would create a directory. 
+
+Then I ran:
+
+`docker run -v "$(pwd)/logs.log:/usr/src/app/text.log" devopsdockeruh/simple-web-service`
+
+---
+
+---
+
+__Ex. 1.10.__
+
+_Solution_
+
+```bash
+docker run -p 127.0.0.1:8080:8080 web-server
+```
+
+---
+
+
 
 ### Useful resources
 
