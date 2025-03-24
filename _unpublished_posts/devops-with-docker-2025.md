@@ -641,10 +641,10 @@ sent or received.
 
 To open a connection to a Docker container we do the following:
 
-1. Expose port (add `EXPOSE <port>` to the Dockerfile)
-2. Publish port (run the container with `-p <host-port>:<container-port>`)
+1. _Expose port_ (add `EXPOSE <port>` to the Dockerfile)
+2. _Publish port_ (run the container with `-p <host-port>:<container-port>`)
 
-__CAREFUL__: this shorty snytax, `-p <host-port>:<container-port>` basically results in 
+__CAREFUL__: this short snytax, `-p <host-port>:<container-port>` basically results in 
 `-p 0.0.0.0:<host-port>:<container-port>`, which opens the port to anyone!
 
 You can also limit connections to a certain protocol, e.g., `EXPORT <port>/UDP` and `p <host-port>:<container-port>/udp`.
@@ -676,6 +676,270 @@ docker run -p 127.0.0.1:8080:8080 web-server
 ```
 
 ---
+
+### Utilizing tools from the Registry
+
+Observe the following Dockerfile, which containerizes a [Ruby on Rails project](https://github.com/docker-hy/material-applications/tree/main/rails-example-project):
+
+```dockerfile
+# We need ruby 3.1.0. I found this from Docker Hub
+FROM ruby:3.1.0
+
+EXPOSE 3000
+
+WORKDIR /usr/src/app
+
+# Install the correct bundler version
+RUN gem install bundler:2.3.3
+
+# Copy the files required for dependencies to be installed
+# Copy these files separately to take advantage of Docker's caching mechanism
+COPY Gemfile* ./
+
+# Install all dependencies
+RUN bundle install
+
+# Copy all of the source code
+COPY . .
+
+# We pick the production mode since we have no intention of developing the software inside the container.
+# Run database migrations by following instructions from README
+RUN rails db:migrate RAILS_ENV=production
+
+# Precompile assets by following instructions from README
+RUN rake assets:precompile
+
+# And finally the command to run the application
+CMD ["rails", "s", "-e", "production"]
+```
+
+If you pay attention you will see it closely follows the [README file](https://github.com/docker-hy/material-applications/blob/main/rails-example-project/README.md) in the project.
+
+
+#### Exercises 
+
+---
+
+__Ex. 1.11.__
+
+The goal of this exercise is to containerize an old [Java Spring project](https://github.com/docker-hy/material-applications/tree/main/spring-example-project).
+
+_Solution_
+
+```dockerfile
+FROM amazoncorretto:8
+
+EXPOSE 8080
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN ./mvnw package
+
+CMD [ "java", "-jar", "./target/docker-example-1.1.3.jar" ]
+```
+
+Then use the following command:
+
+```bash
+docker build . -t java-project && docker run -p 127.0.0.1:8080:8080 java-project
+```
+
+---
+
+#### Project Exercises
+
+---
+
+__Ex. 1.12.__
+
+_Solution_
+
+```dockerfile
+
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+
+
+```
+
+Then use this to run:
+
+```bash
+docker build . -t project-frontend && docker run -p 127.0.0.1:3000:3000 project-frontend
+```
+
+---
+
+---
+
+__Ex. 1.13.__
+
+_Solution_
+
+```dockerfile
+FROM golang:1.16-bullseye
+
+WORKDIR /usr/src/app
+
+EXPOSE 8080
+
+COPY . .
+
+RUN go build
+
+RUN go test ./...
+
+CMD [ "./server" ]
+```
+
+Then run this: 
+
+```bash
+docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.0.1:8080:8080 project-backend
+```
+
+---
+
+---
+
+__Ex. 1.14.__
+
+_Solution_
+
+Dockerfile for the frontend:
+
+```dockerfile
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost:8080
+
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+Dockerfile for the backend:
+
+```dockerfile
+FROM golang:1.16-bullseye
+
+WORKDIR /usr/src/app
+
+EXPOSE 8080
+
+COPY . .
+
+ENV REQUEST_ORIGIN=http://localhost:3000
+
+RUN go build
+
+RUN go test ./...
+
+CMD [ "./server" ]
+```
+
+Command to build and run the frontend: 
+
+```bash
+docker build . -t project-frontend && docker run -p 127.0.0.1:3000:3000 project-frontend
+```
+
+```bash
+docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.0.1:8080:8080 project-backend
+```
+
+---
+
+---
+
+__Ex. 1.15.__
+
+_Solution_
+
+I had an LLM build my a simple Razor .NET web app where one can post messages in a simple GUI. Then I
+containerized it and published it to [Docker Hub](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general)
+
+Here is the Dockerfile I used:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+
+CMD [ "dotnet", "SimpleMessageBoard.dll" ]
+```
+
+---
+
+---
+
+__Ex. 1.16.__
+
+_Solution_
+
+I have deployed the app from the previous ex. (1.15) to DigitalOcean. 
+I built the image and ran it locally like this:
+
+```bash
+docker build --platform linux/amd64 -t project-homework . && docker run -p 127.0.0.1:8080:8080 project-homework
+```
+
+Then I created a repository on Docker hub called [aljazkovac/project-homework](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general) and pushed the image there.
+
+On [DigitalOcean](https://www.digitalocean.com/) I then created a webapp and simply connected it to the image 
+I pushed to Docker Hub. Then it was easy to deploy via the GUI there, and you can access the running app 
+[here](https://messages-app-homework-n7x9w.ondigitalocean.app/)(if it no longer works then it's because
+the exercise has been graded and I destroyed the resource to not have to pay for it). But you can always
+pull the image locally from Docker Hub and run it there!
+
+---
+
+### Summary
+
+In this chapter we learned the basics of containers and images. We learned how to write simple Dockerfiles,
+and how to use their caching mechanism to our advantage. We have also learned how to push images to Docker Hub,
+where they can be pulled by other users. 
+
+## Chapter 3: Docker compose
 
 
 
