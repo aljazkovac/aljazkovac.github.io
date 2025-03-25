@@ -939,7 +939,90 @@ In this chapter we learned the basics of containers and images. We learned how t
 and how to use their caching mechanism to our advantage. We have also learned how to push images to Docker Hub,
 where they can be pulled by other users. 
 
+### Certificate of completion
+
+![DevOps with Docker: Docker basics](/assets/images/devops-docker/devops-docker.basics-certificate.png)
+_Certificate for completing the Docker basics part of the DevOps with Docker course_
+
+Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/7sb5eqwntiyyxcg).
+
 ## Chapter 3: Docker compose
+
+### Basics of docker compose
+
+We will be using [Docker Compose](https://docs.docker.com/compose/) to define and run multi-container applications.
+
+| Command               | Explain                           |
+|-----------------------|-----------------------------------|
+| `docker compose up`   | Starts the services defined in the `docker-compose.yaml` file |
+| `docker compose down` | Stops and removes the running services |
+| `docker compose logs` | Shows the logs of the services |
+| `docker compose ps`   | Lists all the services and their current status |
+
+Find the full list of commands [here](https://docs.docker.com/reference/cli/docker/compose/).
+
+---
+
+__Ex. 2.1.__
+
+_Solution_
+
+```yaml
+services:
+  simple-web-service:
+    image: devopsdockeruh/simple-web-service
+    volumes:
+      - ./logs.log:/usr/src/app/text.log
+    container_name: simple-web-service
+```
+
+---
+
+Read [here](https://docs.docker.com/reference/compose-file/services/#command)) about how to add a command to docker compose. 
+Also, read [here](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/) about how to add environment variables.
+
+---
+
+__Ex. 2.2.__
+
+```yaml
+services:
+  web-server-compose:
+    image: devopsdockeruh/simple-web-service
+    ports:
+      - 127.0.0.1:8080:8080
+    command: server
+    container_name: web-server-compose
+```
+
+---
+
+---
+
+__Ex. 2.3.__
+
+I have decided to use the already built local images:
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    container_name: frontend
+  backend:
+    image: project-backend:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    container_name: backend
+```
+
+---
+
+### Docker networking
+
+
+
 
 
 
