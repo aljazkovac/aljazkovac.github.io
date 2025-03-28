@@ -1107,7 +1107,6 @@ We can run `docker compose port --index 1 whoami 8000` (change index for the oth
 the containers are running on. 
 
 For this type of a scaled up service, one would often use a load balancer, e.g., [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy):
-Read more about it [here](http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/).
 
 ```yaml
 services:
