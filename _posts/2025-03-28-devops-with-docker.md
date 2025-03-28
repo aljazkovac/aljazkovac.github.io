@@ -1056,7 +1056,6 @@ services:
   redis:
     image: redis:7.2-bookworm
     container_name: redis-container
-
 ```
 
 ---
@@ -1225,6 +1224,165 @@ volumes:
   database:
   files:
 ```
+
+---
+
+_Ex. 2.6._
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+```
+
+We didn't define a named volume for the postgres service, but Docker has nevertheless created one for us, 
+which we can see if we run `docker inspect` on the container: 
+
+```bash
+"Mounts": [
+            {
+                "Type": "volume",
+                "Name": "d842ae7ba093ff1045998bed12867a2b0c7d6650a6569c75449acf0925b40987",
+                "Source": "/var/lib/docker/volumes/d842ae7ba093ff1045998bed12867a2b0c7d6650a6569c75449acf0925b40987/_data",
+                "Destination": "/var/lib/postgresql/data",
+                "Driver": "local",
+                "Mode": "",
+                "RW": true,
+                "Propagation": ""
+            }
+        ],
+```
+
+---
+
+---
+
+_Ex. 2.7._
+
+Here is a very easy-to-understand difference between a named Docker volume and a bind mount.
+
+__Named Docker volume__
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+    volumes:
+      - database:/var/lib/postgresql/data
+
+volumes:
+  database:
+```
+
+This will create a named Docker volume like so:
+
+```bash
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker volume ls
+DRIVER    VOLUME NAME
+local     unpublished_posts_database
+```
+
+This will create a named Docker volume, and it will work fine, but you won't be able to inspect the volume
+locally on your machine. Instead, the files are stored in Docker's internal volume management.
+
+__Bind mount__
+
+However, if we do this:
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+    volumes:
+      - ./database:/var/lib/postgresql/data
+```
+
+Then we are using a bind mount. After running `docker compose up` a folder called `database` will be
+created where the `docker compose` file is located, and you will be able to inspect those files directly
+on your host machine. 
+
+P.S. The benefit of a bind mount is that you know where the data is located and it is therefore 
+easier to create backups. 
+
+---
 
 
 
