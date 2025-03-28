@@ -941,7 +941,7 @@ where they can be pulled by other users.
 
 ### Certificate of completion
 
-![DevOps with Docker: Docker basics](/assets/images/devops-docker/devops-docker.basics-certificate.png)
+![DevOps with Docker: Docker basics](/assets/images/devops-docker/devops-docker-basics-certificate.png)
 _Certificate for completing the Docker basics part of the DevOps with Docker course_
 
 Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/7sb5eqwntiyyxcg).
@@ -1021,7 +1021,200 @@ services:
 
 ### Docker networking
 
+Docker compose starts and automatically joins the defined services into a [network with a DNS](https://docs.docker.com/engine/network/). The containers can then simply reference each other with their service names. 
 
+---
+
+__Ex. 2.4.__
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - 127.0.0.1:3000:3000
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    container_name: backend-container
+    restart: unless-stopped
+    environment:
+      - REDIS_HOST=redis
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+
+```
+
+---
+
+#### Manual network definition
+
+It is possible to define a network manually in a `docker compose` file, and to establish a connection
+to an external network (a network defined in another `docker compose` file). 
+
+```yaml
+services:
+  db:
+    image: postgres:13.2-alpine
+    networks:
+      - database-network <em># Name in this Docker Compose file</em>
+
+networks:
+  database-network: # Name in this Docker Compose file
+    name: database-network # Name that will be the actual name of the network
+```
+
+```yaml
+services:
+  db:
+    image: backend-image
+    networks:
+      - database-network
+
+networks:
+  database-network:
+    external:
+      name: database-network # Must match the actual name of the network
+```
+
+#### Scaling
+
+Docker compose has the ability to scale a service and create multiple instances. For example, let's say we have the following `docker compose`:
+
+```yaml
+services:
+  whoami:
+    image: jwilder/whoami
+    # Leave the host port unspecified, otherwise all instances will try to connect to the same port;
+    # when left unspecified, Docker will automatically choose a free port.
+    ports:
+      - 8000
+```
+
+Then we can run this: `docker compose up --scale whoami=3` to spin up three containers of the same service.
+We can run `docker compose port --index 1 whoami 8000` (change index for the other two) to see what ports
+the containers are running on. 
+
+For this type of a scaled up service, one would often use a load balancer, e.g., [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy):
+Read more about it [here](http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/).
+
+```yaml
+services:
+  whoami:
+    image: jwilder/whoami
+    environment:
+        # Nginx-proxy needs to know where to route!
+      - VIRTUAL_HOST=whoami.colasloth.com
+  proxy:
+    image: jwilder/nginx-proxy
+    volumes:
+      # docker.sock provides access to the Docker Engine API, which contains all the information about
+      # running containers, their configs, and their metadata.
+      - /var/run/docker.sock:/tmp/docker.sock:ro # ro stands for read-only
+    ports:
+      - 80:80
+```
+
+Also read about [colasloth.com](https://colasloth.github.io/) if you're interested. It is a clever developer tool 
+that saves developers from editing their local `/etc/hosts file`. Instead, `colasloth.com` always points to localhost!
+Another interesting thing to learn about is `docker.sock`: [here](https://lobster1234.github.io/2019/04/05/docker-socket-file-for-ipc/) is a good resource!
+
+---
+
+__Ex. 2.5.__
+
+We have the following `docker compose`:
+
+```yaml
+services:
+  calculator:
+      image: devopsdockeruh/scaling-exercise-calculator
+      ports:
+        - 3000:3000
+      container_name: calculator
+  compute:
+      image: devopsdockeruh/scaling-exercise-compute
+      environment:
+        - VIRTUAL_HOST=compute.localtest.me
+  load-balancer:
+      build: ./load-balancer
+      image: load-balancer
+      volumes: 
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+      ports:
+        - 80:80
+      container_name: load-balancer
+```
+
+I scaled the `compute`service to two container instances and got it to pass the test:
+
+```bash
+docker compose up --scale compute=2
+```
+
+---
+
+### Volumes in action
+
+We have the following `docker compose` file:
+
+```yaml
+services:                                   # Start of services definition
+  db:                                       # Name of the service
+    image: postgres                         # Use official PostgreSQL image
+    restart: unless-stopped                 # Restart container unless manually stopped
+    environment:                            # Environment variables section
+      POSTGRES_PASSWORD: example            # Set PostgreSQL root password
+    container_name: db_redmine              # Explicitly name the container
+    volumes:                                # Container's volume mappings
+      - database:/var/lib/postgresql/data   # Map named volume 'database' to PostgreSQL data directory
+
+volumes:                                    # Docker volumes declaration
+  database:                                 # Declare a volume named 'database'
+  # We could specify further options here, e.g., driver, driver_opts, etc.
+```
+
+If we used the Postgres image without a `volume` configuration, an anonymous volume would still be created because the image's Dockerfile has a [`VOLUME` instruction](https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template), but ["wouldn't persist when the container is deleted and re-created."](https://github.com/docker-library/docs/blob/master/postgres/README.md#where-to-store-data)
+
+
+We can now add Redmine and Adminer like so:
+
+```yaml
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+    container_name: db_redmine
+    volumes:
+      - database:/var/lib/postgresql/data
+  redmine:
+    image: redmine:5.1-alpine
+    environment:
+      - REDMINE_DB_POSTGRES=db
+      - REDMINE_DB_PASSWORD=example
+    ports:
+      - 9999:3000
+    volumes:
+      - files:/usr/src/redmine/files
+    depends_on:
+      - db
+  adminer:
+    image: adminer:4
+    restart: always
+    environment:
+      - ADMINER_DESIGN=galkaev
+    ports:
+      - 8083:8080
+
+volumes:
+  database:
+  files:
+```
 
 
 
