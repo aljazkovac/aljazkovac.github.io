@@ -75,7 +75,8 @@ Containers are instances of images.
 Cooking metaphor:
 
 Image == recipe + ingredients
-Container == finished meal.
+
+Container == finished meal
 
 To run a container you need an image and a container runtime (Docker engine). The image provides the instructions (recipe) 
 and dependencies (ingredients) for the container to run.
@@ -492,11 +493,13 @@ __Ex. 1.8.__
 
 _Solution_
 
+```dockerfile
 # Start from the ubuntu image
 FROM devopsdockeruh/simple-web-service:alpine
 
 # When running docker run the command will be the one defined here
 CMD server
+```
 
 ---
 
@@ -986,7 +989,7 @@ services:
 
 ---
 
-Read [here](https://docs.docker.com/reference/compose-file/services/#command)) about how to add a command to docker compose. 
+Read [here](https://docs.docker.com/reference/compose-file/services/#command) about how to add a command to docker compose. 
 Also, read [here](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/) about how to add environment variables.
 
 ---
