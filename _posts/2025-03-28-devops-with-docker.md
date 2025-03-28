@@ -1,17 +1,25 @@
-Since I started working with DevOps at my current job at Caspeco (I started there in September 2022, and transitioned into a 
+---
+title: DevOps with Docker
+date: 2025-03-28 09:30:00 +0200
+categories: [devops, docker] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+tags: [devops, docker, containers] # TAG names should always be lowercase.
+description: A comprehensive course on Docker offered by University of Helsinki
+---
+
+Since I started working with DevOps at my current job at [Caspeco](https://caspeco.com/) (I started there in September 2022, and transitioned into a 
 more of a DevOps role in late 2023), I have been working a lot with containers. We started moving towards a microservices
 architecture, so a lot of my work has revolved around creating smaller services that we deploy as container apps in Azure.
-The reason for taking this course has therefore been to complement the knowledge and skills I learned at my work, with whatever
-this course could teach me. We shall see how much of it I will find interesting and challenging. Perhaps it will turn out to be mostly old stuff
-to me, but it can't hurt having a look and solidifying my Docker knowledge. I have good experience with University of Helsinki
+The reason for taking [this course](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker) has therefore been to complement the knowledge and skills I learned at my work, with whatever
+this course could teach me. I have good experience with University of Helsinki
 courses (took their [Full Stack Open](https://aljazkovac.github.io/posts/Full-Stack-Open-Deep-Dive-Into-Modern-Web-Development/) course a while ago), 
 so I look forward to this one!
 
 ## Chapter 1: Getting started
 
-This chapter is just about some general course information and setting up Docker, etc. But what I really loved was the preamble
-on LLMs and their role in software development, and how a programmer should approach working with them. I really recommend
-reading it. Here is just a little taste to whet your appetite:
+This chapter is just about some general course information and setting up Docker, etc. But what I really loved was 
+the [preamble on LLMs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-1) and their role in software development, 
+and how a programmer should approach working with them. I really recommend reading it. 
+Here is just a little taste to whet your appetite:
 
 > The rapid development of language models puts the student in a challenging position: is it worth and is it even necessary 
 > to learn things at a detailed level, when you can get almost everything ready-made from language models?
