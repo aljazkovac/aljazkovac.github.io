@@ -1429,7 +1429,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
 ```
 
-```nginx configuration
+```nginx
 events { worker_connections 1024; }
 
 http {
