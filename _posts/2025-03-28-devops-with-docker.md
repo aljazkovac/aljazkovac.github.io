@@ -1384,6 +1384,89 @@ easier to create backups.
 
 ---
 
+---
+
+_Ex. 2.8._
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+    volumes:
+      - ./database:/var/lib/postgresql/data
+  nginx:
+    image: nginx:1.27.4-bookworm
+    ports:
+      - "127.0.0.1:80:80"
+    container_name: nginx-container
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+```
+
+```nginx configuration
+events { worker_connections 1024; }
+
+http {
+  server {
+    listen 80;
+
+    # configure here where requests to http://localhost/...
+    # are forwarded
+    location / {
+      proxy_pass http://frontend:3000;
+    }
+
+    # configure here where requests to http://localhost/api/...
+    # are forwarded
+    location /api/ {
+      proxy_set_header Host $host;
+      # Huge difference if you set this without the trailing slash: in that case, nginx keeps the entire
+      # matched location and appends it to the proxy URL => request to /api/ping -> http://backend:8080/api/ping
+      # With the trailing slash: nginx removes the matched location before proxying => 
+      # request to /api/ping -> http://backend:8080/ping
+      proxy_pass http://backend:8080/;
+    }
+  }
+}
+```
+
+There is a crucial difference between `proxy_pass http://backend:8080`and `proxy pass http://backend:8080/`:
+
+1. proxy_pass `http://backend:8080` (no trailing slash) keeps the entire matched location and appends it:
+    - Nginx keeps the entire matched location and appends it to the proxy URL
+    - Request to `/api/ping` → `http://backend:8080/api/ping`
+2. proxy_pass `http://backend:8080/` (with trailing slash) removes the matched location prefix before proxying:
+    - Nginx removes the matched location prefix before proxying
+    - Request to `/api/ping` → `http://backend:8080/ping`
+
+---
+
 
 
 
