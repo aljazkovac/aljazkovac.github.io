@@ -1467,6 +1467,173 @@ There is a crucial difference between `proxy_pass http://backend:8080`and `proxy
 
 ---
 
+---
+
+_Ex. 2.9._
+
+I was getting a `403 Forbidden` error when making calls from the nginx port (`localhost`) to the backend (`localhost:8080/ping`).
+The reason is that different ports are considered different origins by the browser, and I had previously set the `REQUEST_ORIGIN`
+environment variable to `http://localhost:3000` directly in the backend Dockerfile (this was fine before when
+the requests were coming from the frontend service running at port 3000, but now they are coming from nginx
+running at port 80). However, setting it in `docker-compose` actually overrides the value set in Dockerfile, so that was the only change I made: I set `REQUEST_ORIGIN=http://localhost` in the backend service. My `docker-compose` now looks like this:
+
+```yaml
+services:
+  frontend:
+    image: project-frontend:latest
+    ports:
+      - "127.0.0.1:3000:3000"
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REQUEST_ORIGIN=http://localhost
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+    volumes:
+      - ./database:/var/lib/postgresql/data
+  nginx:
+    image: nginx:1.27.4-bookworm
+    ports:
+      - "127.0.0.1:80:80"
+    container_name: nginx-container
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+```
+
+---
+
+---
+
+This took a while to get working. The trick was to understand the difference between build-time variables
+and runtime variables.
+
+Here's how to identify build-time vs runtime variables:
+
+1. Build-time variables are needed during the image build process:
+    - Variables used in RUN commands
+    - Variables that affect the build output
+    - React's REACT_APP_* variables (they get embedded into the built JavaScript)
+    - Variables needed for compilation/building steps
+    - Example: `npm run build` needs REACT_APP_* variables because they're bundled into the static files
+
+2. Runtime variables are needed when the container runs:
+    - Variables used in CMD or ENTRYPOINT
+    - Configuration for running services (ports, hosts, passwords)
+    - Backend service configurations
+    - Database connections
+    - Example: `REQUEST_ORIGIN` in the backend because it's checked during request handling
+
+__Quick way to tell__:
+    - If the variable is used before/during a build step (RUN npm run build) → Build-time
+    - If the variable is used by the running application → Runtime
+
+That is why I was able to overwrite the `REQUEST_ORIGIN` variable in the docker-compose previosly, 
+although it is set in the backend Dockerfile, but I was not able to do the same with the `REACT_APP_BACKEND_URL` variable which is being set in the frontend Dockerfile. The solution was to 
+change it in the Dockerfile and then rebuild the image. 
+
+The resulting frontend Dockerfile:
+
+```dockerfile
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+The resulting `docker-compose` with the ports removed:
+
+```yaml
+services:
+  frontend:
+    image: project-frontend-new:latest
+    container_name: frontend-container
+  backend:
+    image: project-backend:latest
+    restart: unless-stopped
+    container_name: backend-container
+    environment:
+      - REQUEST_ORIGIN=http://localhost
+      - REDIS_HOST=redis
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DATABASE=postgres-db
+  redis:
+    image: redis:7.2-bookworm
+    container_name: redis-container
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db-postgres-container
+    environment:
+      - POSTGRES_USER=postgres-user
+      - POSTGRES_PASSWORD=postgres-password
+      - POSTGRES_DB=postgres-db
+    volumes:
+      - ./database:/var/lib/postgresql/data
+  nginx:
+    image: nginx:1.27.4-bookworm
+    ports:
+      - "127.0.0.1:80:80"
+    container_name: nginx-container
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+```
+
+And the result of running the port scan:
+
+```bash
+(base) aljazkovac@Aljazs-MacBook-Pro example-frontend % docker run --platform linux/amd64 -it --rm --network host networkstatic/nmap localhost
+Starting Nmap 7.92 ( https://nmap.org ) at 2025-03-30 20:26 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.0000040s latency).
+Other addresses for localhost (not scanned): ::1
+Not shown: 998 closed tcp ports (reset)
+PORT    STATE    SERVICE
+80/tcp  filtered http
+111/tcp open     rpcbind
+
+Nmap done: 1 IP address (1 host up) scanned in 1.41 seconds
+```
+
+We see that the backend and frontend ports are now not published, and only the nginx port 
+(and the [rpcbind service port](https://en.wikipedia.org/wiki/Portmap)) are open.
+
+---
+
 
 
 
