@@ -1610,6 +1610,7 @@ Here's how to identify build-time vs runtime variables:
     - Example: `REQUEST_ORIGIN` in the backend because it's checked during request handling
 
 __Quick way to tell__:
+
     - If the variable is used before/during a build step (RUN npm run build) → Build-time
     - If the variable is used by the running application → Runtime
 
