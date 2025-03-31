@@ -1133,6 +1133,72 @@ Another interesting thing to learn about is `docker.sock`: [here](https://lobste
 
 ---
 
+__Understanding colasloth.com and /etc/hosts__
+
+When developing locally with multiple services, you often need different domain names pointing to your local machine. Traditionally, this is done by editing the `/etc/hosts` file, which is a local system file that maps hostnames to IP addresses. It acts as a local DNS lookup table that your operating system checks before making DNS queries to external DNS servers.
+
+A typical `/etc/hosts` file might look like this:
+```bash
+# Local development environments
+127.0.0.1    localhost
+127.0.0.1    myapp.local
+127.0.0.1    api.myapp.local
+127.0.0.1    admin.myapp.local
+```
+
+However, editing this file:
+- Requires admin/root privileges
+- Needs to be done on each developer's machine
+- Can become messy with many entries
+
+This is where [colasloth.com](https://colasloth.github.io/) comes in - it's a clever developer tool that automatically resolves all its subdomains to `127.0.0.1` (localhost). This means you can use any subdomain like `myapp.colasloth.com` or `api.colasloth.com` and it will point to your local machine, without any `/etc/hosts` file modifications!
+
+Example usage in docker-compose:
+```yaml
+services:
+  frontend:
+    environment:
+      - VIRTUAL_HOST=app.colasloth.com
+  api:
+    environment:
+      - VIRTUAL_HOST=api.colasloth.com
+```
+
+This makes local development much easier, especially when working with multiple services that need different domain names.
+---
+
+---
+
+__Understanding docker.sock__
+
+The `docker.sock` file is a Unix socket that serves as the primary entry point for the Docker API. It allows processes to communicate with the Docker daemon, which manages containers, images, networks, and volumes on your system.
+
+When you mount docker.sock into a container like this:
+```yaml
+services:
+  proxy:
+    image: nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro  # ro = read-only
+```
+
+You're essentially giving that container access to the Docker daemon's API. This is particularly useful for:
+
+1. **Container Management**: The container can create, stop, or remove other containers
+2. **Auto-Discovery**: Services like nginx-proxy can automatically detect new containers and update their configuration
+3. **Monitoring**: Tools can collect metrics about running containers
+
+**Security Note**: Mounting docker.sock gives significant power to the container - it can control the Docker daemon and other containers. Always:
+- Use read-only mode (`ro`) when possible
+- Only mount it to trusted containers
+- Be cautious with permissions
+
+A common use case is with reverse proxies that need to automatically detect and route traffic to newly created containers, as shown in our scaling example above.
+
+---
+
+---
+
 __Ex. 2.5.__
 
 We have the following `docker compose`:
@@ -1634,7 +1700,34 @@ We see that the backend and frontend ports are now not published, and only the n
 
 ---
 
+### Containers in development
 
+Like I mentioned at the beginning, at my current job we are moving to a microservices architecture, 
+and deploying most of our services as container apps in Azure. However, we still do quite a bit of our 
+development the old-fashioned way, meaning we don't use development containers. One of the reasons for
+me taking this course is I would like to set up development containers for my team at least, so that one
+could spin up the backend and frontend with the help of a `docker-compose`. There will be some challenges
+along the way, I am sure, like deciding how to deal with Azure key vault, service bus, etc. However, I do
+think it would benefit our team greatly, and it would certainly solve the "it works on my computer" problem. 
+Feel free to have a look at this [interesting study on containerized development environments](https://helda.helsinki.fi/items/9f681533-f488-406d-b2d8-a2f8b225f283). 
+
+### Summary
+
+In this chapter we did the following:
+docker-compose, networking, scaling and load-balancing (learned about colasloth.com and docker.sock), volumes (bind mounts vs. docker volumes), how to setup nginx reverse proxy (and difference between build-time and runtime variables). 
+1. The basics of `docker-compose`
+2. The basics of docker networking
+3. How to scale and load-balance containers (aldo learned about `colasloth.com` and `docker.sock`)
+4. Volumes: bind mounts vs. named Docker volumes
+5. How to setup nginx reverse proxy (and the difference between build-time and runtime variables)
+
+
+### Certificate of completion
+
+![DevOps with Docker: Docker compose](/assets/images/devops-docker/devops-docker-compose-certificate.png)
+_Certificate for completing the Docker basics part of the DevOps with Docker course_
+
+Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/8c978jnqck2k83x).
 
 
 ### Useful resources
@@ -1643,3 +1736,4 @@ We see that the backend and frontend ports are now not published, and only the n
 - https://docs.docker.com/
 - https://github.com/docker-library
 - 
+
