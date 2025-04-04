@@ -1731,11 +1731,71 @@ _Certificate for completing the Docker basics part of the DevOps with Docker cou
 
 Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/8c978jnqck2k83x).
 
+## Chapter 4: Security and optimization
+
+### Official images and trust
+
+To find the official version of a certain image, look at [Docker Official images](https://github.com/docker-library),
+or the accompanying [GitHub repository](https://github.com/docker-library/official-images).
+
+A good command to know is `docker image history <image>`, which shows layers that were created by a command
+in the image's Dockerfile. For example, if I have this Dockerfile:
+
+```dockerfile
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+
+RUN npm run build
+
+RUN npm install -g serve
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+Then the `docker image history` command will show this:
+
+```bash
+(base) aljazkovac@Aljazs-MacBook-Pro example-frontend % docker image history project-frontend-new
+66781200778c   5 days ago      CMD ["serve" "-s" "-l" "3000" "build"]          0B        buildkit.dockerfile.v0
+<missing>      5 days ago      RUN /bin/sh -c npm install -g serve # buildk…   8.68MB    buildkit.dockerfile.v0
+<missing>      5 days ago      RUN /bin/sh -c npm run build # buildkit         11MB      buildkit.dockerfile.v0
+<missing>      12 days ago     ENV REACT_APP_BACKEND_URL=http://localhost/a…   0B        buildkit.dockerfile.v0
+<missing>      12 days ago     RUN /bin/sh -c npm install # buildkit           360MB     buildkit.dockerfile.v0
+<missing>      12 days ago     COPY . . # buildkit                             707kB     buildkit.dockerfile.v0
+<missing>      12 days ago     EXPOSE map[3000/tcp:{}]                         0B        buildkit.dockerfile.v0
+<missing>      12 days ago     WORKDIR /usr/src/app                            0B        buildkit.dockerfile.v0
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["node"]                 0B        
+<missing>      19 months ago   /bin/sh -c #(nop)  ENTRYPOINT ["docker-entry…   0B        
+<missing>      19 months ago   /bin/sh -c #(nop) COPY file:4d192565a7220e13…   388B      
+<missing>      19 months ago   /bin/sh -c set -ex   && savedAptMark="$(apt-…   9.49MB    
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV YARN_VERSION=1.22.19     0B        
+<missing>      19 months ago   /bin/sh -c ARCH= && dpkgArch="$(dpkg --print…   100MB     
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV NODE_VERSION=16.20.2     0B        
+<missing>      19 months ago   /bin/sh -c groupadd --gid 1000 node   && use…   337kB     
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B        
+<missing>      19 months ago   /bin/sh -c #(nop) ADD file:abd1ad48ae3ebec7a…   74.4MB    
+```
+
+We can see my own image layers (created 5-12 days ago), and the base image layers (created 19 months ago). 
+
+
+
+
 
 ### Useful resources
 
 - https://hub.docker.com/
 - https://docs.docker.com/
 - https://github.com/docker-library
-- 
+- https://helda.helsinki.fi/items/9f681533-f488-406d-b2d8-a2f8b225f283
 
