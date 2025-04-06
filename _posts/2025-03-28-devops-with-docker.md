@@ -1788,7 +1788,78 @@ Then the `docker image history` command will show this:
 
 We can see my own image layers (created 5-12 days ago), and the base image layers (created 19 months ago). 
 
+### Deployment pipelines
 
+In this chapter, we will use [GitHub Actions](https://github.com/features/actions) to build and push an image to Docker Hub, and then [Watchtower](https://containrrr.dev/watchtower/) to pull and restart the new image.
+
+---
+
+_Ex. 3.1._
+
+This was an interesting exercise. I had to create a GitHub Action workflow that would build and push
+a Docker image to Docker Hub, and then set up Watchtower to watch the image for changes, and pull and
+restart if the image has been updated.
+
+I created the following GitHub Action workflow:
+
+```yaml
+name: Release Node.js app
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:  # name of the job
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
+      with:
+        context: .
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ secrets.DOCKER_USERNAME }}/nodeapp:latest
+```
+
+And I added this line in the Dockerfile for the project I was containerizing:
+
+```dockerfile
+LABEL com.centurylinklabs.watchtower.enable=true
+```
+
+Then I created the following `docker-compose`:
+
+```yaml
+services:
+  watchtower:
+    image: containrrr/watchtower
+    environment:
+      -  WATCHTOWER_POLL_INTERVAL=60 <em># Poll every 60 seconds</em>
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    container_name: watchtower
+    command: --label-enable
+```
+
+The `label-enable` command tells Watchtower to [only watch the images that have the label](https://containrrr.dev/watchtower/container-selection/) `com.centurylinklabs.watchtower.enable=true`
+set. That is why I had to add that label to the Dockerfile.
+
+---
 
 
 
