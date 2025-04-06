@@ -1846,6 +1846,12 @@ Then I created the following `docker-compose`:
 
 ```yaml
 services:
+  app: 
+    image: aljazkovac/nodeapp:latest
+    ports:
+      - "127.0.0.1:8080:8080"
+    container_name: express-app
+
   watchtower:
     image: containrrr/watchtower
     environment:
