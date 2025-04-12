@@ -894,7 +894,7 @@ __Ex. 1.15.__
 
 _Solution_
 
-I had an LLM build my a simple Razor .NET web app where one can post messages in a simple GUI. Then I
+I had an LLM build a simple Razor .NET web app where one can post messages in a simple GUI. Then I
 containerized it and published it to [Docker Hub](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general)
 
 Here is the Dockerfile I used:
@@ -1864,6 +1864,88 @@ services:
 
 The `label-enable` command tells Watchtower to [only watch the images that have the label](https://containrrr.dev/watchtower/container-selection/) `com.centurylinklabs.watchtower.enable=true`
 set. That is why I had to add that label to the Dockerfile.
+
+---
+
+---
+
+_Ex. 3.2._
+
+I added a step to the pipeline, which redeploys the app on Digital ocean:
+
+```yaml
+name: Release Simple Message Board App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:  # name of the job
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push Docker image
+      id: push
+      uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
+      with:
+        context: .
+        push: true
+        platforms: linux/amd64,linux/arm64
+        tags: ${{ secrets.DOCKER_USERNAME }}/project-homework:latest
+  
+    - name: Deploy the app
+      uses: digitalocean/app_action/deploy@v2
+      env:
+        SAMPLE_DIGEST: ${{ steps.push.outputs.digest }}
+      with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+```
+
+To get this to work, I had to add an [app spec](https://docs.digitalocean.com/glossary/app-spec/) to the project:
+
+```yaml
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: aljazkovac-project-homework
+    match:
+      path:
+        prefix: /
+name: lionfish-app
+region: ams
+services:
+- http_port: 8080
+  image:
+    registry: aljazkovac
+    registry_type: DOCKER_HUB
+    repository: project-homework
+    digest: ${SAMPLE_DIGEST}
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-0.5gb
+  name: aljazkovac-project-homework
+```
+
+Then I tested by making some obvious code changes and checking if they come into effect after pushing
+them to GitHub.
 
 ---
 
