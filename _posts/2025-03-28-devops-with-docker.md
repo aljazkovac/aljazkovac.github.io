@@ -1949,6 +1949,107 @@ them to GitHub.
 
 ---
 
+---
+
+_Ex. 3.3._
+
+I wrote this script:
+
+```sh
+#!/bin/sh
+GITHUB_REPO="https://github.com/"$1.git
+DOCKER_HUB_REPO=$2
+
+echo "Cloning repository:" $GITHUB_REPO
+git clone $GITHUB_REPO repo_dir
+cd repo_dir
+
+echo "Building Docker image"
+docker build . -t $DOCKER_HUB_REPO
+
+echo "Pushing image to Docker Hub"
+docker push $DOCKER_HUB_REPO
+
+cd ..
+rm -rf repo_dir
+
+echo "Done!"
+```
+
+The script is super simple and has no error checking. But it works.
+
+I ran it like this:
+
+```bash
+./script.sh aljazkovac/simplemessageboard aljazkovac/simplemessageboardscriptimage
+```
+
+---
+
+---
+
+_Ex. 3.4._
+
+Dockerfile:
+
+```dockerfile
+FROM docker:25-git AS build
+
+WORKDIR /usr/src/app
+
+COPY script.sh .
+
+ENTRYPOINT [ "/usr/src/app/script.sh" ]
+```
+
+Script:
+
+```sh
+#!/bin/sh
+GITHUB_REPO="https://github.com/"$1.git
+DOCKER_HUB_REPO=$2
+
+if [ -n "$DOCKER_USER" ] && [ -n "DOCKER_PWD" ]; then
+    echo "Logging in to Docker Hub"
+    echo "$DOCKER_PWD" | docker login -u "$DOCKER_USER" --password-stdin
+fi
+
+echo "Cloning repository:" $GITHUB_REPO
+git clone $GITHUB_REPO repo_dir
+cd repo_dir
+
+echo "Building Docker image"
+docker build . -t $DOCKER_HUB_REPO
+
+echo "Pushing image to Docker Hub"
+docker push $DOCKER_HUB_REPO
+
+cd ..
+rm -rf repo_dir
+
+echo "Done!"
+```
+
+Build the image first: 
+
+```sh
+docker build -t scriptbuilder .
+```
+
+Create a Docker PAT to use as password.
+
+Run the container:
+
+```bash
+docker run -e DOCKER_USER=your_username \
+  -e DOCKER_PWD=your_password \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  script-builder aljazkovac/simplemessageboard aljazkovac/simplemessageboardscriptimage
+```
+
+I then also verified that the image works by pulling it from Docker Hub and running it locally. 
+
+---
 
 
 ### Useful resources
