@@ -2051,6 +2051,327 @@ I then also verified that the image works by pulling it from Docker Hub and runn
 
 ---
 
+### Using a non-root user
+
+Running containers as root can pose security risks because if an attacker were to gain access to the container, they would have root privileges which could allow modification of system files and installation of malicious software. We should follow the __Principle of Least Privilege__, meaning that applications should run with the permissions they need to function and nothing more. 
+
+---
+
+_Ex. 3.5._
+
+Backend Dockerfile with non-root user:
+
+```dockerfile
+FROM golang:1.16-bullseye
+
+WORKDIR /usr/src/app
+
+RUN adduser -disabled-password backenduser
+
+EXPOSE 8080
+
+COPY . .
+
+ENV REQUEST_ORIGIN=http://localhost:3000
+
+RUN go build
+
+RUN go test ./...
+
+RUN chown -R backenduser:backenduser .
+
+USER backenduser
+
+CMD [ "./server" ]
+```
+
+Frontend Dockerfile with non-root user:
+
+```dockerfile
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+RUN adduser -disabled-password frontenduser
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+
+RUN npm run build
+
+RUN npm install -g serve
+
+RUN chown -R frontenduser:frontenduser .
+
+USER frontenduser
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+---
+
+### Optimizing the image size
+
+A small image size has many advantages:
+
+1. Performance
+2. Less attack surface
+
+We can reduce the size of our images like this:
+
+1. Minimize the number of layers in the image ([each command that is executed to the base image forms a layer](https://docs.docker.com/get-started/docker-overview/#how-does-a-docker-image-work))
+2. Use small base images
+3. Use the _builder pattern_
+
+Builder pattern: with compiled languages remove the tools that are needed to compile the code from the final container:
+
+1. Build the code in the first container
+2. Build artifacts (binaries, static files, bundles, transpiled code) are packaged into the runtime container 
+3. The runtime container contains no tools that are needed to compile the code
+
+---
+
+_Ex. 3.6._
+
+Let us first optimize the frontend image. Here is the original image size:
+
+```bash
+REPOSITORY       TAG     IMAGE ID       CREATED      SIZE
+frontend-nonroot latest  e9e65a4d959c   2 hours ago  746MB
+```
+
+Here is the original Dockerfile for the frontend:
+
+```yaml
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+RUN adduser -disabled-password frontenduser
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+RUN npm install
+
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+
+RUN npm run build
+
+RUN npm install -g serve
+
+RUN chown -R frontenduser:frontenduser .
+
+USER frontenduser
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+If we run `docker image history` on the original frontend image we get this:
+
+```bash
+(base) aljazkovac@Aljazs-MacBook-Pro example-frontend % docker image history e9e65a4d959c
+IMAGE          CREATED         CREATED BY                                      SIZE      COMMENT
+e9e65a4d959c   2 hours ago     CMD ["serve" "-s" "-l" "3000" "build"]          0B        buildkit.dockerfile.v0
+<missing>      2 hours ago     USER frontenduser                               0B        buildkit.dockerfile.v0
+<missing>      2 hours ago     RUN /bin/sh -c chown -R frontenduser:fronten…   185MB     buildkit.dockerfile.v0
+<missing>      2 hours ago     RUN /bin/sh -c npm install -g serve # buildk…   6.58MB    buildkit.dockerfile.v0
+<missing>      2 hours ago     RUN /bin/sh -c npm run build # buildkit         8.68MB    buildkit.dockerfile.v0
+<missing>      2 hours ago     ENV REACT_APP_BACKEND_URL=http://localhost/a…   0B        buildkit.dockerfile.v0
+<missing>      2 hours ago     RUN /bin/sh -c npm install # buildkit           360MB     buildkit.dockerfile.v0
+<missing>      2 hours ago     COPY . . # buildkit                             707kB     buildkit.dockerfile.v0
+<missing>      2 hours ago     EXPOSE map[3000/tcp:{}]                         0B        buildkit.dockerfile.v0
+<missing>      2 hours ago     RUN /bin/sh -c adduser -disabled-password fr…   338kB     buildkit.dockerfile.v0
+<missing>      3 weeks ago     WORKDIR /usr/src/app                            0B        buildkit.dockerfile.v0
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["node"]                 0B
+<missing>      19 months ago   /bin/sh -c #(nop)  ENTRYPOINT ["docker-entry…   0B
+<missing>      19 months ago   /bin/sh -c #(nop) COPY file:4d192565a7220e13…   388B
+<missing>      19 months ago   /bin/sh -c set -ex   && savedAptMark="$(apt-…   9.49MB
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV YARN_VERSION=1.22.19     0B
+<missing>      19 months ago   /bin/sh -c ARCH= && dpkgArch="$(dpkg --print…   100MB
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV NODE_VERSION=16.20.2     0B
+<missing>      19 months ago   /bin/sh -c groupadd --gid 1000 node   && use…   337kB
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B
+<missing>      19 months ago   /bin/sh -c #(nop) ADD file:abd1ad48ae3ebec7a…   74.4MB
+```
+
+We first join all run layers into one:
+
+```yaml
+FROM node:16.20.2-bullseye-slim
+
+WORKDIR /usr/src/app
+
+RUN adduser -disabled-password frontenduser
+
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+
+COPY . .
+
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+
+RUN npm install && npm run build && npm install -g serve && chown -R frontenduser:frontenduser .
+
+USER frontenduser
+
+CMD [ "serve", "-s", "-l", "3000", "build" ]
+```
+
+This results in an image that is smaller than the original (746 MB) but still relatively large (561 MB):
+
+```bash
+REPOSITORY              TAG       IMAGE ID       CREATED             SIZE
+frontend-optimized-1    latest    6f0611a5e25f   About an hour ago   561MB
+frontend-nonroot        latest    e9e65a4d959c   4 hours ago         746MB
+```
+
+If we inspect the layers again we can see that we could benefit from a multi-stage build:
+
+```bash
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker image history 6f0611a5e25f
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+6f0611a5e25f   40 seconds ago   CMD ["serve" "-s" "-l" "3000" "build"]          0B        buildkit.dockerfile.v0
+<missing>      40 seconds ago   USER frontenduser                               0B        buildkit.dockerfile.v0
+<missing>      40 seconds ago   RUN /bin/sh -c npm install && npm run build …   375MB     buildkit.dockerfile.v0
+<missing>      2 hours ago      ENV REACT_APP_BACKEND_URL=http://localhost/a…   0B        buildkit.dockerfile.v0
+<missing>      2 hours ago      COPY . . # buildkit                             707kB     buildkit.dockerfile.v0
+<missing>      2 hours ago      EXPOSE map[3000/tcp:{}]                         0B        buildkit.dockerfile.v0
+<missing>      2 hours ago      RUN /bin/sh -c adduser -disabled-password fr…   338kB     buildkit.dockerfile.v0
+<missing>      3 weeks ago      WORKDIR /usr/src/app                            0B        buildkit.dockerfile.v0
+<missing>      19 months ago    /bin/sh -c #(nop)  CMD ["node"]                 0B
+<missing>      19 months ago    /bin/sh -c #(nop)  ENTRYPOINT ["docker-entry…   0B
+<missing>      19 months ago    /bin/sh -c #(nop) COPY file:4d192565a7220e13…   388B
+<missing>      19 months ago    /bin/sh -c set -ex   && savedAptMark="$(apt-…   9.49MB
+<missing>      19 months ago    /bin/sh -c #(nop)  ENV YARN_VERSION=1.22.19     0B
+<missing>      19 months ago    /bin/sh -c ARCH= && dpkgArch="$(dpkg --print…   100MB
+<missing>      19 months ago    /bin/sh -c #(nop)  ENV NODE_VERSION=16.20.2     0B
+<missing>      19 months ago    /bin/sh -c groupadd --gid 1000 node   && use…   337kB
+<missing>      19 months ago    /bin/sh -c #(nop)  CMD ["bash"]                 0B
+<missing>      19 months ago    /bin/sh -c #(nop) ADD file:abd1ad48ae3ebec7a…   74.4MB
+```
+
+Let us try some more advanced optimizations (builder pattern and minimize `RUN` layers where possible):
+
+```dockerfile
+# Build
+FROM node:16.20.2-bullseye-slim AS builder
+WORKDIR /usr/src/app
+# Helps with caching independencies
+COPY package*.json ./
+RUN npm install 
+COPY . .
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+RUN npm run build
+
+# Runtime
+FROM node:alpine
+WORKDIR /usr/src/app
+# Create non-root user
+RUN adduser -D frontenduser && \
+    npm install -g serve && \
+    chown -R frontenduser:frontenduser .
+# Copy static files from builder
+COPY --from=builder /usr/src/app/build ./build
+# Install server
+USER frontenduser
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+CMD ["serve", "-s", "-l", "3000", "build"]
+```
+
+This results in an image that is significantly smaller:
+
+```bash
+REPOSITORY                TAG        IMAGE ID       CREATED             SIZE
+frontend-optimized-2      latest     563bc7313368   About an hour ago   176MB
+frontend-optimized-1      latest     6f0611a5e25f   39 hours ago        561MB
+frontend-nonroot          latest     e9e65a4d959c   41 hours ago        746MB
+```
+
+We have been able to decrease the image size from 746 MB to 176 MB. We could have minimized it even
+further by using nginx to serve the static files but then we would need to also change the `CMD` and
+the port configuration (nginx serves the files on port 80 by default). 
+
+Now let us optimize the backend image. The original image size was:
+
+```bash
+REPOSITORY       TAG     IMAGE ID       CREATED      SIZE
+backend-nonroot  latest  7361b01d6c6e   2 hours ago  1.08GB
+```
+
+Here is the original Dockerfile for the backend:
+
+```yaml
+FROM golang:1.16-bullseye
+
+WORKDIR /usr/src/app
+
+RUN adduser -disabled-password backenduser
+
+EXPOSE 8080
+
+COPY . .
+
+ENV REQUEST_ORIGIN=http://localhost:3000
+
+RUN go build
+
+RUN go test ./...
+
+RUN chown -R backenduser:backenduser .
+
+USER backenduser
+
+CMD [ "./server" ]
+```
+
+We have already learned from the frontend that we would benefit from a multi-stage build, so let us 
+attempt to do that directly here:
+
+```dockerfile
+FROM golang:1.16-bullseye AS builder
+WORKDIR /usr/src/app
+# Copy dependency files first
+COPY go.* ./
+RUN go mod download
+# Copy source code
+COPY . .
+ENV REQUEST_ORIGIN=http://localhost:3000
+RUN go build -o server && go test ./...
+
+FROM debian:bullseye-slim
+WORKDIR /usr/src/app
+# Add basic tools and create non-root user
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/* && useradd -m backenduser
+# Copy only the built binary from builder stage
+COPY --from=builder /usr/src/app/server .
+RUN chown -R backenduser:backenduser server
+USER backenduser
+EXPOSE 8080
+CMD [ "./server" ]
+```
+
+This results in a significantly reduced image size:
+
+```bash
+REPOSITORY                TAG        IMAGE ID       CREATED              SIZE
+backend-optimized-1       latest     0835447d9372   About a minute ago   112MB
+backend-nonroot           latest     7361b01d6c6e   25 hours ago         1.08GB
+```
+
+And, most importantly, if we run containers from the optimizes images, they work.
+
+---
+
 
 ### Useful resources
 
