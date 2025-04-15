@@ -2368,7 +2368,7 @@ backend-optimized-1       latest     0835447d9372   About a minute ago   112MB
 backend-nonroot           latest     7361b01d6c6e   25 hours ago         1.08GB
 ```
 
-And, most importantly, if we run containers from the optimizes images, they work.
+And, most importantly, if we run containers from the optimized images, they work.
 
 ---
 
