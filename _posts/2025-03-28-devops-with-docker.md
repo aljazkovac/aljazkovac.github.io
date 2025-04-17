@@ -17,8 +17,7 @@ so I look forward to this one!
 ## Chapter 1: Getting started
 
 This chapter is just about some general course information and setting up Docker, etc. But what I really loved was 
-the [preamble on LLMs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-1) and their role in software development, 
-and how a programmer should approach working with them. I really recommend reading it. 
+the [preamble on LLMs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-1) and their role in software development, and how a programmer should approach working with them. I really recommend reading it. 
 Here is just a little taste to whet your appetite:
 
 > The rapid development of language models puts the student in a challenging position: is it worth and is it even necessary 
@@ -33,8 +32,7 @@ when you write it, how will you ever debug it?"__
 I couldn't agree more! I think the need to learn the basics well is greater now than ever. Recent research shows that GitHub Copilot
 has negatively affected code quality since its widespread adoption. I personally don't use any code completion when I code anymore. 
 It's like somebody constantly trying to finish your sentences. It is impossible to get any quality work done. I do, however,
-use LLMs extensively when researching something or trying to learn the basics of something completely new. I do think they can be
-a great tool, if used correctly.
+use LLMs extensively when researching something or trying to learn the basics of something completely new. I do think they can be a great tool, if used correctly.
 
 ## Chapter 2: Docker basics
 
@@ -42,8 +40,7 @@ a great tool, if used correctly.
 
 #### DevOps and Docker
 
-DevOps (Dev == development, Ops == operations) simply means that the release, configuring and monitoring of software is in the hands
-of the people who develop it.
+DevOps (Dev == development, Ops == operations) simply means that the release, configuring and monitoring of software is in the hands of the people who develop it.
 
 > Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages 
 > called containers.
@@ -64,15 +61,13 @@ which virtualizes the physical hardware.
 > resulting in a more lightweight and efficient solution.
 > — ([Devops with Docker](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts))
 
-Containers therefore offer faster startup times and less overhead, but less isolation than VMs (the isolation level of containers 
-is at the process level, not the OS level).
+Containers therefore offer faster startup times and less overhead, but less isolation than VMs (the isolation level of containers is at the process level, not the OS level).
 
 __Side note:__ Docker can run natively only on Linux! Docker for Mac actually uses a VM that runs a Linux instance under the hood!
 
 #### Images and containers
 
-Containers are instances of images. 
-Cooking metaphor:
+Containers are instances of images. Cooking metaphor:
 
 Image == recipe + ingredients
 
@@ -2372,11 +2367,297 @@ And, most importantly, if we run containers from the optimized images, they work
 
 ---
 
+#### Image with preinstalled environment
 
-### Useful resources
+If we use an Alpine-based image (much smaller than the Ubuntu-based image, for example), then we will
+probably sooner or later find ourselves lacking some tools. Instead of installing the tools ourselves, 
+it is a good idea to look for images that have preinstalled environments that cover our needs, e.g., [Python image](https://hub.docker.com/_/python) (if Python is what we need).
 
-- https://hub.docker.com/
-- https://docs.docker.com/
-- https://github.com/docker-library
-- https://helda.helsinki.fi/items/9f681533-f488-406d-b2d8-a2f8b225f283
+---
+
+_Ex. 3.7._
+
+For the backend, I changed the builder and runtime images to slimmer alpine variants:
+
+```dockerfile
+FROM golang:1.16-alpine AS builder
+WORKDIR /usr/src/app
+# Copy dependency files first
+COPY go.* ./
+RUN go mod download
+# Copy source code
+COPY . .
+ENV REQUEST_ORIGIN=http://localhost:3000
+RUN apk add --no-cache build-base && \
+    go build -o server && \
+    go test ./...
+
+FROM alpine:3.21.3
+WORKDIR /usr/src/app
+# Add basic tools and create non-root user
+RUN apk add --no-cache ca-certificates && \
+adduser -D backenduser
+# Copy only the built binary from builder stage
+COPY --from=builder /usr/src/app/server .
+RUN chown -R backenduser:backenduser server
+USER backenduser
+EXPOSE 8080
+CMD [ "./server" ]
+```
+
+This resulted in a significant decrease in image size, from 112 MB to 43 MB:
+
+```bash
+REPOSITORY              TAG       IMAGE ID       CREATED         SIZE
+backend-optimized-2     latest    9ebf470e0a65   4 minutes ago   43MB
+backend-optimized-1     latest    0835447d9372   21 hours ago    112MB
+```
+
+For the frontend, I changed the build stage to a slimmer, Alpine version:
+
+```dockerfile
+# Build
+FROM node:16.20.2-alpine AS builder
+WORKDIR /usr/src/app
+# Helps with caching independencies
+COPY package*.json ./
+RUN npm install 
+COPY . .
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+RUN npm run build
+
+# Runtime
+FROM node:16.20.2-alpine
+WORKDIR /usr/src/app
+# Create non-root user
+RUN adduser -D frontenduser && \
+    npm install -g serve && \
+    chown -R frontenduser:frontenduser .
+# Copy static files from builder
+COPY --from=builder /usr/src/app/build ./build
+# Install server
+USER frontenduser
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+CMD ["serve", "-s", "-l", "3000", "build"]
+```
+
+This resulted in a decreased image size, from 176 MB to 129 MB:
+
+```bash
+REPOSITORY               TAG        IMAGE ID       CREATED          SIZE
+frontend-optimized-3     latest     5c70ae0e165c   7 minutes ago    129MB
+frontend-optimized-2     latest     563bc7313368   6 hours ago      176MB
+```
+
+---
+
+---
+
+_Ex. 3.8._
+
+I decided to use nginx for the runtime image of the frontend:
+
+```dockerfile
+# Build
+FROM node:16.20.2-alpine AS builder
+WORKDIR /usr/src/app
+# Helps with caching independencies
+COPY package*.json ./
+RUN npm install 
+COPY . .
+ENV REACT_APP_BACKEND_URL=http://localhost/api
+RUN npm run build
+
+# Runtime
+FROM nginx:alpine
+# Remove default nginx static files and config
+RUN rm -rf /usr/share/nginx/html/* && \
+    rm /etc/nginx/conf.d/default.conf
+# Copy static files from builder
+COPY --from=builder /usr/src/app/build /usr/share/nginx/html
+# Set up user, permissions, and configuration in one layer
+RUN adduser -D frontenduser && \
+    # Set up permissions for nginx directories
+    chown -R frontenduser:frontenduser /var/cache/nginx && \
+    chown -R frontenduser:frontenduser /var/log/nginx && \
+    touch /var/run/nginx.pid && \
+    chown -R frontenduser:frontenduser /var/run/nginx.pid && \
+    # Set permissions for content
+    chown -R frontenduser:frontenduser /usr/share/nginx/html && \
+    # Create nginx config 
+    echo 'server { \
+    listen 3000; \
+    location / { \
+        root /usr/share/nginx/html; \
+        index index.html; \
+        try_files $uri $uri/ /index.html; \
+    } \
+}' > /etc/nginx/conf.d/default.conf && \
+    chown -R frontenduser:frontenduser /etc/nginx/conf.d
+USER frontenduser
+# Port 5000 is reserved on my MacBook, so using port 3000 instead
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+I had to add some basic nginx config to make it work. The image size has once again been reduced, this time from 129 MB to 51.8 MB:
+
+```bash
+REPOSITORY              TAG       IMAGE ID       CREATED              SIZE
+frontend-optimized-4    latest    3bf23be4d456   About a minute ago   51.8MB
+frontend-optimized-3    latest    5c70ae0e165c   About an hour ago    129MB
+```
+
+---
+
+---
+
+_Ex. 3.9._
+
+This was slighly more complicated because the scratch images is completely empty. To get it to work, I had to set some specific environment variables (shout out to `claude-3.7-sonnet`) to address an architecture mismatch and to force Go to create a statically linked binary (`CGO_ENABLED`).
+
+Here is the final Dockerfile:
+
+```dockerfile
+FROM golang:1.16-alpine AS builder
+WORKDIR /usr/src/app
+# Copy dependency files first
+COPY go.* ./
+RUN go mod download
+# Copy source code
+COPY . .
+ENV REQUEST_ORIGIN=http://localhost:3000
+# Disable CGO for static linking (required for scratch image)
+ENV CGO_ENABLED=0
+# Set target OS explicitly to Linux
+ENV GOOS=linux
+# Set target architecture to amd64 (x86_64)
+ENV GOARCH=amd64
+RUN adduser -D backenduser && \
+    apk add --no-cache build-base && \
+    go build -o server && \
+    go test ./... && \
+    chown backenduser:backenduser server
+
+FROM scratch
+WORKDIR /usr/src/app
+COPY --from=builder /etc/passwd /etc/passwd
+# Copy SSL certificates from builder if HTTPS is needed
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+# Copy only the built binary from builder stage
+COPY --from=builder /usr/src/app/server .
+USER backenduser
+EXPOSE 8080
+CMD [ "./server" ]
+```
+
+The image size has now been reduced from 43 MB to 18.3 MB:
+
+```bash
+REPOSITORY              TAG       IMAGE ID       CREATED             SIZE
+backend-optimized-3     latest    8a5a175d1504   7 minutes ago       18.3MB
+backend-optimized-2     latest    9ebf470e0a65   3 hours ago         43MB
+```
+
+---
+
+---
+
+_Ex. 3.10_
+
+I have decided to optimize the SimpleMessageBoard project, which I have used before in this course.
+The original image size is: 
+
+```bash
+REPOSITORY                 TAG       IMAGE ID       CREATED          SIZE
+simplemessageboard-orig    latest    83ae82efc8c7   49 seconds ago   259MB
+```
+
+The original Dockerfile was this:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 8080
+
+CMD [ "dotnet", "SimpleMessageBoard.dll" ]
+```
+
+The original Dockerfile already uses a multi-stage build, but I decided to use the Alpine version for
+both the build and runtime stages, and I also added a user for increased security:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+WORKDIR /usr/src/app
+COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
+WORKDIR /app
+RUN adduser -D dotnetuser
+COPY --from=build /app/publish .
+USER dotnetuser
+EXPOSE 8080
+CMD [ "dotnet", "SimpleMessageBoard.dll" ]
+```
+
+This resulted in a greatly reduced image size:
+
+```bash
+REPOSITORY                         TAG        IMAGE ID       CREATED          SIZE
+simplemessageboard-optimized-1     latest     6e2594acc8e6   18 minutes ago   127MB
+simplemessageboard-orig            latest     83ae82efc8c7   40 minutes ago   259MB
+```
+
+---
+
+### Multi-host environments
+
+Kind (to run Kubernetes locally): https://kind.sigs.k8s.io/
+k3s (https://k3s.io/) and k3d (https://github.com/k3d-io/k3d) to run Kubernetes inside containers 
+(k3d creates containerized k3s clusters). This way you can spin up a multi-node k3s cluster on a single 
+machine using docker.
+
+Kubernetes runs a workload (application) by placing containers into pods (a set of running containers) and pods into nodes (either a virtual or a physical machine). Each node is managed by the control plane (the container orchestration 
+layer that exposes the API and interfaces to define, deploy and manage the lifecycle of containers) and 
+contains the services necessary to run pods. 
+
+---
+
+_Ex. 3.11._
+
+![Kubernetes architecture](/assets/images/devops-docker/kubernetes-architecture.png)
+_A diagram of the Kubernetes architecture_
+
+---
+
+### Summary
+
+In this chapter we learned how to make our Docker images smaller and more secure, by minimizing the
+number of layers, considering their structure so we can take advantage of Docker's caching mechanism,
+and by using multi-stage builds. We have also learned how to use users with limited permissions to make
+our images more secure. A very useful chapter of this overall great course!
+
+### Certificate of completion
+
+![DevOps with Docker: Security and optimization](/assets/images/devops-docker/devops-docker-security-optimization-certificate.png)
+_Certificate for completing the Docker security and optimization part of the DevOps with Docker course_
+
+Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/sbvgjqy9inmwt7x).
+
+## Closing thoughts
 
