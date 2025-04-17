@@ -2627,14 +2627,16 @@ simplemessageboard-orig            latest     83ae82efc8c7   40 minutes ago   25
 
 ### Multi-host environments
 
-Kind (to run Kubernetes locally): https://kind.sigs.k8s.io/
-k3s (https://k3s.io/) and k3d (https://github.com/k3d-io/k3d) to run Kubernetes inside containers 
-(k3d creates containerized k3s clusters). This way you can spin up a multi-node k3s cluster on a single 
-machine using docker.
-
 Kubernetes runs a workload (application) by placing containers into pods (a set of running containers) and pods into nodes (either a virtual or a physical machine). Each node is managed by the control plane (the container orchestration 
 layer that exposes the API and interfaces to define, deploy and manage the lifecycle of containers) and 
 contains the services necessary to run pods. 
+
+Here are some cool resources:
+
+1. [Kind](https://kind.sigs.k8s.io/): to run Kubernetes locally
+2. [k3s](https://k3s.io/) and [k3d](https://github.com/k3d-io/k3d): to run Kubernetes inside containers 
+(k3d creates containerized k3s clusters). This way you can spin up a multi-node k3s cluster on a single 
+machine using docker.
 
 ---
 
@@ -2661,3 +2663,14 @@ Validate the certificate at the [validation link](https://courses.mooc.fi/certif
 
 ## Closing thoughts
 
+This was such a great and fun course, and I can warmly recommend it. I already had some experience with 
+Docker, but this course made my basics stronger, and taught me a lot more than I thought I needed to know. 
+I learned some new Docker commands and got a lot more comfortable working with images and containers. 
+
+Here are some highlights:
+
+1. [```CMD``` vs ```ENTRYPOINT``` and exec vs. shell form in ```ENTRYPOINT```](https://aljazkovac.github.io/posts/devops-with-docker/#defining-start-conditions-for-the-container)
+2. [Bind mounts vs. Docker volumes](https://aljazkovac.github.io/posts/devops-with-docker/#volumes-in-action)
+3. [docker.sock](https://aljazkovac.github.io/posts/devops-with-docker/#scaling)
+4. [The importance of distinguishing between runtime and build-time variables in a Dockerfile](https://aljazkovac.github.io/posts/devops-with-docker/#volumes-in-action)
+5. [How to make Docker images smaller and more secure](https://aljazkovac.github.io/posts/devops-with-docker/#chapter-4-security-and-optimization)
