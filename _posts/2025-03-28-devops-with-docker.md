@@ -142,7 +142,7 @@ _Important commands_:
 
 ---
 
-__Ex. 1.1.__
+[__Ex. 1.1.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#e61047a7-6306-4222-80c3-3b89c7b995ce)
 
 ```bash
 (base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx 
@@ -168,9 +168,7 @@ a3f9a37b6036   nginx     "/docker-entrypoint.…"   49 seconds ago   Up 48 secon
 
 ---
 
-__Ex. 1.2.__
-
-_Solution_
+[__Ex. 1.2.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#69973c71-ef3e-444b-8944-5f427ef0cffb)
 
 ```bash
 (base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps 
@@ -253,9 +251,7 @@ But the installation done in this way will not be permanent!
 
 #### Exercises
 
-__Ex. 1.3.__
-
-_Solution_
+[__Ex. 1.3.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#4b132769-24bb-4523-b620-1f355fb69a18)
 
 ```bash
 1. docker run -d --rm -it --name secret-msg devopsdockeruh/simple-web-service:ubuntu
@@ -263,8 +259,7 @@ _Solution_
 3. tail -f ./text.log
 ```
 
-__Ex. 1.4.__
-_Solution_
+[__Ex. 1.4.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#33cdf131-c5f8-4b22-85ef-7ba47e0f1bdc)
 
 ```bash
 docker run -it --name curl ubuntu sh -c 'while true; do echo "Input website:"; read website; echo "Searching.."; sleep 1; curl http://$website; done' - this results in 'curl not found'
@@ -455,9 +450,7 @@ CMD and FILL HERE is executed at runtime.
 
 ---
 
-__Ex. 1.7.__
-
-_Solution_
+[__Ex. 1.7.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#912843d1-249b-465e-8af2-eb02f1461c05)
 
 ```dockerfile
 # Start from the ubuntu image
@@ -484,9 +477,7 @@ CMD ./script.sh
 
 ---
 
-__Ex. 1.8.__
-
-_Solution_
+[__Ex. 1.8.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#fa341527-2be4-46e5-8fb7-4b530eba67d5)
 
 ```dockerfile
 # Start from the ubuntu image
@@ -659,9 +650,7 @@ You can also limit connections to a certain protocol, e.g., `EXPORT <port>/UDP` 
 
 ---
 
-__Ex. 1.9.__
-
-_Solution_
+[__Ex. 1.9.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#ddf44c72-27d6-4459-8bb4-b72fe5d104e5)
 
 I created the `logs.log` file first with `touch logs.log`, otherwise the `-v flag` command would create a directory. 
 
@@ -673,9 +662,7 @@ Then I ran:
 
 ---
 
-__Ex. 1.10.__
-
-_Solution_
+[__Ex. 1.10.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#deecce60-502d-4479-bf66-7035aadf93ea)
 
 ```bash
 docker run -p 127.0.0.1:8080:8080 web-server
@@ -726,11 +713,10 @@ If you pay attention you will see it closely follows the [README file](https://g
 
 ---
 
-__Ex. 1.11.__
+[__Ex. 1.11.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#f9b9fd5f-6eb3-41cc-b30a-d2375530f404)
 
 The goal of this exercise is to containerize an old [Java Spring project](https://github.com/docker-hy/material-applications/tree/main/spring-example-project).
 
-_Solution_
 
 ```dockerfile
 FROM amazoncorretto:8
@@ -758,9 +744,7 @@ docker build . -t java-project && docker run -p 127.0.0.1:8080:8080 java-project
 
 ---
 
-__Ex. 1.12.__
-
-_Solution_
+[__Ex. 1.12.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#0679c676-3257-4c41-86e1-aa0db93b6977)
 
 ```dockerfile
 
@@ -794,9 +778,7 @@ docker build . -t project-frontend && docker run -p 127.0.0.1:3000:3000 project-
 
 ---
 
-__Ex. 1.13.__
-
-_Solution_
+[__Ex. 1.13.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#d4c1e0bc-4796-4f0b-9eaa-c58084afb94f)
 
 ```dockerfile
 FROM golang:1.16-bullseye
@@ -824,9 +806,7 @@ docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.
 
 ---
 
-__Ex. 1.14.__
-
-_Solution_
+[__Ex. 1.14.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#9227044c-5b55-4b89-b568-fc5071166025)
 
 Dockerfile for the frontend:
 
@@ -885,9 +865,7 @@ docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.
 
 ---
 
-__Ex. 1.15.__
-
-_Solution_
+[__Ex. 1.15.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#3a23e02b-eebf-4fbf-aaf7-623c16722e27)
 
 I had an LLM build a simple Razor .NET web app where one can post messages in a simple GUI. Then I
 containerized it and published it to [Docker Hub](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general)
@@ -918,9 +896,7 @@ CMD [ "dotnet", "SimpleMessageBoard.dll" ]
 
 ---
 
-__Ex. 1.16.__
-
-_Solution_
+[__Ex. 1.16.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#191c75dc-7b7e-489d-a0b0-976646dcd735)
 
 I have deployed the app from the previous ex. (1.15) to DigitalOcean. 
 I built the image and ran it locally like this:
@@ -969,9 +945,7 @@ Find the full list of commands [here](https://docs.docker.com/reference/cli/dock
 
 ---
 
-__Ex. 2.1.__
-
-_Solution_
+[__Ex. 2.1.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#209609c5-4fd4-4174-a34d-084e1263aa3e)
 
 ```yaml
 services:
@@ -989,7 +963,7 @@ Also, read [here](https://docs.docker.com/compose/how-tos/environment-variables/
 
 ---
 
-__Ex. 2.2.__
+[__Ex. 2.2.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#f26c4aba-0f15-48ab-8cbb-ad69e3347d01)
 
 ```yaml
 services:
@@ -1005,7 +979,7 @@ services:
 
 ---
 
-__Ex. 2.3.__
+[__Ex. 2.3.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#3474eea7-0921-46e3-8100-77533f073127)
 
 I have decided to use the already built local images:
 
@@ -1031,7 +1005,7 @@ Docker compose starts and automatically joins the defined services into a [netwo
 
 ---
 
-__Ex. 2.4.__
+[__Ex. 2.4.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#6ecbbdea-a420-4429-a2ac-9a88eed8c9db)
 
 ```yaml
 services:
@@ -1195,7 +1169,7 @@ A common use case is with reverse proxies that need to automatically detect and 
 
 ---
 
-__Ex. 2.5.__
+[__Ex. 2.5.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#c3918908-8f8e-4210-ac23-495374347ae4)
 
 We have the following `docker compose`:
 
@@ -1289,7 +1263,7 @@ volumes:
 
 ---
 
-_Ex. 2.6._
+[_Ex. 2.6._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action#33527278-b27f-415e-8488-91fa1bd8e108)
 
 ```yaml
 services:
@@ -1345,7 +1319,7 @@ which we can see if we run `docker inspect` on the container:
 
 ---
 
-_Ex. 2.7._
+[_Ex. 2.7._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action#6c983c9a-4ee7-4c22-8ef3-fc354e20b687)
 
 Here is a very easy-to-understand difference between a named Docker volume and a bind mount.
 
@@ -1448,7 +1422,7 @@ easier to create backups.
 
 ---
 
-_Ex. 2.8._
+[_Ex. 2.8._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action#3a1f5568-0de6-4804-888c-7d5efe93efe8)
 
 ```yaml
 services:
@@ -1531,7 +1505,7 @@ There is a crucial difference between `proxy_pass http://backend:8080`and `proxy
 
 ---
 
-_Ex. 2.9._
+[_Ex. 2.9._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action#365c096b-aa4a-4d31-bb86-a63479c1ad78)
 
 I was getting a `403 Forbidden` error when making calls from the nginx port (`localhost`) to the backend (`localhost:8080/ping`).
 The reason is that different ports are considered different origins by the browser, and I had previously set the `REQUEST_ORIGIN`
@@ -1584,6 +1558,8 @@ services:
 ---
 
 ---
+
+[_Ex. 2.10._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/volumes-in-action#0117ad93-2b94-48c6-a399-120188ef9019)
 
 This took a while to get working. The trick was to understand the difference between build-time variables
 and runtime variables.
@@ -1789,7 +1765,7 @@ In this chapter, we will use [GitHub Actions](https://github.com/features/action
 
 ---
 
-_Ex. 3.1._
+[_Ex. 3.1._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/deployment-pipelines#c7cd071d-f7c3-47cf-bf5f-03524a04d1c6)
 
 This was an interesting exercise. I had to create a GitHub Action workflow that would build and push
 a Docker image to Docker Hub, and then set up Watchtower to watch the image for changes, and pull and
@@ -1864,7 +1840,7 @@ set. That is why I had to add that label to the Dockerfile.
 
 ---
 
-_Ex. 3.2._
+[_Ex. 3.2._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/deployment-pipelines#80374de5-5327-4f61-b313-40892eedc4ba)
 
 I added a step to the pipeline, which redeploys the app on Digital ocean:
 
@@ -1946,7 +1922,7 @@ them to GitHub.
 
 ---
 
-_Ex. 3.3._
+[_Ex. 3.3._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/deployment-pipelines#936f9072-153c-4659-ba11-771c06cf9389)
 
 I wrote this script:
 
@@ -1983,7 +1959,7 @@ I ran it like this:
 
 ---
 
-_Ex. 3.4._
+[_Ex. 3.4._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/deployment-pipelines#1a1c2d1c-93dc-41b3-a1a6-0804ae0c8cec)
 
 Dockerfile:
 
@@ -2052,7 +2028,7 @@ Running containers as root can pose security risks because if an attacker were t
 
 ---
 
-_Ex. 3.5._
+[_Ex. 3.5._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/using-a-non-root-user#c6dbbffe-6a04-41ea-bc80-48076cf7836f)
 
 Backend Dockerfile with non-root user:
 
@@ -2132,7 +2108,7 @@ Builder pattern: with compiled languages remove the tools that are needed to com
 
 ---
 
-_Ex. 3.6._
+[_Ex. 3.6._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#8747e05d-2d5d-4997-8e19-8e0e708925db)
 
 Let us first optimize the frontend image. Here is the original image size:
 
@@ -2375,7 +2351,7 @@ it is a good idea to look for images that have preinstalled environments that co
 
 ---
 
-_Ex. 3.7._
+[_Ex. 3.7._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#40aab5a1-f4e2-4f89-aed8-7c5efdc489ff)
 
 For the backend, I changed the builder and runtime images to slimmer alpine variants:
 
@@ -2454,7 +2430,7 @@ frontend-optimized-2     latest     563bc7313368   6 hours ago      176MB
 
 ---
 
-_Ex. 3.8._
+[_Ex. 3.8._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#a185abea-a907-4aa4-acdb-520abceca298)
 
 I decided to use nginx for the runtime image of the frontend:
 
@@ -2513,7 +2489,7 @@ frontend-optimized-3    latest    5c70ae0e165c   About an hour ago    129MB
 
 ---
 
-_Ex. 3.9._
+[_Ex. 3.9._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#db2075da-4f40-41f5-85a4-96027b561219)
 
 This was slighly more complicated because the scratch images is completely empty. To get it to work, I had to set some specific environment variables (shout out to `claude-3.7-sonnet`) to address an architecture mismatch and to force Go to create a statically linked binary (`CGO_ENABLED`).
 
@@ -2564,7 +2540,7 @@ backend-optimized-2     latest    9ebf470e0a65   3 hours ago         43MB
 
 ---
 
-_Ex. 3.10_
+[_Ex. 3.10_](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#bb0f2fd6-df4a-4887-87c0-9fc97df08a23)
 
 I have decided to optimize the SimpleMessageBoard project, which I have used before in this course.
 The original image size is: 
@@ -2640,7 +2616,7 @@ machine using docker.
 
 ---
 
-_Ex. 3.11._
+[_Ex. 3.11._](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/multi-host-environments#5a8df1b3-50a7-4ef4-bbe7-00eb7033444e)
 
 ![Kubernetes architecture](/assets/images/devops-docker/kubernetes-architecture.png)
 _A diagram of the Kubernetes architecture_
