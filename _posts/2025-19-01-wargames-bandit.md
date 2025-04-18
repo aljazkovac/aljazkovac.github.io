@@ -297,12 +297,15 @@ millionth	dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
 ```
 Password: dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
 
+`grep` searches the file for the pattern, and prints any line that contains it. That is why this works. 
+
 ### [Bandit 8-9](https://overthewire.org/wargames/bandit/bandit9.html)
 
 ```bash
 bandit8@bandit:~$ sort data.txt | uniq -c | awk '$1 == 1 {print $2}'
 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
 ```
+
 Password: 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
 
 ---
@@ -313,7 +316,7 @@ __Explanation__
 2. uniq -c: Counts the number of occurrences of each line.
 3. awk '$1 == 1 {print $2}': Filters lines where the count is 1 and prints the second field (the password).
 
-__The awk Command__
+__The awk command__
 
 The awk command processes input line by line and splits each line into fields (columns) based on a delimiter, 
 which is a space or tab by default. Each field can then be accessed using a variable, such as $1 for the first field, 
@@ -327,6 +330,22 @@ awk 'condition {action}'
 
 * condition: A test to decide if the action should be applied to the current line.
 * action: The operation to perform if the condition is true. If omitted, the entire line is printed by default.
+
+If we run just the first two parts of the command we get this:
+
+```bash
+bandit8@bandit:~$ sort data.txt | uniq -c
+     10 0lLAU8Hx0a5E8URNEITfTIe9sy6tcpeE
+     10 0oTVZsmZ2OmngEgPis8LloSSnuBmm7t9
+     10 11RbnkUhGZG3V5XHw9YBKPWcdZTQrYSQ
+     10 3M5U6xE6bEuGjktQvDD4eyHnW3bwvCkj
+     10 3WrYuQdo7JuGsvyB8hRss8A1uKcda2q4
+      1 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
+     10 4rrSr6IONT8TbtjY0fBa6G5SxLu76X4U
+     10 5EL94fXpDzA3oO8q2IFwAQ7WwdOBnUz2
+```
+
+Now it is easier to see how the `awk` part finished the job.
 
 ---
 
@@ -342,8 +361,8 @@ D9========== FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
 
 Password: FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
 
-I could have used grep to search for the password, but I wanted to experiment with the strings command.
-The strings command is less efficient than grep.
+I could have used `grep` to search for the password, but I wanted to experiment with the `strings` command,
+although it is less efficient.
 
 ### [Bandit 10-11](https://overthewire.org/wargames/bandit/bandit11.html)
  
