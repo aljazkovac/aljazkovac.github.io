@@ -302,50 +302,16 @@ Password: dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
 ### [Bandit 8-9](https://overthewire.org/wargames/bandit/bandit9.html)
 
 ```bash
-bandit8@bandit:~$ sort data.txt | uniq -c | awk '$1 == 1 {print $2}'
+bandit8@bandit:~$ sort data.txt | uniq -u
 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
 ```
-
-Password: 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
 
 ---
 
 __Explanation__
 
 1. sort data.txt: Sorts the lines in data.txt.
-2. uniq -c: Counts the number of occurrences of each line.
-3. awk '$1 == 1 {print $2}': Filters lines where the count is 1 and prints the second field (the password).
-
-__The awk command__
-
-The awk command processes input line by line and splits each line into fields (columns) based on a delimiter, 
-which is a space or tab by default. Each field can then be accessed using a variable, such as $1 for the first field, 
-$2 for the second field, and so on.
-
-Here’s a detailed breakdown of the awk command:
-
-```bash
-awk 'condition {action}'
-```
-
-* condition: A test to decide if the action should be applied to the current line.
-* action: The operation to perform if the condition is true. If omitted, the entire line is printed by default.
-
-If we run just the first two parts of the command we get this:
-
-```bash
-bandit8@bandit:~$ sort data.txt | uniq -c
-     10 0lLAU8Hx0a5E8URNEITfTIe9sy6tcpeE
-     10 0oTVZsmZ2OmngEgPis8LloSSnuBmm7t9
-     10 11RbnkUhGZG3V5XHw9YBKPWcdZTQrYSQ
-     10 3M5U6xE6bEuGjktQvDD4eyHnW3bwvCkj
-     10 3WrYuQdo7JuGsvyB8hRss8A1uKcda2q4
-      1 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
-     10 4rrSr6IONT8TbtjY0fBa6G5SxLu76X4U
-     10 5EL94fXpDzA3oO8q2IFwAQ7WwdOBnUz2
-```
-
-Now it is easier to see how the `awk` part finished the job.
+2. uniq -u: Only prints unique lines.
 
 ---
 
