@@ -310,8 +310,8 @@ bandit8@bandit:~$ sort data.txt | uniq -u
 
 __Explanation__
 
-1. sort data.txt: Sorts the lines in data.txt.
-2. uniq -u: Only prints unique lines.
+1. `sort data.txt`: Sorts the lines in data.txt.
+2. `uniq -u`: Only prints unique lines.
 
 ---
 
@@ -326,9 +326,6 @@ D9========== FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
 ```
 
 Password: FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
-
-I could have used `grep` to search for the password, but I wanted to experiment with the `strings` command,
-although it is less efficient.
 
 ### [Bandit 10-11](https://overthewire.org/wargames/bandit/bandit11.html)
  
@@ -347,9 +344,9 @@ Base64 encoding is a method to encode binary data (e.g., images, files, or arbit
 
 __Example Encoding Process: "Hello"__
 
-Step 1: Convert Characters to Binary
+_Step 1: Convert Characters to Binary_
 
-The input string is `"Hello"`. Each character is converted into its ASCII value in **binary**:
+The input string is `"Hello"`. Each character is converted into its ASCII value in __binary__:
 
 | Character | ASCII (Decimal) | Binary (8 Bits) |
 |-----------|------------------|------------------|
@@ -360,19 +357,20 @@ The input string is `"Hello"`. Each character is converted into its ASCII value 
 | o         | 111              | `01101111`       |
 
 Concatenate these binary values into a single stream:
-```
+
+```bash
 01001000 01100101 01101100 01101100 01101111
 ```
 
-Step 2: Group Into 6-Bit Chunks
+_Step 2: Group Into 6-Bit Chunks_
 
 Break the binary stream into __6-bit groups__:
 
-```
+```bash
 010010 000110 010101 101100 011011 110111
 ```
 
-Step 3: Convert Each 6-Bit Chunk to Decimal
+_Step 3: Convert Each 6-Bit Chunk to Decimal_
 
 Each 6-bit group is treated as a number and converted from __binary to decimal__:
 
@@ -385,7 +383,7 @@ Each 6-bit group is treated as a number and converted from __binary to decimal__
 | 011011      | 27            |
 | 110111      | 55            |
 
-Step 4: Map Decimal Values to Base64 Characters
+_Step 4: Map Decimal Values to Base64 Characters_
 
 Using the Base64 encoding table:
 
@@ -404,50 +402,48 @@ The resulting Base64 encoded string so far is:
 SGVsbG
 ```
 
-#### Step 5: Add Padding if Necessary
-Base64 requires the output length to be a multiple of 4 characters. Since `"Hello"` results in 6 Base64 characters, add `=` padding to make it 8 characters:
-```
+_Step 5: Add Padding if Necessary_
+
+Base64 requires the output length to be a multiple of four characters. Since `"Hello"` results in six 
+Base64 characters, add `=` padding to make it 8 characters:
+
+```bash
 SGVsbG8=
 ```
 
----
+_Final Base64 Encoded String_
 
-### Final Base64 Encoded String
 The Base64 encoding of `"Hello"` is:
-```
+
+```bash
 SGVsbG8=
 ```
 
----
+__Summary of Steps__
 
-### Summary of Steps
 1. Convert input to binary.
-2. Split the binary stream into **6-bit chunks**.
+2. Split the binary stream into __6-bit chunks__.
 3. Convert each 6-bit chunk to decimal.
 4. Map decimal values to Base64 characters.
 5. Add padding (`=`) to ensure the output length is a multiple of 4.
 
+
+__Key Points__
+
+- _Purpose_: Base64 encoding allows binary data to be safely transmitted or stored in systems that expect plain text.
+- _Character Set_: Base64 uses 64 symbols (`A-Z`, `a-z`, `0-9`, `+`, `/`) and `=` for padding.
+- _Output Size_: Base64 encoded data is about **33% larger** than the original binary data.
+- _Reversible_: Base64 is not encryption; it’s easily decoded.
+
 ---
 
-### Key Points
-- **Purpose**: Base64 encoding allows binary data to be safely transmitted or stored in systems that expect plain text.
-- **Character Set**: Base64 uses 64 symbols (`A-Z`, `a-z`, `0-9`, `+`, `/`) and `=` for padding.
-- **Output Size**: Base64 encoded data is about **33% larger** than the original binary data.
-- **Reversible**: Base64 is not encryption; it’s easily decoded.
-
-## Bandit 11-12
-
-**Level Goal**
-
-The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters 
-have been rotated by 13 positions.
-
-*Solution*
+### [Bandit 11-12](https://overthewire.org/wargames/bandit/bandit12.html)
 
 This seems to be a ROT13 cipher, which is a simple letter substitution cipher that replaces a letter with the 13th letter 
 after it in the alphabet. It is a special case of the [Caesar cipher](https://en.wikipedia.org/wiki/ROT13).
 
 The translation table is as follows:
+
 | Plain                        | Cipher                        |
 |------------------------------|-------------------------------|
 | ABCDEFGHIJKLMNOPQRSTUVWXYZ   | NOPQRSTUVWXYZABCDEFGHIJKLM    |
@@ -465,9 +461,11 @@ The password is 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
 
 ---
 
-### ROT13 in Bash and `tr`
+__ROT13 in Bash and `tr`__
 
-ROT13 ("rotate by 13 places") is a substitution cipher that shifts each letter by 13 positions in the alphabet. For example:
+ROT13 ("rotate by 13 places") is a substitution cipher that shifts each letter by 13 positions in the alphabet. 
+For example:
+
 - `A` becomes `N`, `B` becomes `O`, ..., `M` becomes `Z`.
 - After `Z`, it wraps around: `N` becomes `A`, `O` becomes `B`, ..., `Z` becomes `M`.
 
@@ -482,25 +480,26 @@ tr 'A-Za-z' 'N-ZA-Mn-za-m'
 This command works by translating characters in the input set (`A-Za-z`) to corresponding characters in the output set 
 (`N-ZA-Mn-za-m`).
 
----
+__How Does It Work?__
 
-### How Does It Work?
-#### 1. **`tr` Command Overview**
 The `tr` command translates or replaces characters. Its syntax is:
 ```bash
 tr SET1 SET2
 ```
-- **`SET1`**: Characters to be replaced.
-- **`SET2`**: Characters to replace them with.
+- `SET1`: Characters to be replaced.
+- `SET2`: Characters to replace them with.
 - Characters in `SET1` are mapped one-to-one to characters in `SET2`.
 
-#### 2. **Why `A-Za-z`?**
+__Why `A-Za-z`?__
+
 - `A-Z`: Represents all uppercase letters (`A` to `Z`).
 - `a-z`: Represents all lowercase letters (`a` to `z`).
 - Combined as `A-Za-z`, it covers all alphabetic characters in the input to be processed.
 
-#### 3. **Why `N-ZA-Mn-za-m`?**
+__Why `N-ZA-Mn-za-m`?__
+
 This is the output set that defines the ROT13 transformation:
+
 - `N-ZA-M`: Shifts uppercase letters by 13 positions:
   - `N-Z`: Maps the second half of the uppercase alphabet (`N` to `Z`).
   - `A-M`: Maps the first half of the uppercase alphabet (`A` to `M`).
@@ -510,60 +509,52 @@ This is the output set that defines the ROT13 transformation:
 
 Together, `N-ZA-Mn-za-m` defines 52 characters (26 uppercase + 26 lowercase), perfectly matching `A-Za-z`.
 
----
+__How Does the Mapping Work?__
 
-### How Does the Mapping Work?
 The `tr` command pairs characters from the input set (`A-Za-z`) with characters in the output set (`N-ZA-Mn-za-m`):
+
 - `A` maps to `N`, `B` maps to `O`, ..., `M` maps to `Z`.
 - `N` maps to `A`, `O` maps to `B`, ..., `Z` maps to `M`.
 - `a` maps to `n`, `b` maps to `o`, ..., `m` maps to `z`.
 - `n` maps to `a`, `o` maps to `b`, ..., `z` maps to `m`.
 
-#### Example
+_Example_
+
 Input:
+
 ```bash
 echo "Hello World!" | tr 'A-Za-z' 'N-ZA-Mn-za-m'
 ```
 Output:
-```
+
+```bash
 Uryyb Jbeyq!
 ```
 Explanation:
+
 - `H` becomes `U`, `e` becomes `r`, `l` becomes `y`, ..., `W` becomes `J`, and so on.
 
----
+__Why Are the Sets of Equal Length?__
 
-### Why Are the Sets of Equal Length?
 Although `N-ZA-Mn-za-m` appears longer due to the split ranges (`N-Z` and `A-M`, etc.), it matches `A-Za-z` perfectly in length:
 - `A-Za-z`: 52 characters (26 uppercase + 26 lowercase).
 - `N-ZA-Mn-za-m`: 52 characters (26 uppercase + 26 lowercase).
 
 Each input character maps directly to a corresponding output character, maintaining a one-to-one relationship.
 
----
+__Recap__
 
-### Recap
-- **`A-Za-z`**: Defines the input characters (all alphabetic characters).
-- **`N-ZA-Mn-za-m`**: Defines the output characters (ROT13-transformed alphabet).
-- **Mapping**: Each character in the input set maps directly to one in the output set.
+- `A-Za-z`: Defines the input characters (all alphabetic characters).
+- `N-ZA-Mn-za-m`: Defines the output characters (ROT13-transformed alphabet).
+- Mapping: Each character in the input set maps directly to one in the output set.
 
 This makes `tr 'A-Za-z' 'N-ZA-Mn-za-m'` a simple and efficient way to implement ROT13 in Bash!
 
 ---
 
-## Bandit 12-13
-
-**Level Goal**
-
-The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been 
-repeatedly compressed. For this level it may be useful to create a directory under /tmp in which you can work. 
-Use mkdir with a hard to guess directory name. Or better, use the command “mktemp -d”. Then copy the datafile 
-using cp, and rename it using mv (read the manpages!).
-
-*Solution*
+### [Bandit 12-13](https://overthewire.org/wargames/bandit/bandit13.html)
   
-1. Follow the instructions, and create a temporary directory using `mktemp -d`. Then copy the data.txt file to this directory, 
-and navigate to the directory. Rename the data.txt file to data.hex. Now we can work on the file.
+1. _Follow the instructions, and create a temporary directory using `mktemp -d`. Then copy the data.txt file to this directory, and navigate to the directory. Rename the data.txt file to data.hex. Now we can work on the file._
     ```bash
     bandit12@bandit:~$ mktemp -d
     /tmp/tmp.NCTnzrrXbQ
@@ -576,8 +567,7 @@ and navigate to the directory. Rename the data.txt file to data.hex. Now we can 
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data.txt
     data.txt: ASCII text
     ```
-2. The file is a hexdump of a file that has been repeatedly compressed. We can use `xxd` to reverse the hexdump and `file` to
-check the type of file this produces.
+2. _The file is a hexdump of a file that has been repeatedly compressed. We can use `xxd` to reverse the hexdump and `file` to check the type of file this produces._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ xxd -r data.hex > data
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ file data
@@ -587,7 +577,7 @@ check the type of file this produces.
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
     data.hex  data_unhexed.gz
    ```
-3. We see that the file is a gzip compressed file. We can use `gzip -d` to decompress the file.
+3. _We see that the file is a gzip compressed file. We can use `gzip -d` to decompress the file._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed.gz
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
@@ -598,7 +588,7 @@ check the type of file this produces.
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
     data.hex  data_unhexed_gunzipped.bz2
     ```
-4. The file is a bzip2 compressed file. We can use `bzip2 -d` to decompress the file.
+4. _The file is a bzip2 compressed file. We can use `bzip2 -d` to decompress the file._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ bzip2 -d data_unhexed_gunzipped.bz2
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
@@ -609,7 +599,7 @@ check the type of file this produces.
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
     data.hex  data_unhexed_gunzipped_bunzipped.gz
     ```
-5. The file is a gzip compressed file, again. Repeat step 3.
+5. _The file is a gzip compressed file, again. Repeat step 3._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed_gunzipped_bunzipped.gz
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
@@ -620,7 +610,7 @@ check the type of file this produces.
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
     data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar
     ```
-6. The file is a tar archive. We can use `tar -xf` to extract the contents of the file.
+6. _The file is a tar archive. We can use `tar -xf` to extract the contents of the file._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped.tar
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
@@ -631,7 +621,7 @@ check the type of file this produces.
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
     data.hex  data_unhexed_gunzipped_bunzipped_gunzipped.tar  data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
     ```
-7. The new file is still a tar archive. Repeat step 6 again.
+7. _The new file is still a tar archive. Repeat step 6 again._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls
@@ -646,7 +636,7 @@ check the type of file this produces.
     -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred.tar
     -rw-r--r-- 1 bandit12 bandit12   221 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred.bz2
    ```
-8. The file is a bzip2 compressed file. Repeat step 4.
+8. _The file is a bzip2 compressed file. Repeat step 4._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ bzip2 -d data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred.bz2
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
@@ -659,7 +649,7 @@ check the type of file this produces.
     data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred: POSIX tar archive (GNU)
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ mv data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
     ```
-9. The file is, once again, a tar archive. Repeat step 6.
+9. _The file is, once again, a tar archive. Repeat step 6._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ tar -xf data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
@@ -680,7 +670,7 @@ check the type of file this produces.
     -rw-r--r-- 1 bandit12 bandit12 10240 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped.tar
     -rw-r--r-- 1 bandit12 bandit12    79 Sep 19 07:08 data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred.gz
     ```
-10. The file is, again, a gzip file, so we decompress once more.
+10. _The file is, again, a gzip file, so we decompress once more._
     ```bash
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ gzip -d data_unhexed_gunzipped_bunzipped_gunzipped_untarred_untarred_bunzipped_untarred.gz
     bandit12@bandit:/tmp/tmp.NCTnzrrXbQ$ ls -l
@@ -701,4 +691,4 @@ The password is FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn.
 This was quite a tedious process, but it was a good exercise in using the `file` command to determine the type of file and then
 using the appropriate command to decompress the file. It was also good to rename the files to keep track of the steps taken.
 
----
+### [Bandit 13-14](https://overthewire.org/wargames/bandit/bandit14.html)
