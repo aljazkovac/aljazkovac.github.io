@@ -16,7 +16,7 @@ timezone: Europe/Stockholm
 
 title: Aljaz Kovac # the main title
 
-tagline: I build stuff that does stuff. # it will display as the sub-title
+tagline: .NET Developer and Azure DevOps Engineer # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   The GitHub Pages landing site for Aljaz Kovac, a software developer and a DevOps engineer.
