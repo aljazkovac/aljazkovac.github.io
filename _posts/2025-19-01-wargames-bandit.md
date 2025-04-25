@@ -693,7 +693,8 @@ using the appropriate command to decompress the file. It was also good to rename
 
 ### [Bandit 13-14](https://overthewire.org/wargames/bandit/bandit14.html)
 
-In this level you need to first figure out a way to read a file that can only be read by the user `bandit14` whereas you are user `bandit13`. But you do get an awful lot of help: a private ssh key which you can use to login to the machine you are working on (localhost) as user `bandit14`:
+In this level you need to first figure out a way to read a file that can only be read by the user `bandit14` whereas you are user `bandit13`. 
+But you do get an awful lot of help: a private ssh key which you can use to login to the machine you are working on (localhost) as user `bandit14`:
 
 ```bash
 ssh -v -i sshkey.private bandit14@localhost -p 2220
@@ -704,3 +705,18 @@ Connecting over the default port 22 doesn't work. Once you are logged in as the 
 The password: MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS.
 
 ### [Bandit 14-15](https://overthewire.org/wargames/bandit/bandit15.html)
+
+The trick was finding which of the suggested commands (`ssh, telnet, nc, openssl, s_client, nmap`) could be used for this.
+After some digging `nc` seems to do the trick:
+
+```bash
+bandit14@bandit:~$ nc localhost 30000
+MU4VWeTyJk8ROof1qqmcBPaLh7lDCPvS
+Correct!
+8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
+```
+
+The password: 8xCjnmgoKbGLhHFAZlGE5Tmu4M2tKJQo
+
+### [Bandit 15-16](https://overthewire.org/wargames/bandit/bandit16.html)
+
