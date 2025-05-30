@@ -9,6 +9,7 @@ TODO:
 - Write about application insights checks from locations vs. generic check
 - Write about Container Apps Environments with workload profiles
 - Write about cost optimization for SQL databases?
+- Write about database access: control plane vs. data plane operations + include article about adding users to databases (Azure actually makes a check to see that the user exists)
 
 
 ## Table of Contents
@@ -43,6 +44,8 @@ TODO:
     - [Container Instances](#container-instances)
   - [Database Services](#database-services)
     - [Azure SQL Database](#azure-sql-database)
+      - [🔧 Problem: Connection timeout issues with Azure SQL](#-problem-connection-timeout-issues-with-azure-sql)
+      - [📋 How-To: Control Database Access](#-how-to-control-database-access)
     - [Cosmos DB](#cosmos-db)
     - [Redis Cache](#redis-cache)
   - [Identity \& Access Management](#identity--access-management)
@@ -143,7 +146,7 @@ TODO:
 ### Azure SQL Database
 <!-- Add SQL Database issues here -->
 
-**Problem** 
+#### 🔧 Problem: Connection timeout issues with Azure SQL
 
 Unable to move databases into an SQL elastic pool due to mismatch in `preferredEnclaveType` property.
 
@@ -187,6 +190,26 @@ This manually updated the elastic pool's problematic property to the required va
 **Resources**
 
 - https://github.com/hashicorp/terraform-provider-azurerm/issues/24195
+
+#### 📋 How-To: Control Database Access
+
+TODO: Fix this up and add information on adding users to databases!
+
+Azure RBAC on the Database Server:
+
+This is crucial for control plane operations. Azure Role-Based Access Control (RBAC) at the server or resource group level dictates who can manage the Azure SQL server itself (e.g., create or delete databases, configure server settings like firewalls, backups, auditing, or Azure AD authentication).
+Examples of roles here include SQL Server Contributor, SQL Security Manager, or custom roles.
+Database Users (in "Security" for each database):
+
+This is for data plane operations – controlling who can access and interact with the data within a specific database.
+These users are distinct from server-level logins (in older SQL Server models) and ideally should be contained database users. Contained database users are authenticated at the database level and make the database more portable, especially when using Azure AD.
+Users Correspond to Azure AD Groups:
+
+This is a best practice. Creating database users mapped to Azure AD security groups simplifies access management significantly. Instead of managing individual user permissions in each database, you manage group memberships in Azure AD. When a user is added to or removed from the AD group, their access to the database is automatically updated.
+Database Users Have Memberships (e.g., db_owner):
+
+Assigning database users (which are mapped to AD groups) to built-in database roles (like db_owner, db_datareader, db_datawriter) or custom database roles is the standard way to grant permissions within the SQL database using T-SQL.
+Your understanding and implementation correctly separate management plane (Azure RBAC) and data plane (SQL users and permissions) security, leveraging Azure AD for centralized identity management.
 
 ### Cosmos DB
 <!-- Add Cosmos DB issues here -->
