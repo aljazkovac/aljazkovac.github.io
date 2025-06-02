@@ -1,4 +1,10 @@
-## TITLE: Custom reverse proxy with YARP: vibe-coding vs. old-style coding
+---
+title: Custom reverse proxy with YARP: vibe-coding vs. old-style coding
+date: 2025-06-02 18:33:00 +0200
+categories: [.NET, reverse proxy] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+tags: [.net, yarp, reverse proxy, prometheus, grafana, vibe-coding] # TAG names should always be lowercase.
+description: Two custom reverse proxies in YARP: vibe-coding vs. classical coding
+---
 
 ## The goal
 
