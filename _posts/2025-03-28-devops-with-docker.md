@@ -2281,7 +2281,7 @@ backend-nonroot  latest  7361b01d6c6e   2 hours ago  1.08GB
 
 Here is the original Dockerfile for the backend:
 
-```yaml
+```dockerfile
 FROM golang:1.16-bullseye
 
 WORKDIR /usr/src/app

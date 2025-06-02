@@ -1,0 +1,704 @@
+## TITLE: Custom reverse proxy with YARP: vibe-coding vs. old-style coding
+
+## The goal
+
+I have been working with our custom reverse proxy at my current workplace, [Caspeco AB](https://caspeco.com/), 
+and got quite interested in reverse proxies in general. I wanted to try and write my own custom
+reverse proxy from scratch. Since I mostly live in the .NET world, I chose to utilize [YARP](https://github.com/dotnet/yarp), 
+the go-to reverse proxy library for .NET.
+
+But the goal for this project was more than just writing a custom reverse proxy. I wanted to write two 
+custom reverse proxies! The first one using what the cool kids use these days, vibe-coding, and then another
+one the old-fashioned way, writing the code myself. 
+
+In addition to this, I also wanted to learn the basics of [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/), 
+two monitoring and observability tools (as a DevOps engineer, I love my dashboards). 
+I work with Azure in my day-to-day job, so I wanted to expand my horizons a bit with two of the most popular 
+open-source monitoring tools.
+
+## Architecture
+
+A reverse proxy obviously needs some services to proxy requests to. I built one backend service, but 
+spun up two containers with it, so I had two difference services to proxy requests to. Then I also spun up 
+a Prometheus and a Grafana container. The `docker compose` reveals the architecture of the project:
+
+```yaml
+services:
+  product-service-a:
+    build:
+      context: .
+      dockerfile: src/Services/ProductService/ProductService.Api/Dockerfile
+    ports:
+      - "5001:8080" # Host:Container. 8080 is the default HTTP port for .NET 8+ aspnet images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080 # Explicitly set container HTTP port
+      
+  product-service-b:
+    build:
+      context: .
+      dockerfile: src/Services/ProductService/ProductService.Api/Dockerfile
+    ports:
+      - "5011:8080" # Host:Container. 8080 is the default HTTP port for .NET 8+ aspnet images
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080 # Explicitly set container HTTP port
+
+  postgres-db:
+    image: postgres:15-alpine # Using PostgreSQL version 15 on Alpine Linux for a smaller image
+    container_name: yarp_postgres_db # Optional: give the container a specific name
+    environment:
+      POSTGRES_USER: yarpuser        # Define the default superuser for the database
+      POSTGRES_PASSWORD: yarpPassword  # Define the password for the superuser
+      POSTGRES_DB: yarp_routing_db   # Optional: Creates this database automatically on first run
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432 (default PostgreSQL port)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data
+    restart: unless-stopped # Optional: restarts the DB container if it stops, unless manually stopped
+
+  gateway-api: 
+    build:
+      context: .
+      dockerfile: src/ManualGateway/ManualGateway.Api/Dockerfile
+    ports:
+      - "5012:8080" # YARP gateway will be accessible on host port 5012
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080 # Gateway container listens on 8080
+    depends_on: # Good practice: ensure backend services start first
+      - product-service-a
+      - product-service-b
+      - postgres-db
+    
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml # Bind mounts the config file into the container
+      - prometheus_data:/prometheus # Named volume to persist metrics data
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    restart: unless-stopped
+  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+      
+volumes:
+  postgres_data: # This named volume will store the PostgreSQL data
+  prometheus_data: # This named volume will store the Prometheus metrics data
+  grafana_data: # This names volume will store the Grafana data
+```
+
+As you can see, I also have a postgres-db container there. The reason is that I wanted to read the 
+deployments to the services from a database as that would provide the most dynamical routing setup.
+
+### Product service
+
+This is a classical Domain Driven Design (DDD) backend service. It has the following layers:
+
+Domain (business logic) -> Infrastructure (data access) -> Application (application logic) -> API (exposes the application)
+
+I don't intend to write extensively about the basics of Domain-Driven Design here, there are far better resources
+than myself out there. But in a nutshell, you define the aggregate root and the contract which applies to accessing and changing it. Then you define the methods for operating on the aggregate root (implementation of the contract from the domain). 
+Then you define the layers that transfer the data, so you have your DTOs and the methods that call the repository methods 
+and transform the data to the correct format. And then you have your API, which exposes these methods publicly.
+
+#### Method of implementation
+
+I actually vibe-coded this part, and didn't write any of the code myself, except for small changes and 
+adjustments. 
+
+### YARP
+
+I started off by wondering, Why a "reverse" proxy? Where does the name come from? After some research I learned the following:
+
+There are traditional proxies, also known as forward proxies, and reverse proxies. A forward proxy sits in front of a client and forwards its requests to the internet, while a reverse proxy sits in front of a serves and handles requests coming from a client.
+
+The flow from client to server and back again:
+
+[Client] ⇄ [Forward Proxy] ⇄ [Internet] ⇄ [Reverse Proxy] ⇄ [Backend Server]
+
+#### Method of implementation
+
+##### Vibe coding
+
+I vibe coded the reverse proxy by quuerying an LLM, mostly [Gemini 2.5. Pro](https://deepmind.google/models/gemini/pro/) in [Cursor](https://www.cursor.com/). 
+I was pleasantly surprised to discover that I actually got a working version, albeit a rather complicated one. 
+I wasn't sure in what way it was complicated since I vibe-coded the proxy first, and only afterwards did 
+I implement another one the old-fashioned way. But I felt it. It felt akward. 
+
+##### Classical coding
+
+I then decided to try and implement a reverse proxy by writing one myself. 
+I started by reading about [reverse proxies in general](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Proxy_servers_and_tunneling). Then I read the [documentation for YARP](https://learn.microsoft.com/en-gb/aspnet/core/fundamentals/servers/yarp/yarp-overview?view=aspnetcore-9.0). And finally I read the code samples at the [official YARP repo](https://github.com/dotnet/yarp/tree/main/samples). 
+
+All in all, I understood the following:
+
+1. There are two ways to provide routing logic: configuration files and code
+2. There are all kinds of ways to route requests, depending on headers, queries, cookies, etc.
+3. The most native-way to achieve programmatic routing is to modify YARP's built-in pipeline with custom middleware
+
+The last point I learned while looking at this code example from YARP's official repo:
+
+```csharp
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Yarp.ReverseProxy.Configuration;
+using Microsoft.AspNetCore.Http;
+using Yarp.ReverseProxy.Model;
+
+const string DEBUG_HEADER = "Debug";
+const string DEBUG_METADATA_KEY = "debug";
+const string DEBUG_VALUE = "true";
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddReverseProxy()
+    .LoadFromMemory(GetRoutes(), GetClusters());
+
+var app = builder.Build();
+
+
+app.Map("/update", context =>
+{
+    context.RequestServices.GetRequiredService<InMemoryConfigProvider>().Update(GetRoutes(), GetClusters());
+    return Task.CompletedTask;
+});
+// We can customize the proxy pipeline and add/remove/replace steps
+app.MapReverseProxy(proxyPipeline =>
+{
+    // Use a custom proxy middleware, defined below
+    proxyPipeline.Use(MyCustomProxyStep);
+    // Don't forget to include these two middleware when you make a custom proxy pipeline (if you need them).
+    proxyPipeline.UseSessionAffinity();
+    proxyPipeline.UseLoadBalancing();
+});
+
+app.Run();
+
+RouteConfig[] GetRoutes()
+{
+    return
+    [
+        new RouteConfig()
+        {
+            RouteId = "route" + Random.Shared.Next(), // Forces a new route id each time GetRoutes is called.
+            ClusterId = "cluster1",
+            Match = new RouteMatch
+            {
+                // Path or Hosts are required for each route. This catch-all pattern matches all request paths.
+                Path = "{**catch-all}"
+            }
+        }
+    ];
+}
+
+ClusterConfig[] GetClusters()
+{
+    var debugMetadata = new Dictionary<string, string>
+    {
+        { DEBUG_METADATA_KEY, DEBUG_VALUE }
+    };
+
+    return
+    [
+        new ClusterConfig()
+        {
+            ClusterId = "cluster1",
+            SessionAffinity = new SessionAffinityConfig { Enabled = true, Policy = "Cookie", AffinityKeyName = ".Yarp.ReverseProxy.Affinity" },
+            Destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "destination1", new DestinationConfig() { Address = "https://example.com" } },
+                { "debugdestination1", new DestinationConfig() {
+                    Address = "https://bing.com",
+                    Metadata = debugMetadata  }
+                },
+            }
+        }
+    ];
+}
+
+/// <summary>
+/// Custom proxy step that filters destinations based on a header in the inbound request
+/// Looks at each destination metadata, and filters in/out based on their debug flag and the inbound header
+/// </summary>
+Task MyCustomProxyStep(HttpContext context, Func<Task> next)
+{
+    // Can read data from the request via the context
+    var useDebugDestinations = context.Request.Headers.TryGetValue(DEBUG_HEADER, out var headerValues) && headerValues.Count == 1 && headerValues[0] == DEBUG_VALUE;
+
+    // The context also stores a ReverseProxyFeature which holds proxy specific data such as the cluster, route and destinations
+    var availableDestinationsFeature = context.Features.Get<IReverseProxyFeature>();
+    var filteredDestinations = new List<DestinationState>();
+
+    // Filter destinations based on criteria
+    foreach (var d in availableDestinationsFeature.AvailableDestinations)
+    {
+        //Todo: Replace with a lookup of metadata - but not currently exposed correctly here
+        if (d.DestinationId.Contains("debug") == useDebugDestinations) { filteredDestinations.Add(d); }
+    }
+    availableDestinationsFeature.AvailableDestinations = filteredDestinations;
+
+    // Important - required to move to the next step in the proxy pipeline
+    return next();
+}
+```
+
+So, for my custom implementation I tried to achieve something very similar:
+
+```csharp
+using ManualGateway.Api.Services;
+using Prometheus;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Model;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile("yarp.json", optional: false, reloadOnChange: true);
+builder.Services.AddControllers();
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .LoadFromMemory([], []);
+builder.Services.AddScoped<SystemRoutingRepository>();
+
+var app = builder.Build();
+
+// At startup (before any HTTP requests), there's no active scope. Scoped services can only be resolved
+// within an active scope context.
+using (var scope = app.Services.CreateScope())
+{
+    var repository = scope.ServiceProvider.GetRequiredService<SystemRoutingRepository>();
+    var initialRoutes = GetRoutesFromDatabase();
+    var initialClusters = await GetClustersFromDatabase(repository);
+
+    var configProvider = app.Services.GetRequiredService<InMemoryConfigProvider>();
+    configProvider.Update(initialRoutes, initialClusters);
+}
+
+app.Map("/update", async context =>
+{
+    var repository = context.RequestServices.GetRequiredService<SystemRoutingRepository>();
+    var routes = GetRoutesFromDatabase();
+    var clusters = await GetClustersFromDatabase(repository);
+    context.RequestServices.GetRequiredService<InMemoryConfigProvider>().Update(routes, clusters);
+});
+// We can customize the proxy pipeline and add/remove/replace steps
+app.MapReverseProxy(proxyPipeline =>
+{
+    // Use a custom proxy middleware, defined below
+    proxyPipeline.Use(MyCustomProxyStep);
+    // Don't forget to include these two middleware when you make a custom proxy pipeline (if you need them).
+    proxyPipeline.UseSessionAffinity();
+    proxyPipeline.UseLoadBalancing();
+});
+
+// Use and send metrics to Prometheus
+app.UseHttpMetrics();
+app.MapMetrics();
+
+app.Run();
+
+RouteConfig[] GetRoutesFromDatabase()
+{
+    return
+    [
+        new RouteConfig
+        {
+            RouteId = "product-route",
+            ClusterId = "product-cluster",
+            Match = new RouteMatch
+            {
+                Path = "/api/products/{**catch-all}"
+            }
+        }
+    ];
+}
+
+async Task<ClusterConfig[]> GetClustersFromDatabase(SystemRoutingRepository repository)
+{
+    var systemRoutes = await repository.GetAllRoutesAsync();
+    var destinations = new Dictionary<string, DestinationConfig>(StringComparer.OrdinalIgnoreCase);
+
+    foreach (var systemRoute in systemRoutes)
+    {
+        destinations.Add(
+            $"product-dest-{systemRoute.SystemId}",
+            new DestinationConfig { Address = systemRoute.ProductServiceTarget }
+        );
+    }
+
+    return
+    [
+        new ClusterConfig()
+        {
+            ClusterId = $"product-cluster",
+            Destinations = destinations
+        }
+    ];
+
+}
+
+/// <summary>
+/// Custom proxy step that filters destinations based on a header in the inbound request
+/// </summary>
+Task MyCustomProxyStep(HttpContext context, Func<Task> next)
+{
+    // Can read data from the request via the context
+    var destinationHeaderPresent = context.Request.Headers.TryGetValue("destination", out var headerValues) && headerValues.Count == 1;
+    var destination = headerValues.FirstOrDefault();
+
+    // The context also stores a ReverseProxyFeature which holds proxy specific data such as the cluster, route and destinations
+    var availableDestinationsFeature = context.Features.Get<IReverseProxyFeature>();
+
+    if (!destinationHeaderPresent || destination is null || availableDestinationsFeature is null)
+    {
+        context.Response.StatusCode = 400;
+        context.Response.WriteAsync("Destination header not present. Cannot route the request.");
+        return Task.CompletedTask;
+    }
+    var filteredDestinations = availableDestinationsFeature.AvailableDestinations
+        .Where(d => d.DestinationId.Contains(destination)).ToList();
+
+    availableDestinationsFeature.AvailableDestinations = filteredDestinations;
+
+    // Important - required to move to the next step in the proxy pipeline
+    return next();
+}
+```
+
+If one compares this to my vibe-coded implementation, the difference is obvious:
+
+```csharp
+using System.Diagnostics;
+using Gateway.Api.Services; // For SystemRoutingRepository
+using Yarp.ReverseProxy.Forwarder; // For IHttpForwarder
+using System.Net; // For DecompressionMethods, SocketsHttpHandler
+
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. Load YARP static configuration (for inventory, orders, and fallback)
+builder.Configuration.AddJsonFile("yarp.json", optional: false, reloadOnChange: true);
+
+// 2. Add YARP services and load static config
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+
+// 3. Add our custom SystemRoutingRepository
+builder.Services.AddScoped<SystemRoutingRepository>(); // Scoped is fine
+
+// 4. Add IHttpForwarder for manual forwarding
+builder.Services.AddHttpForwarder();
+
+var app = builder.Build();
+
+// 5. Prepare HttpClient for IHttpForwarder
+// This configuration is recommended by YARP docs for direct forwarding.
+var httpClient = new HttpMessageInvoker(new SocketsHttpHandler()
+{
+    UseProxy = false,
+    AllowAutoRedirect = false,
+    AutomaticDecompression = DecompressionMethods.None,
+    UseCookies = false,
+    ActivityHeadersPropagator = new ReverseProxyPropagator(DistributedContextPropagator.Current), // For distributed tracing
+    ConnectTimeout = TimeSpan.FromSeconds(15),
+});
+// Distributed Tracing Context: In a microservices architecture, a single user request might flow through multiple services
+// (e.g., Gateway -> OrderService -> InventoryService). To trace the entire lifecycle of such a request across these services,
+// a "trace context" (containing IDs like a Trace ID and Span ID) needs to be passed from one service to the next.
+// W3C Trace Context / OpenTelemetry: The standard for propagating this context is often the W3C Trace Context specification,
+// which defines specific HTTP headers (like traceparent and tracestate) to carry this information. OpenTelemetry is a widely
+// adopted observability framework that implements these standards.
+// ActivitySource and Activity: In .NET, distributed tracing is often implemented using System.Diagnostics.ActivitySource
+// and System.Diagnostics.Activity. An Activity represents a unit of work and carries the trace context.
+// DistributedContextPropagator: This is a .NET class responsible for injecting (serializing) the current Activity's context
+// into outgoing HTTP request headers and extracting (deserializing) it from incoming HTTP request headers.
+// DistributedContextPropagator.Current usually defaults to a propagator that handles W3C Trace Context headers.
+// ReverseProxyPropagator: This is a YARP-specific wrapper. When YARP (acting as the IHttpForwarder) makes an outgoing request
+// to a backend service, this propagator ensures that if there's an active Activity (trace context) on the incoming request
+// to the gateway, its context is correctly propagated (i.e., the right headers like traceparent are added) to the outgoing request
+// being sent to the backend service.
+// Why SocketsHttpHandler needs it: The SocketsHttpHandler (which is the underlying handler for HttpClient / HttpMessageInvoker)
+// doesn't automatically know about Activity propagation in the same way that the higher-level HttpClientFactory or ASP.NET Core's
+// built-in client might. By setting the ActivityHeadersPropagator explicitly, we ensure that this httpClient instance used by
+// IHttpForwarder participates correctly in distributed tracing.
+
+
+// Get IHttpForwarder and ILogger for use in route handlers
+var forwarder = app.Services.GetRequiredService<IHttpForwarder>();
+var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+var logger = loggerFactory.CreateLogger("DynamicProductRouting");
+
+// 6. CUSTOM DYNAMIC ROUTING for ProductService
+// This needs to be mapped *before* app.MapReverseProxy() if we want to intercept these paths.
+app.Map("/products-api/{**rest}", async (HttpContext httpContext, string rest) =>
+{
+    // Try to get 'system' query parameter
+    if (!httpContext.Request.Query.TryGetValue("system", out var systemIdValues) || string.IsNullOrEmpty(systemIdValues.FirstOrDefault()))
+    {
+        logger.LogInformation("Product route: 'system' query parameter missing or empty. Falling back to static YARP config.");
+        // If 'system' query parameter is missing, we can either:
+        // 1. Return a BadRequest
+        // httpContext.Response.StatusCode = 400;
+        // await httpContext.Response.WriteAsync("'system' query parameter is required for /products-api routes.");
+        // return;
+
+        // 2. Or, let it fall through to be handled by the static yarp.json config (if a route matches there)
+        // To do this, we essentially re-invoke the YARP pipeline for this specific context.
+        // This is a bit more advanced; for now, a simple fallback or error is easier.
+        // For simplicity, let's assume if no 'system' is passed, we don't dynamically route here.
+        // The request *might* be caught by app.MapReverseProxy() later if a general /products-api route exists there.
+        // Let's explicitly say we require it for this dynamic path for now.
+        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await httpContext.Response.WriteAsync("The 'system' query parameter is required for this product API endpoint.");
+        return;
+    }
+
+    var systemId = systemIdValues.First();
+    var routingRepo = httpContext.RequestServices.GetRequiredService<SystemRoutingRepository>(); // Get repo from DI
+    logger.LogInformation("Product route: Attempting dynamic route for systemId '{SystemId}' and path '/{Rest}'", systemId, rest);
+
+    var systemRoute = await routingRepo.GetRouteBySystemIdAsync(systemId!);
+    if (systemRoute == null || string.IsNullOrEmpty(systemRoute.ProductServiceTarget))
+    {
+        logger.LogWarning("Product route: No specific route found for systemId '{SystemId}' in database, or ProductServiceTarget is missing.", systemId);
+        httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+        await httpContext.Response.WriteAsync($"No product routing configuration found for system '{systemId}'.");
+        return;
+    }
+
+    var productRoute = systemRoute.ProductServiceTarget;
+
+    logger.LogInformation("Product route: Forwarding to '{SystemRoute}/{Rest}' for systemId '{SystemId}'", productRoute, rest, systemId);
+
+    // Forward the request. YARP takes care of copying headers, body, etc.
+    // The 'rest' variable already includes the leading '/' if it was part of the original path after /products-api/
+    // We need to ensure 'rest' correctly forms the path *after* the hostname.
+    // If 'rest' starts with '/', destinationPrefix should not have a trailing '/'.
+    // If 'rest' doesn't start with '/', destinationPrefix might need a trailing '/' or 'rest' needs a leading '/'.
+    // The {**rest} captures segments including slashes.
+    
+    // Let's use the 'rest' parameter directly.
+    // If original is /products-api/foo/bar then 'rest' is foo/bar
+    // We need to send to http://target:8080/foo/bar
+    // So, the path to forward is simply 'rest' if YARP expects the full path after hostname.
+    // However, IHttpForwarder.SendAsync wants the full URI.
+
+    // Let's rebuild the path for the backend:
+    var backendPath = $"/{rest}{httpContext.Request.QueryString}";
+
+    // This replaces the current request's path with the new one for forwarding
+    // This is a simplified way; YARP's transforms offer more robust path manipulation.
+    // For IHttpForwarder, we simply provide the full target URI.
+
+    var targetUri = $"{productRoute}{backendPath}";
+    logger.LogInformation("Product route: Constructed Target URI '{TargetUri}'", targetUri);
+
+    var error = await forwarder.SendAsync(httpContext, targetUri, httpClient);
+    if (error != ForwarderError.None)
+    {
+        var errorFeature = httpContext.GetForwarderErrorFeature();
+        var exception = errorFeature?.Exception;
+        logger.LogError(exception, "Product route: Error forwarding request for systemId '{SystemId}'. Error: {ForwarderError}", systemId, error);
+        // Error handling (e.g., return 502 Bad Gateway or specific error)
+        if (!httpContext.Response.HasStarted) // Check if response has already started
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+            await httpContext.Response.WriteAsync("Error forwarding request to backend product service.");
+        }
+    }
+    else
+    {
+        logger.LogInformation("Product route: Successfully forwarded request for systemId '{SystemId}' to '{TargetUri}'", systemId, targetUri);
+    }
+});
+
+
+// 7. Map YARP reverse proxy middleware for all other routes (inventory, orders, or product fallback)
+// This will use the routes defined in yarp.json
+app.MapReverseProxy();
+
+app.Run();
+```
+
+## Prometheus and Grafana metrics
+
+I have been wanting to learn the basics of Prometheus and Grafana for a while. I have experience with Azure,
+but it's always good to know the open-source alternatives. As I was pondering what types of metrics to set up,
+I learned about the __RED__ and __USE__ monitoring methodologies.
+
+_RED Method (Request-focused)_
+**Best for:** User-facing services, APIs, microservices
+
+**Focuses on:**
+- **Rate:** How many requests per second
+- **Errors:** How many of those requests are failing  
+- **Duration:** How long those requests take
+
+_USE Method (Resource-focused)_
+**Best for:** Infrastructure, system resources
+
+**Focuses on:**
+- **Utilization:** How busy a resource is (% time busy)
+- **Saturation:** How much extra work is queued (waiting)
+- **Errors:** Count of error events
+
+Then I asked an LLM ([Claude Sonnet 4](https://www.anthropic.com/claude/sonnet)) to give me a few recommendations
+on what types of metrics to set up. It provided a list of top 10 essential metrics. I needed to tweak them
+a bit to get the right types of requests, etc., and the final list now looks like this:
+
+__Top 10 Essential Metrics__
+
+### RED Metrics (Service Performance)
+
+1. **Request Rate**
+   ```promql
+   rate(http_requests_received_total[5m])
+   ```
+   *Measures how many HTTP requests per second your service is handling. Essential for understanding traffic volume and capacity planning.*
+
+2. **Error Rate (%)**
+   ```promql
+   rate(http_requests_received_total{code=~"5.."}[5m]) / rate(http_requests_received_total[5m]) * 100
+   ```
+   *Shows the percentage of requests returning 5xx server errors. High error rates indicate service problems or capacity issues.*
+
+3. **Response Duration (95th percentile)**
+   ```promql
+   histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+   ```
+   *Shows how long 95% of requests take to complete. Reveals performance issues that averages might hide.*
+
+4. **Service Availability**
+   ```promql
+   up
+   ```
+   *Binary metric showing if Prometheus can reach your service (1=up, 0=down). Critical for detecting outages.*
+
+### USE Metrics (Resource Monitoring)
+
+5. **CPU Utilization**
+   ```promql
+   rate(process_cpu_seconds_total[5m]) * 100
+   ```
+   *Shows CPU usage percentage over time. High CPU can indicate performance bottlenecks or insufficient resources.*
+
+6. **Memory Usage**
+   ```promql
+   process_working_set_bytes / 1024 / 1024
+   ```
+   `1024 / 1024` converts bytes to megabytes.
+   *Displays memory consumption in MB. Helps detect memory leaks and plan resource allocation.*
+   *Typical ranges for .NET apps: <100MB (excellent), 100-200MB (good), 200-500MB (acceptable), >500MB (investigate).*
+
+7. **Garbage Collection Pressure**
+   ```promql
+   rate(dotnet_collection_count_total[5m])
+   ```
+   *Tracks .NET garbage collection frequency. High GC activity can impact performance and indicates memory pressure.*
+   *Typical GC rates for .NET apps: <0.1/sec (excellent), 0.1-1.0/sec (good), 1.0-5.0/sec (concerning), >5.0/sec (critical). Gen 2 collections >0.1/sec need immediate investigation.*
+
+### YARP-Specific Metrics
+
+8. **Routing Distribution**
+   ```promql
+   sum by (job) (rate(http_requests_received_total[5m]))
+   ```
+   *Shows how traffic is distributed across backend destinations. Useful for load balancing verification and troubleshooting routing logic.*
+   *Note: `rate()` always returns per-second averages regardless of time window - multiply by 60 for per-minute or 3600 for per-hour.*
+
+9. **Proxy Latency**
+   ```promql
+   histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{job="gateway-api"}[5m]))
+   ```
+   *Measures total request duration through the gateway including routing and backend response time. Shows proxy overhead plus backend latency.*
+   *This represents user-experienced latency: gateway processing + network + backend processing + response time.*
+   *Typical ranges for .NET APIs: <50ms (excellent), 50-200ms (good), 200-500ms (acceptable), >500ms (investigate).*
+
+10. **Backend Health**
+    ```promql
+    up{job=~"product-service-.*"}
+    ```
+    *Monitors availability of backend services behind the proxy. Critical for detecting when specific backend instances fail.*
+
+### Quick Dashboard Layout
+- **Traffic Panel:** #1, #8 (Rate + Distribution)
+- **Errors Panel:** #2, #4 (Error rate + Availability) 
+- **Latency Panel:** #3, #9 (Response + Proxy duration)
+- **Resources Panel:** #5, #6, #7 (CPU, Memory, GC)
+
+**Golden Rule:** Start with RED for user experience, add USE for troubleshooting performance issues.
+
+I set up the four proposed panels in a Grafana dashboard, and was quite happy with the result.
+
+
+![Final Grafana Dashboard](/assets/images/yarp/grafana.png)
+_Final Grafana Dasbhoard with top 10 essential metrics according to the RED and USE methodology_
+
+## Summary
+
+In this project I built two custom reverse proxies with YARP. The first proxy I vibe-coded, the second
+one I coded myself by first reading the YARP documentation and then looking at the code examples on
+YARP's official repository. The difference was stark. I was not only able to produce a much more 
+performant and YARP-like reverse proxy by coding it myself, but was also able to understand the code in-depth.
+I can't say I really understood any of the parts I vibe-coded, not in more than a general and superficial way, at least.
+
+However, I did make extensive use of LLMs while researching for the project, and that has been very 
+helpful and has deepened my knowledge of the subject matter. After this experiment, my final thoughts on
+vibe-coding would be this: It can be useful if you know nothing about something and you still need to 
+get something to work by tomorrow morning. In that sense it's almost like a super power: Hey, I've built a 
+reverse proxy with YARP, and I don't even know what a reverse proxy is! However, if you intend to actually
+use your code for anything long-term or realistic, then it is a complete waste of time. You are far better off
+learning the concepts, looking at the official documentation and code examples, and figuring it out yourself. 
+You'll have to live with the code you write anyhow, or someone else will, and if you're an engineer by heart
+then you want to engineer things that work and are easy to maintain. 
+
+---
+
+## Appendix: Cookies, Headers, and Query Parameters: Differences and Proxy Routing
+
+When working with reverse proxies like YARP, it's important to understand the differences between cookies, headers, and query parameters, as each can be used for routing decisions:
+
+| Feature         | Cookies                | Headers                | Query Parameters         |
+|-----------------|------------------------|------------------------|-------------------------|
+| Where           | `Cookie` header        | Any HTTP header        | URL (after `?`)         |
+| Set by          | Server/Client          | Client/Server          | Client                  |
+| Visibility      | Not in URL             | Not in URL             | In URL                  |
+| Persistence     | Can persist            | Per-request            | Per-request             |
+| Use cases       | Sessions, auth, prefs  | Auth, routing, meta    | Filters, routing, data  |
+| Sent with       | All matching requests  | Only when set          | Only that request       |
+| Path attribute  | Yes                    | No                     | No                      |
+
+- **Cookies** are small pieces of data stored on the client and sent automatically with requests to matching domains/paths. They're often used for session management or user affinity, and can be used for routing in proxies via custom code.
+- **Headers** are metadata sent with each HTTP request/response. They're flexible, not visible in the URL, and are commonly used for authentication, custom routing, or tenant selection in proxies.
+- **Query parameters** are part of the URL and are visible in logs and browser address bars. They're easy to use for routing and filtering, but are only sent for the specific request.
+
+**In YARP:**
+- Header and query parameter-based routing is supported out of the box in static config.
+- Cookie-based routing requires custom code in the YARP pipeline.
+
+For API routing, headers and query parameters are most common, but cookies are useful for session or affinity scenarios.
+
+---
