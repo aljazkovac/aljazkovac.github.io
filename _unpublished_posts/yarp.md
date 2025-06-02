@@ -6,6 +6,25 @@ tags: [.net, yarp, reverse proxy, prometheus, grafana, vibe-coding] # TAG names 
 description: Two custom reverse proxies in YARP: vibe-coding vs. classical coding
 ---
 
+## Table of contents
+
+- [Table of contents](#table-of-contents)
+- [The goal](#the-goal)
+- [Architecture](#architecture)
+  - [Product service](#product-service)
+    - [Method of implementation](#method-of-implementation)
+  - [YARP](#yarp)
+    - [Method of implementation](#method-of-implementation-1)
+      - [Vibe coding](#vibe-coding)
+      - [Classical coding](#classical-coding)
+- [Prometheus and Grafana metrics](#prometheus-and-grafana-metrics)
+  - [RED Metrics (Service Performance)](#red-metrics-service-performance)
+  - [USE Metrics (Resource Monitoring)](#use-metrics-resource-monitoring)
+  - [YARP-Specific Metrics](#yarp-specific-metrics)
+  - [Quick Dashboard Layout](#quick-dashboard-layout)
+- [Summary](#summary)
+- [Appendix: Cookies, Headers, and Query Parameters: Differences and Proxy Routing](#appendix-cookies-headers-and-query-parameters-differences-and-proxy-routing)
+
 ## The goal
 
 I have been working with our custom reverse proxy at my current workplace, [Caspeco AB](https://caspeco.com/), 
