@@ -11,67 +11,7 @@ TODO:
 - Write about cost optimization for SQL databases?
 - Write about database access: control plane vs. data plane operations + include article about adding users to databases (Azure actually makes a check to see that the user exists)
 
-
 ## Table of Contents
-
-- [Azure DevOps Knowledge Base](#azure-devops-knowledge-base)
-  - [Table of Contents](#table-of-contents)
-  - [Azure Resource Management](#azure-resource-management)
-    - [Resource Groups](#resource-groups)
-    - [Subscriptions \& Management Groups](#subscriptions--management-groups)
-    - [Tags \& Governance](#tags--governance)
-  - [Azure DevOps Pipelines](#azure-devops-pipelines)
-    - [Build Pipelines](#build-pipelines)
-    - [Release Pipelines](#release-pipelines)
-    - [Service Connections](#service-connections)
-    - [Variable Groups \& Secrets](#variable-groups--secrets)
-  - [Infrastructure as Code (IaC)](#infrastructure-as-code-iac)
-    - [Bicep](#bicep)
-    - [Terraform](#terraform)
-  - [Networking \& Security](#networking--security)
-    - [Virtual Networks](#virtual-networks)
-    - [Network Security Groups](#network-security-groups)
-    - [Application Gateway \& Load Balancers](#application-gateway--load-balancers)
-    - [VPN \& ExpressRoute](#vpn--expressroute)
-  - [Monitoring \& Logging](#monitoring--logging)
-    - [Azure Monitor](#azure-monitor)
-    - [Log Analytics](#log-analytics)
-    - [Application Insights](#application-insights)
-    - [Alerts \& Notifications](#alerts--notifications)
-  - [Container Services](#container-services)
-    - [Azure Container Registry (ACR)](#azure-container-registry-acr)
-    - [Azure Kubernetes Service (AKS)](#azure-kubernetes-service-aks)
-    - [Container Instances](#container-instances)
-  - [Database Services](#database-services)
-    - [Azure SQL Database](#azure-sql-database)
-      - [🔧 Problem: Connection timeout issues with Azure SQL](#-problem-connection-timeout-issues-with-azure-sql)
-      - [📋 How-To: Control Database Access](#-how-to-control-database-access)
-    - [Cosmos DB](#cosmos-db)
-    - [Redis Cache](#redis-cache)
-  - [Identity \& Access Management](#identity--access-management)
-    - [Azure Active Directory](#azure-active-directory)
-    - [Service Principals](#service-principals)
-    - [RBAC \& Permissions](#rbac--permissions)
-  - [Cost Optimization](#cost-optimization)
-    - [Resource Sizing](#resource-sizing)
-    - [Reserved Instances](#reserved-instances)
-    - [Cost Monitoring](#cost-monitoring)
-  - [Troubleshooting](#troubleshooting)
-    - [Common Error Messages](#common-error-messages)
-      - [Error: "The subscription is not registered to use namespace"](#error-the-subscription-is-not-registered-to-use-namespace)
-    - [Debugging Techniques](#debugging-techniques)
-    - [Performance Issues](#performance-issues)
-  - [Useful Scripts \& Commands](#useful-scripts--commands)
-    - [Common Azure CLI Commands](#common-azure-cli-commands)
-    - [PowerShell Snippets](#powershell-snippets)
-    - [ARM Template Patterns](#arm-template-patterns)
-  - [External Resources](#external-resources)
-    - [Official Documentation](#official-documentation)
-    - [Community Resources](#community-resources)
-    - [Tools \& Extensions](#tools--extensions)
-  - [Contributing to This Document](#contributing-to-this-document)
-    - [Adding New Entries](#adding-new-entries)
-    - [Maintenance](#maintenance)
 
 ## Azure Resource Management
 
@@ -117,6 +57,19 @@ TODO:
 <!-- Add connectivity issues here -->
 
 ## Monitoring & Logging
+
+### Quantify performance gains for a new container app deployment
+
+Problem description: We had performance issues with one of our deployments (a very large system with several thousand employees). We decided to make a temporary deployment and have a couple of administrators (up to 6) work against that deployment instead. How to quantify the performance improvements?
+
+Some ideas:
+
+1. Compare average response times / latency (server side) for the standard deployment vs. temporary deployment
+2. Compare P95 or P99 response times (server side latency)
+3. Compare error rates (server side)
+4. Compare uptime/availability
+5. Compare request count and CPU/Memory Usage
+6. Compare client-side performance (browser load times)
 
 ### Azure Monitor
 <!-- Add monitoring issues here -->
