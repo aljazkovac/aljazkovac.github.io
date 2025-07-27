@@ -90,8 +90,37 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 ---
 
-Ex. 1.1.
+## Ex. 1.1 - First Application Deploy
 
+**Goal**: Create a simple application that outputs a timestamp and UUID every 5 seconds, containerize it, and deploy it to Kubernetes.
 
+- **Create simple app**: Generates UUID on startup, outputs timestamp + UUID every 5 seconds
+
+- **Containerize the app**
+
+- `docker build -t your-dockerhub-username/ex-1-1:latest .`
+- `docker login`
+- `docker push your-dockerhub-username/ex-1-1:latest`
+
+- **Kubernetes Deployment**
+
+- **Created cluster**: `k3d cluster create k3s-default -a 2`
+- **Deployed app**: `kubectl create deployment log-output --image=aljazkovac/kubernetes-1-1`
+- **Initial issue**: Wrong image name caused `ImagePullBackOff` - lesson learned about exact naming
+
+- **Testing and Scaling**
+
+- **Scaling experiment**: `kubectl scale deployment log-output --replicas=3`
+- **Key insight**: Each pod is independent with its own UUID - they don't share log files
+- **Multi-pod logging**: `kubectl logs -f -l app=log-output --prefix=true` shows which pod generated each log line
+
+- **Essential Commands Learned**
+
+- `kubectl logs -f deployment/log-output` - Stream logs from all pods
+- `kubectl logs -f -l app=log-output --prefix=true` - Stream with pod names
+- `kubectl scale deployment <name> --replicas=N` - Scale application
+- `kubectl get pods` - Check pod status
+
+**Result**: ✅ Successfully deployed and scaled a containerized application, understanding pod independence and basic Kubernetes orchestration.
 
 ---
