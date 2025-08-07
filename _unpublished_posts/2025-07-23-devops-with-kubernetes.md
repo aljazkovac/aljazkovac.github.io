@@ -62,6 +62,34 @@ If we run the command `k3d kubeconfig get k3s-default` then we can see the auto-
 
 Some more basic `k3d` commands: `k3d cluster start`, `k3d cluster stop`, `k3d cluster delete`.
 
+## Common k3d Troubleshooting
+
+**Connection Refused Error**:
+
+When running `kubectl get nodes`, you might encounter:
+
+```text
+The connection to the server 0.0.0.0:63096 was refused - did you specify the right host or port?
+```
+
+This typically means your k3d cluster is stopped. Check cluster status:
+
+```bash
+k3d cluster list
+```
+
+If you see `0/1` servers and `0/2` agents, the cluster is stopped. Start it with:
+
+```bash
+k3d cluster start k3s-default
+```
+
+After starting, verify the cluster is running:
+
+- Servers should show `1/1`
+- Agents should show `2/2`
+- `kubectl get nodes` should now work successfully
+
 ## kubectl and its role in k3d and k3s
 
 `kubectl` is the command-line tool used to interact with Kubernetes clusters. It works seamlessly with `k3d` and `k3s` as follows:
