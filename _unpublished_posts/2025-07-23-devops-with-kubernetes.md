@@ -152,3 +152,36 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 **Result**: ✅ Successfully deployed and scaled a containerized application, understanding pod independence and basic Kubernetes orchestration.
 
 ---
+
+## Exercise 1.2: TODO Application
+
+**Objective**: Create a web server that outputs "Server started in port NNNN" when started, uses PORT environment variable, and deploy to Kubernetes.
+
+- **Application Development**
+
+- **Created Express.js server**: Simple web server with configurable port
+- **PORT environment variable**: `const port = process.env.PORT || 3000;`
+- **Startup message**: Logs "Server started in port 3000" as required
+
+- **Docker Containerization**
+
+- **Dockerfile**: Node.js 24-alpine base with npm install and app copy
+- **Local build**: `docker build -t todo-app .`
+- **Docker Hub push**: Tagged and pushed as `aljazkovac/todo-app:latest`
+
+- **Kubernetes Deployment**
+
+- **Reused existing cluster**: Used the same k3s-default cluster from exercise 1.1
+- **Deployed app**: `kubectl create deployment todo-app --image=aljazkovac/todo-app:latest`
+- **No networking yet**: As expected, external access not configured (covered in future exercises)
+
+- **Essential Commands Learned**
+
+- `docker tag <local-image> <dockerhub-username>/<image>:latest` - Tag for registry
+- `docker push <dockerhub-username>/<image>:latest` - Push to Docker Hub
+- `kubectl create deployment <name> --image=<image>` - Deploy from registry
+- `kubectl logs deployment/<name>` - Check application logs
+
+**Result**: ✅ Successfully created and deployed a simple web server to Kubernetes, confirming proper startup message and environment variable usage.
+
+---
