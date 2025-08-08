@@ -151,6 +151,8 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 **Result**: ✅ Successfully deployed and scaled a containerized application, understanding pod independence and basic Kubernetes orchestration.
 
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.1/log_output`
+
 ---
 
 ## Exercise 1.2: TODO Application
@@ -183,6 +185,8 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 - `kubectl logs deployment/<name>` - Check application logs
 
 **Result**: ✅ Successfully created and deployed a simple web server to Kubernetes, confirming proper startup message and environment variable usage.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.2/todo_app`
 
 ---
 
@@ -220,6 +224,35 @@ kubectl logs -f -l app=log-output --prefix=true
 
 **Result**: ✅ Deployment applied successfully; pods emit periodic timestamp + UUID as before using the declarative manifest.
 
-Release: Link to the GitHub release for this exercise: `RELEASE_URL_HERE`
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.3/log_output`
+
+---
+
+## Exercise 1.4: Declarative Deployment for TODO app
+
+**Objective**: Create a `deployment.yaml` for the course project you started in Exercise 1.2 (`todo-app`). You won’t have access to the port yet — that comes later.
+
+- **Manifests folder**: Created `devops-with-kubernetes/todo_app/manifests/` and added [`deployment.yaml`](https://github.com/aljazkovac/devops-with-kubernetes/blob/1.4/todo_app/manifests/deployment.yaml).
+- **Deployment spec**: `apps/v1` Deployment named `todo-app`, label `app=todo-app`, 1 replica, image `aljazkovac/todo-app:latest`, with resource requests/limits.
+
+### Apply & verify (Deployment)
+
+```bash
+# Apply the declarative deployment
+kubectl apply -f devops-with-kubernetes/todo_app/manifests/deployment.yaml
+
+# Wait for rollout to complete
+kubectl rollout status deployment/todo-app
+
+# Inspect pods
+kubectl get pods -l app=todo-app
+
+# Chech logs to verify startup message (no external port yet)
+kubectl logs -l app=todo-app 
+```
+
+**Result**: ✅ The `todo-app` runs via a declarative Deployment, and logs confirm the server starts with the given port. External access will be added in a later exercise.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.4/todo_app`
 
 ---
