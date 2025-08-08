@@ -185,3 +185,41 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 **Result**: ✅ Successfully created and deployed a simple web server to Kubernetes, confirming proper startup message and environment variable usage.
 
 ---
+
+## Exercise 1.3: Declarative Deployment Manifests
+
+**Objective**: Move the "Log output" app to a declarative Kubernetes manifest and verify it runs by restarting and following logs.
+
+- **Manifests folder**: Created `devops-with-kubernetes/log_output/manifests/` and added [`deployment.yaml`](https://github.com/aljazkovac/devops-with-kubernetes/blob/1.3/log_output/manifests/deployment.yaml).
+- **Deployment spec**: `apps/v1` Deployment named `log-output`, label `app=log-output`, 1 replica, image `aljazkovac/kubernetes-1-1:latest`.
+
+### Apply & verify
+
+```bash
+# Apply the declarative deployment
+kubectl apply -f devops-with-kubernetes/log_output/manifests/deployment.yaml
+
+# Wait for rollout to complete
+kubectl rollout status deployment/log-output
+
+# Inspect pods
+kubectl get pods -l app=log-output
+
+# Follow logs (shows timestamp + UUID)
+kubectl logs -f -l app=log-output --prefix=true
+```
+
+### Restart test
+
+```bash
+# Trigger a rolling restart and watch logs
+kubectl rollout restart deployment/log-output
+kubectl rollout status deployment/log-output
+kubectl logs -f -l app=log-output --prefix=true
+```
+
+**Result**: ✅ Deployment applied successfully; pods emit periodic timestamp + UUID as before using the declarative manifest.
+
+Release: Link to the GitHub release for this exercise: `RELEASE_URL_HERE`
+
+---
