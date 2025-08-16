@@ -32,7 +32,7 @@ _Basic Kubernetes concepts_:
 - POD == the smallest building block in the Kubernetes object model. The pod sees the container(s) it contains, Kubernetes only sees the pod
 - NODE == groups of pods co-located on a single machine (real or virtual)
 - CLUSTER == nodes are grouped into clusters, each of which is overseen by a MASTER NODE
-- DEPLOYMENT == a .yaml file declaration that puts clusters in place => Kubernetes then selects the machines and propagates the containers in each pod
+- DEPLOYMENT == a `.yaml` file declaration that puts clusters in place => Kubernetes then selects the machines and propagates the containers in each pod
 
 [_K3s_](https://k3s.io/) is a lightweight Kubernetes distribution developed by Rancher Labs. It’s designed to be easy to install, resource-efficient, and suitable for local development, edge, and IoT environments. It removes some non-essential features and dependencies to reduce complexity.
 
@@ -62,7 +62,7 @@ If we run the command `k3d kubeconfig get k3s-default` then we can see the auto-
 
 Some more basic `k3d` commands: `k3d cluster start`, `k3d cluster stop`, `k3d cluster delete`.
 
-## Common k3d Troubleshooting
+### Common k3d Troubleshooting
 
 **Connection Refused Error**:
 
@@ -90,7 +90,7 @@ After starting, verify the cluster is running:
 - Agents should show `2/2`
 - `kubectl get nodes` should now work successfully
 
-## kubectl and its role in k3d and k3s
+### kubectl and its role in k3d and k3s
 
 `kubectl` is the command-line tool used to interact with Kubernetes clusters. It works seamlessly with `k3d` and `k3s` as follows:
 
@@ -118,7 +118,7 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 ---
 
-## Ex. 1.1 - First Application Deploy
+### Ex. 1.1 - First Application Deploy
 
 **Goal**: Create a simple application that outputs a timestamp and UUID every 5 seconds, containerize it, and deploy it to Kubernetes.
 
@@ -155,7 +155,7 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 ---
 
-## Exercise 1.2: TODO Application
+### Exercise 1.2: TODO Application
 
 **Objective**: Create a web server that outputs "Server started in port NNNN" when started, uses PORT environment variable, and deploy to Kubernetes.
 
@@ -190,7 +190,7 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 ---
 
-## Exercise 1.3: Declarative Deployment Manifests
+### Exercise 1.3: Declarative Deployment Manifests
 
 **Objective**: Move the "Log output" app to a declarative Kubernetes manifest and verify it runs by restarting and following logs.
 
@@ -228,7 +228,7 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 ---
 
-## Exercise 1.4: Declarative Deployment for TODO app
+### Exercise 1.4: Declarative Deployment for TODO app
 
 **Objective**: Create a `deployment.yaml` for the course project you started in Exercise 1.2 (`todo-app`). You won’t have access to the port yet — that comes later.
 
@@ -256,3 +256,17 @@ kubectl logs -l app=todo-app
 Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.4/todo_app`
 
 ---
+
+## Introduction to Debugging
+
+Some useful commands:
+
+- `kubectl describe`
+- `kubectl logs`
+- `kubectl delete`
+- `kubectl get events`
+
+Using [Lens](https://k8slens.dev/), the Kubernetes IDE, can also make for a smoother debugging experience.
+
+## Introduction to Networking
+
