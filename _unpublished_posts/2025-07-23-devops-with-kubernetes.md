@@ -248,7 +248,7 @@ kubectl rollout status deployment/todo-app
 kubectl get pods -l app=todo-app
 
 # Chech logs to verify startup message (no external port yet)
-kubectl logs -l app=todo-app 
+kubectl logs -l app=todo-app
 ```
 
 **Result**: ✅ The `todo-app` runs via a declarative Deployment, and logs confirm the server starts with the given port. External access will be added in a later exercise.
@@ -270,3 +270,49 @@ Using [Lens](https://k8slens.dev/), the Kubernetes IDE, can also make for a smoo
 
 ## Introduction to Networking
 
+The `kubectl port-forward` command is used to forward a local port to a pod. It is not meant for production use.
+
+---
+
+### Exercise 1.5: Port forwarding for the TODO app
+
+**Objective**: Return a simple HTML website and use port-fowarding to reach it from your local machine
+
+- **Create a simple HTML website**
+- **Build a new Docker image and push**: `docker build -t aljazkovac/todo-app:latest .` && `docker push aljazkovac/todo-app:latest`
+- **Apply new deployment**: `kubectl apply -f todo_app/manifests/deployment.yaml`
+- **Restart deployment**: `kubectl rollout restart deployment/todo-app`
+- **Port forward**: `kubectl port-forward todo-app-66579f8fd6-j72f8 3000:8080` (<`local port`>:<`pod port`>)
+- **Check at localhost:3000**: Go to localhost:3000 and make sure you see the HTML website.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.5/todo_app`
+
+---
+
+### Exercise 1.6: Use a NodePort service for the TODO app
+
+**Objective**: Use a NodePort service to reach your TODO-app from your local machine
+
+- **Prepare a service.yaml file**
+- **Delete existing Kubernetes cluster**: `k3d cluster delete k3s-default`
+- **Create new Kubernetes cluster and open ports on the Docker container and the Kubernetes node**:
+  `k3d cluster create k3s-default --port "3000:30080@agent:0" --agents 2`
+- **Apply the deployment**: `kubectl apply -f manifests/deployment.yaml`
+- **Apply the service**: `kubectl apply -f manifests/service.yaml`
+- **Check at localhost:3000**: Go to `localhost:3000` and make sure you see the HTML website.
+
+Here is the complete chain of port-forwarding:
+
+Browser (localhost:3000)
+↓ (Docker port mapping)
+Docker Container: k3d-k3s-default-agent-0 port 30080
+↓ (This container IS the Kubernetes node)
+Kubernetes Node port 30080
+↓ (NodePort service routing)
+Service nodePort: 30080 → targetPort: 8080
+↓
+TODO app listening on port 8080
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.6/todo_app`
+
+---
