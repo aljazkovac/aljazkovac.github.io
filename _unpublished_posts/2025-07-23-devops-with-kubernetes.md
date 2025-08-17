@@ -313,6 +313,25 @@ Service nodePort: 30080 → targetPort: 8080
 ↓
 TODO app listening on port 8080
 
+**Important**: It doesn't matter which node has the port mapping. The Kubernetes NodePort service handles the cross-node routing. In this case, we opened the port on node `agent-0`, but the pod was running on `agent-1`, but we could still access it at `localhost:3000`.
+
 Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.6/todo_app`
+
+---
+
+### Exercise 1.7: Use Ingress for the TODO app
+
+**Objective**: Use a Ingress service to reach your TODO-app from your local machine
+
+- **Delete the existing cluster**: `k3d cluster delete k3s-default`
+- **Create a new cluster with the port mapping to port 80 (where Ingress listens)**: `k3d cluster create k3s-default --port "3000:80@loadbalancer" --agents 2`
+- **Create a service file**
+- **Create an ingress file**: make sure you reference your service correctly
+- **Apply all services**: `kubectl apply -f manifests/`
+- **Check at `localhost`**
+
+The traffic flow: `localhost:3000 → k3d loadbalancer:80 → Ingress → Service(2345) → Pod(8080)`
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.7/todo_app`
 
 ---
