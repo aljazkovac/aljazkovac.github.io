@@ -319,7 +319,58 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 ---
 
-### Exercise 1.7: Use Ingress for the TODO app
+## Exercise 1.7: Add HTTP Endpoint to Log Output App
+
+**Objective**: "Log output" application currently outputs a timestamp and a random string (that it creates on startup) to the logs. Add an endpoint to request the current status (timestamp and the random string) and an Ingress so that you can access it with a browser.
+
+### Solution
+
+I extended the `log_output/app.js` to include an HTTP server with a `/status` endpoint that returns the current timestamp and the application's UUID as JSON.
+
+The key changes were:
+
+- Added HTTP server using Node.js built-in `http` module
+- Created `/status` endpoint that returns `{timestamp, appId}` 
+- Kept the existing 5-second logging functionality
+- Random string (UUID) is stored in memory for the application lifetime
+
+I also needed to update the Kubernetes manifests:
+
+- **Updated deployment.yaml**: Added `containerPort: 3000` to expose the HTTP server port
+- **Created service.yaml**: ClusterIP service exposing port 2345, targeting container port 3000
+- **Created ingress.yaml**: Ingress resource to route HTTP traffic from the browser to the service
+
+### Networking and Port Configuration
+
+The networking flow works as follows:
+
+1. **k3d Port Mapping**: k3d maps host port 3000 to the cluster's LoadBalancer port 80
+2. **Ingress (Traefik)**: Receives requests on port 80 and routes them based on ingress rules
+3. **Service**: Exposes the deployment on cluster port 2345 and forwards to container targetPort 3000
+4. **Container**: The Node.js app listens on port 3000 inside the container
+
+The complete flow: `localhost:3000` → `Traefik LoadBalancer:80` → `log-output-svc:2345` → `container:3000`
+
+This differs from direct port forwarding (`kubectl port-forward`) because:
+
+- **Ingress routing**: Uses HTTP path-based routing instead of direct port mapping
+- **Service abstraction**: The Service provides load balancing and service discovery
+- **Production-ready**: Ingress is designed for production use, while port-forward is for development
+
+After building and pushing the updated Docker image (`aljazkovac/log-output:latest`) and applying the manifests, the endpoint is accessible at:
+
+```bash
+curl http://localhost:3000/status
+# Returns: {"timestamp":"2025-08-21 19:47:06","appId":"f67b6cb3-9982-40d9-b50f-0eb85059bbae"}
+```
+
+**Key Insight**: The random string (UUID) is stored in memory and persists for the lifetime of the application. Each restart generates a new UUID, but it remains constant while the container is running.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.7/log_output`
+
+---
+
+### Exercise 1.8: Use Ingress for the TODO app
 
 **Objective**: Use a Ingress service to reach your TODO-app from your local machine
 
