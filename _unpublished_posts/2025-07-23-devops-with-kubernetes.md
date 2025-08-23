@@ -379,10 +379,42 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 - **Create a service file**
 - **Create an ingress file**: make sure you reference your service correctly
 - **Apply all services**: `kubectl apply -f manifests/`
-- **Check at `localhost`**
+- **Check at `http://localhost:3000`**
 
 The traffic flow: `localhost:3000 → k3d loadbalancer:80 → Ingress → Service(2345) → Pod(8080)`
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.7/todo_app`
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.8/todo_app`
+
+---
+
+### Exercise 1.9: Ping-Pong Application with Shared Ingress
+
+**Objective**: Develop a second application that responds with "pong X" to GET requests and increases a counter. Create a deployment for it and have it share the same Ingress with the "Log output" application by routing requests directed to '/pingpong' to it.
+
+- **Create the ping-pong application**: Express.js app that handles `/pingpong` endpoint directly
+- **Build and push the Docker image**: `docker build -t aljazkovac/pingpong:latest ./pingpong && docker push aljazkovac/pingpong:latest`
+- **Create deployment and service manifests**: Deploy with resource limits and expose on port 2346
+- **Update the existing Ingress**: Add a new path rule for `/pingpong` to route to `pingpong-svc`
+- **Apply the manifests**: `kubectl apply -f pingpong/manifests/`
+- **Test both endpoints**: 
+  - `curl http://localhost:3000/status` - returns log-output status
+  - `curl http://localhost:3000/pingpong` - returns "pong 0", "pong 1", etc.
+
+The traffic flow with shared Ingress:
+
+```
+localhost:3000 → k3d loadbalancer:80 → Ingress
+                                          ├─ /status → log-output-svc:2345 → Pod:3000
+                                          └─ /pingpong → pingpong-svc:2346 → Pod:9000
+```
+
+Key implementation details:
+
+- The ping-pong app listens on `/pingpong` directly (not `/`), avoiding the need for path rewriting
+- Both applications share the same Ingress resource with path-based routing
+- The counter is stored in memory and may reset on pod restart
+- Port 9000 (where the ping-pong container listens) is not directly accessible from outside the cluster - you must go through the Ingress at `localhost:3000/pingpong`. This is why attempting to access `localhost:9000` directly doesn't work.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.9/pingpong`
 
 ---
