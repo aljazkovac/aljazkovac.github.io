@@ -418,3 +418,48 @@ Key implementation details:
 Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.9/pingpong`
 
 ---
+
+## Introduction to Storage
+
+There are two really hard things in Kubernetes: networking and [storage](https://softwareengineeringdaily.com/2019/01/11/why-is-storage-on-kubernetes-is-so-hard/).
+
+There are several types of storage in Kubernetes:
+
+- emptyDir volume: shared filesystem within a pod => lifecycle tied to the pod => not to be used for backing up a database, but can be used for cache.
+- persistent volume: TODO!
+
+---
+
+### Exercise 1.10: Multi-Container Pod with Shared Storage
+
+**Objective**: Split the log-output application into two applications: one that writes timestamped logs to a file every 5 seconds, and another that reads from that file and serves the content via HTTP endpoint. Both applications should run in the same pod and share data through a volume.
+
+- **Restructure the application**: Split `log_output/` into `log-writer/` and `log-reader/` subdirectories
+- **Create log-writer app**: Writes `timestamp: appId` to `/shared/logs.txt` every 5 seconds, serves status on port 3001
+- **Create log-reader app**: Reads from `/shared/logs.txt` and serves aggregated data via `/status` endpoint on port 3000
+- **Build and push images**: `docker build` and `docker push` both applications
+- **Update deployment**: Multi-container pod with emptyDir volume mounted at `/shared` in both containers
+- **Deploy and test**: `kubectl apply -f log_output/manifests/`
+
+The traffic flow with multi-container pod:
+
+```localhost:3000/status → Ingress → Service:2345 → log-reader:3000 → /shared/logs.txt
+                                                         ↖
+                                              log-writer:3001 → /shared/logs.txt
+                                                     ↑
+                                            (writes every 5 seconds)
+```
+
+Key implementation details:
+
+- **emptyDir volume**: Shared storage mounted at `/shared` in both containers, lifecycle tied to the pod
+- **File-based communication**: log-writer appends to `/shared/logs.txt`, log-reader reads entire file and counts lines
+- **Port separation**: log-writer (3001) and log-reader (3000) use different ports to avoid conflicts
+- **Service routing**: Only log-reader exposed externally; log-writer's HTTP server accessible only within pod
+- **Real-time updates**: Each request to `/status` shows current file state with increasing `totalLogs` count
+
+The `totalLogs` count increases over time as the writer continuously appends new entries. The log-reader serves the most recent log entry and total count from the shared file.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.1`
+
+---
