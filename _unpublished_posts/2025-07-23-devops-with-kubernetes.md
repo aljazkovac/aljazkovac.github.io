@@ -402,7 +402,7 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 The traffic flow with shared Ingress:
 
-```
+```bash
 localhost:3000 → k3d loadbalancer:80 → Ingress
                                           ├─ /status → log-output-svc:2345 → Pod:3000
                                           └─ /pingpong → pingpong-svc:2346 → Pod:9000
@@ -573,5 +573,50 @@ You can inspect the shared volume contents from either pod using `kubectl exec` 
 - Node Affinity for Storage Locality: When using node-local storage like `hostPath`, node affinity constraints ensure pods can access the same underlying storage.
 
 Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.11`
+
+---
+
+### Exercise 1.12: Random Image from Lorem Picsum
+
+**Objective**: Add a random picture from Lorem Picsum to the TODO app that refreshes hourly and is cached in a persistent volume to avoid repeated API calls.
+
+**Requirements:**
+- Display a random image from `https://picsum.photos/1200` in the project
+- Cache the image for 10 minutes
+- After 10 minutes, serve the cached image once more, then fetch a new image on the next request
+- Store images in a persistent volume so they survive container crashes
+
+**Implementation Summary:**
+This exercise focused on integrating external API calls with persistent storage and implementing smart caching logic. The main challenge was ensuring the image fetching logic executed properly within the Express.js middleware stack.
+
+**Key Technical Issues and Solutions:**
+
+_Express.js Middleware Order Problem:_ The initial implementation placed `app.use(express.static())` before the route handlers, causing Express to serve `index.html` directly from the public directory without executing the image fetching logic in the "/" route handler.
+
+_Solution:_ Moved the `express.static()` middleware after the route handlers. This ensures that custom route handlers (like "/" for image fetching) execute first, and static file serving only happens if no routes match.
+
+_Caching Logic Implementation:_ The application implements a three-phase caching strategy: images fresh for less than 10 minutes are served from cache, expired images are served once more from cache while marking them as "served after expiry", and subsequent requests trigger a new API fetch.
+
+_Persistent Storage Integration:_ Used PersistentVolume and PersistentVolumeClaim to mount `/app/images` directory, ensuring cached images survive pod restarts and container crashes. The volume mount allows the application to maintain its cache across deployments.
+
+**Application Workflow:**
+
+_Image Fetching Process:_ On each request to the root path, the application checks if a new image is needed based on cache age and usage. If required, it downloads a new image from Lorem Picsum using axios with streaming, saves it to the persistent volume, and updates metadata with fetch timestamp.
+
+_Cache Management:_ Metadata stored in JSON format tracks when images were fetched and whether they've been served after expiry. This enables the "serve expired image once" requirement while ensuring fresh content delivery.
+
+_Integration with HTML:_ The HTML page includes an image element that references `/image` endpoint, which serves the cached image file directly from the persistent volume.
+
+**Debugging and Deployment:**
+
+_Container Orchestration:_ The deployment uses `imagePullPolicy: Always` to ensure latest code changes are pulled, combined with `kubectl rollout restart` to trigger immediate deployment updates.
+
+_Networking Flow:_ Requests flow through the ingress controller to the service (port 2345) to the container (port 8080), where the Express application handles both the HTML serving and image caching logic.
+
+**Kubernetes Resource Configuration:**
+
+The solution uses existing persistent volume infrastructure from previous exercises, mounting the image storage at `/app/images` in the container. This ensures cached images persist across pod restarts while maintaining the 10-minute caching behavior.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
 
 ---
