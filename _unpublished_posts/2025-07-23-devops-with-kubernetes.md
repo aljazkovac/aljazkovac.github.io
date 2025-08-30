@@ -426,7 +426,7 @@ There are two really hard things in Kubernetes: networking and [storage](https:/
 There are several types of storage in Kubernetes:
 
 - emptyDir volume: shared filesystem within a pod => lifecycle tied to the pod => not to be used for backing up a database, but can be used for cache.
-- persistent volume: TODO!
+- persistent volume: local (not to be used in production as they are tied to a specific node)
 
 ---
 
@@ -461,5 +461,117 @@ Key implementation details:
 The `totalLogs` count increases over time as the writer continuously appends new entries. The log-reader serves the most recent log entry and total count from the shared file.
 
 Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.1`
+
+---
+
+**Scaling Deployments:**
+
+The `kubectl scale` command allows you to dynamically adjust the number of replicas (pods) for a deployment. This is essential for managing resource consumption and handling varying workloads.
+
+**Scale up a deployment:**
+
+```bash
+kubectl scale deployment <deployment-name> --replicas=<number>
+```
+
+**Scale down to zero (stop all pods):**
+
+```bash
+kubectl scale deployment <deployment-name> --replicas=0
+```
+
+**Scale back up:**
+
+```bash
+kubectl scale deployment <deployment-name> --replicas=1
+```
+
+**Practical Examples:**
+
+```bash
+# Scale the log-output deployment to 3 replicas
+kubectl scale deployment log-output --replicas=3
+
+# Scale down the todo-app to save resources
+kubectl scale deployment todo-app --replicas=0
+
+# Scale back up when needed
+kubectl scale deployment todo-app --replicas=1
+
+# Check current replica status
+kubectl get deployment <deployment-name>
+```
+
+**Use Cases:**
+
+- **Resource Management**: Scale to zero when testing applications to free up CPU and memory
+- **Load Handling**: Scale up replicas to handle increased traffic
+- **Development**: Quickly stop/start applications during development cycles
+- **Cost Optimization**: Scale down non-production environments when not in use
+
+The scaling approach is much more efficient than deleting and recreating deployments, as it maintains your configuration while allowing precise control over resource usage.
+
+---
+
+### Exercise 1.11: Shared Persistent Volume Storage
+
+**Objective**: Enable data sharing between "Ping-pong" and "Log output" applications using persistent volumes. Save the number of requests to the ping-pong application into a file in the shared volume and display it alongside the timestamp and random string when accessing the log output application.
+
+**Expected final output**:
+
+```bash
+2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
+Ping / Pongs: 3
+```
+
+**Implementation Summary:**
+This exercise demonstrates persistent data sharing between two separate Kubernetes deployments using PersistentVolumes and PersistentVolumeClaims. The key challenge was enabling the ping-pong application to save its request counter to shared storage that the log-output application could read and display.
+
+**Step-by-Step Process:**
+
+- Create Cluster-Admin Storage Infrastructure:
+
+```bash
+docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube
+```
+
+- Modify Ping-Pong and Lod-Reader Applications
+- Update Kubernetes Deployments
+- Rebuild and Deploy Updated Images
+- Test Persistent Storage
+
+**How the Applications Work Together:**
+
+The system consists of three main components working together through shared persistent storage:
+
+_Ping-Pong Application:_ Runs as a separate deployment, handles `/pingpong` requests by incrementing an in-memory counter, returning "pong X" responses, and persistently saving the counter value to `/shared/pingpong-counter.txt` in the format "Ping / Pongs: X".
+
+_Log-Writer Component_: Continues its original function of writing timestamped UUID entries to `/shared/logs.txt` every 5 seconds, but now uses `writeFile` instead of `appendFile` to maintain only the latest entry.
+
+_Log-Reader Component_: Enhanced to read from both shared files - combines the latest log entry from `logs.txt` with the current ping counter from `pingpong-counter.txt`, serving both pieces of information through the `/status` endpoint.
+
+_Data Flow_: When a user hits `/pingpong`, the ping-pong app increments its counter and saves it to shared storage. When accessing `/status`, the log-reader reads both the latest timestamp/UUID and the current ping count from shared files, presenting them as a unified response.
+
+**Deployment Configuration and Node Scheduling:**
+
+_Node Affinity Solution_: The PersistentVolume includes nodeAffinity constraints that force any pods using this volume to schedule on `k3d-k3s-default-agent-0`. This ensures both applications can access the same `hostPath` directory. Since `hostPath` storage is node-local (each node has its own `/tmp/kube` directory), pods on different nodes would see different file systems. The nodeAffinity constraint solves this by ensuring co-location.
+
+_ReadWriteOnce vs ReadWriteMany_: We use `ReadWriteOnce` access mode, which allows multiple pods on the same node to share the volume. This works because our nodeAffinity ensures both pods run on the same node.
+
+**Container Inspection and Debugging:**
+
+You can inspect the shared volume contents from either pod using `kubectl exec` commands to list directory contents and view file contents. This helps verify that data is being written and read correctly.
+
+**Key Kubernetes Concepts Demonstrated:**
+
+- PersistentVolume vs emptyDir: Unlike `emptyDir` volumes that are tied to pod lifecycle, PersistentVolumes provide data persistence that survives pod restarts and rescheduling.
+
+- Storage Classes and Manual Provisioning: The `manual` storage class indicates that storage is manually provisioned rather than dynamically allocated by a storage controller.
+
+- Cross-Application Data Sharing: This exercise demonstrates how separate deployments can share data through persistent volumes, enabling microservices to communicate via shared file systems.
+
+- Node Affinity for Storage Locality: When using node-local storage like `hostPath`, node affinity constraints ensure pods can access the same underlying storage.
+
+Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.11`
 
 ---
