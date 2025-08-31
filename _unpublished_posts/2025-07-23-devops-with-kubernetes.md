@@ -149,9 +149,13 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 - `kubectl scale deployment <name> --replicas=N` - Scale application
 - `kubectl get pods` - Check pod status
 
-**Result**: ✅ Successfully deployed and scaled a containerized application, understanding pod independence and basic Kubernetes orchestration.
+**Result:**
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.1/log_output`
+✅ Successfully deployed and scaled a containerized application, understanding pod independence and basic Kubernetes orchestration.
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.1/log_output`
 
 ---
 
@@ -186,7 +190,9 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 **Result**: ✅ Successfully created and deployed a simple web server to Kubernetes, confirming proper startup message and environment variable usage.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.2/todo_app`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.2/todo_app`
 
 ---
 
@@ -222,9 +228,13 @@ kubectl rollout status deployment/log-output
 kubectl logs -f -l app=log-output --prefix=true
 ```
 
-**Result**: ✅ Deployment applied successfully; pods emit periodic timestamp + UUID as before using the declarative manifest.
+**Result:**
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.3/log_output`
+✅ Deployment applied successfully; pods emit periodic timestamp + UUID as before using the declarative manifest.
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.3/log_output`
 
 ---
 
@@ -251,9 +261,13 @@ kubectl get pods -l app=todo-app
 kubectl logs -l app=todo-app
 ```
 
-**Result**: ✅ The `todo-app` runs via a declarative Deployment, and logs confirm the server starts with the given port. External access will be added in a later exercise.
+**Result:**
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.4/todo_app`
+✅ The `todo-app` runs via a declarative Deployment, and logs confirm the server starts with the given port. External access will be added in a later exercise.
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.4/todo_app`
 
 ---
 
@@ -285,7 +299,9 @@ The `kubectl port-forward` command is used to forward a local port to a pod. It 
 - **Port forward**: `kubectl port-forward todo-app-66579f8fd6-j72f8 3000:8080` (<`local port`>:<`pod port`>)
 - **Check at localhost:3000**: Go to localhost:3000 and make sure you see the HTML website.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.5/todo_app`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.5/todo_app`
 
 ---
 
@@ -315,7 +331,9 @@ TODO app listening on port 8080
 
 **Important**: It doesn't matter which node has the port mapping. The Kubernetes NodePort service handles the cross-node routing. In this case, we opened the port on node `agent-0`, but the pod was running on `agent-1`, but we could still access it at `localhost:3000`.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.6/todo_app`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.6/todo_app`
 
 ---
 
@@ -366,7 +384,9 @@ curl http://localhost:3000/status
 
 **Key Insight**: The random string (UUID) is stored in memory and persists for the lifetime of the application. Each restart generates a new UUID, but it remains constant while the container is running.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.7/log_output`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.7/log_output`
 
 ---
 
@@ -383,7 +403,9 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 
 The traffic flow: `localhost:3000 → k3d loadbalancer:80 → Ingress → Service(2345) → Pod(8080)`
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.8/todo_app`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.8/todo_app`
 
 ---
 
@@ -415,7 +437,9 @@ Key implementation details:
 - The counter is stored in memory and may reset on pod restart
 - Port 9000 (where the ping-pong container listens) is not directly accessible from outside the cluster - you must go through the Ingress at `localhost:3000/pingpong`. This is why attempting to access `localhost:9000` directly doesn't work.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.9/pingpong`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.9/pingpong`
 
 ---
 
@@ -460,7 +484,9 @@ Key implementation details:
 
 The `totalLogs` count increases over time as the writer continuously appends new entries. The log-reader serves the most recent log entry and total count from the shared file.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.1`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.1`
 
 ---
 
@@ -572,7 +598,9 @@ You can inspect the shared volume contents from either pod using `kubectl exec` 
 
 - Node Affinity for Storage Locality: When using node-local storage like `hostPath`, node affinity constraints ensure pods can access the same underlying storage.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.11`
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.11`
 
 ---
 
@@ -581,6 +609,7 @@ Release: Link to the GitHub release for this exercise: `https://github.com/aljaz
 **Objective**: Add a random picture from Lorem Picsum to the TODO app that refreshes hourly and is cached in a persistent volume to avoid repeated API calls.
 
 **Requirements:**
+
 - Display a random image from `https://picsum.photos/1200` in the project
 - Cache the image for 10 minutes
 - After 10 minutes, serve the cached image once more, then fetch a new image on the next request
@@ -617,6 +646,8 @@ _Networking Flow:_ Requests flow through the ingress controller to the service (
 
 The solution uses existing persistent volume infrastructure from previous exercises, mounting the image storage at `/app/images` in the container. This ensures cached images persist across pod restarts while maintaining the 10-minute caching behavior.
 
-Release: Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
+**Release**:
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
 
 ---
