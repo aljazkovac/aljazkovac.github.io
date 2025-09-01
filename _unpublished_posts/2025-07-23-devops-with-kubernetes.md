@@ -651,3 +651,58 @@ The solution uses existing persistent volume infrastructure from previous exerci
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
 
 ---
+
+### Exercise 1.13: TODO App Input Functionality
+
+**Objective**: Add real todo functionality to the project by implementing an input field with character validation, a send button, and a list of hardcoded todos.
+
+**Requirements:**
+
+- Add an input field that doesn't accept todos over 140 characters
+- Add a send button (functionality not required yet)
+- Display a list of existing todos with hardcoded content
+
+**Implementation Summary:**
+This exercise transformed the basic TODO app from a simple image display into an interactive web application with form inputs and validation. The focus was on frontend development with proper user experience enhancements while maintaining the existing image caching functionality.
+
+**Key Technical Issues and Solutions:**
+
+_Local Development Path Issues:_ The application initially used absolute paths (`/app/images`) designed for containerized environments, causing filesystem errors when running locally with `npm start`. 
+
+_Solution:_ Changed to relative paths (`./images`) that automatically resolve to the correct location in both environments - local development uses the project directory while Docker containers use the `/app` working directory set by `WORKDIR`.
+
+_Docker Volume Mounting for Development:_ Managing the development workflow between local changes and containerized testing required setting up proper volume mounts for real-time file synchronization.
+
+_Solution:_ Created a `docker-compose.yml` configuration with volume mounts (`.:/app` and `/app/node_modules`) enabling live code reloading while preserving container-specific dependencies.
+
+_Express.js Path Resolution for sendFile:_ The `res.sendFile()` method requires absolute paths, but relative paths from `./images` caused "path must be absolute" errors even in the container environment.
+
+_Solution:_ Used `path.resolve()` instead of `path.join()` to ensure all file paths are converted to absolute paths before being passed to Express.js methods.
+
+**Application Workflow:**
+
+_User Interface Design:_ The application now features a clean, responsive TODO interface with input validation, character counting, and visual feedback. The design maintains consistency with the existing image display while adding dedicated todo functionality sections.
+
+_Input Validation Layer:_ Implements both HTML-level validation (`maxlength="140"`) for bulletproof character limits and JavaScript enhancements for real-time user feedback including character counters and visual warnings.
+
+_State Management:_ The send button dynamically enables/disables based on input content, provides visual feedback through color changes, and shows character count progression with red warning colors when approaching the 140 character limit.
+
+**Debugging and Deployment:**
+
+_Development Environment Setup:_ Successfully configured Docker Compose for streamlined development with automatic file synchronization, eliminating the need to rebuild containers after each code change.
+
+_Browser Development Tools Integration:_ Leveraged browser console debugging to understand DOM element properties and troubleshoot JavaScript event handling, demonstrating practical web development debugging techniques.
+
+_Container vs Local Development:_ Resolved path resolution differences between local Node.js execution and containerized deployment, ensuring consistent behavior across development environments.
+
+**Kubernetes Resource Configuration:**
+
+The exercise builds upon existing Kubernetes infrastructure with persistent volume mounting for image storage. The container paths now work seamlessly in both development (Docker Compose) and production (Kubernetes) environments through consistent relative path usage.
+
+The deployment continues to use the established ingress routing, service configuration, and persistent volume claims from previous exercises, demonstrating how frontend enhancements integrate with existing infrastructure.
+
+**Release**:
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.13`
+
+---

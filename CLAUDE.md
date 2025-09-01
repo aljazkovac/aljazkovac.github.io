@@ -85,7 +85,9 @@ The exercise posts should follow this format and style:
 
 ### Exercise $1: Exercise Title
 
-**Objective**: $2
+**Objective:**
+
+$2
 
 **Requirements:**
 
