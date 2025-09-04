@@ -6,7 +6,9 @@ tags: [devops, kubernetes, prometheus, grafana] # TAG names should always be low
 description: University of Helsinki course on Kubernetes
 ---
 
-## First deploy
+## Kubernetes Basics
+
+### First deploy
 
 **Learning goals**:
 
@@ -29,8 +31,8 @@ Top [three reasons for using them](https://www.youtube.com/watch?v=GBTdnfD6s5Q&t
 
 _Basic Kubernetes concepts_:
 
-- POD == the smallest building block in the Kubernetes object model. The pod sees the container(s) it contains, Kubernetes only sees the pod
-- NODE == groups of pods co-located on a single machine (real or virtual)
+- POD == the smallest building block in the Kubernetes object model. The pod sees the container(s) it contains, Kubernetes only sees the pod (most pods hold just one container)
+- NODE == a single machine (real or virtual) on which groups of pods are co-located
 - CLUSTER == nodes are grouped into clusters, each of which is overseen by a MASTER NODE
 - DEPLOYMENT == a `.yaml` file declaration that puts clusters in place => Kubernetes then selects the machines and propagates the containers in each pod
 
@@ -38,7 +40,7 @@ _Basic Kubernetes concepts_:
 
 [_K3d_](https://github.com/k3d-io/k3d) is a tool that runs K3s clusters in Docker containers. It makes it easy to spin up and manage local Kubernetes clusters for testing and development.
 
-**Differences from full Kubernetes:**
+_Differences from full Kubernetes:_
 
 - K3s is much smaller and faster to start, with a reduced binary size.
 - It omits some advanced features (like in-tree cloud providers, some storage drivers).
@@ -47,7 +49,7 @@ _Basic Kubernetes concepts_:
 
 For most learning and development scenarios, k3s/k3d is sufficient and much simpler to use than a full Kubernetes. If you use k3d then you don't need to install k3s separately.
 
-## Containers in k3d Cluster
+_Containers in k3d Cluster:_
 
 When you run the command `k3d cluster create -a 2`, the following containers are created as part of the Kubernetes cluster:
 
@@ -62,7 +64,7 @@ If we run the command `k3d kubeconfig get k3s-default` then we can see the auto-
 
 Some more basic `k3d` commands: `k3d cluster start`, `k3d cluster stop`, `k3d cluster delete`.
 
-### Common k3d Troubleshooting
+_Common k3d Troubleshooting:_
 
 **Connection Refused Error**:
 
@@ -90,7 +92,7 @@ After starting, verify the cluster is running:
 - Agents should show `2/2`
 - `kubectl get nodes` should now work successfully
 
-### kubectl and its role in k3d and k3s
+_kubectl and its role in k3d and k3s:_
 
 `kubectl` is the command-line tool used to interact with Kubernetes clusters. It works seamlessly with `k3d` and `k3s` as follows:
 
@@ -118,7 +120,7 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 ---
 
-### Ex. 1.1 - First Application Deploy
+#### Ex. 1.1 - First Application Deploy
 
 **Goal**: Create a simple application that outputs a timestamp and UUID every 5 seconds, containerize it, and deploy it to Kubernetes.
 
@@ -159,7 +161,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.2: TODO Application
+#### Exercise 1.2: TODO Application
 
 **Objective**: Create a web server that outputs "Server started in port NNNN" when started, uses PORT environment variable, and deploy to Kubernetes.
 
@@ -196,7 +198,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.3: Declarative Deployment Manifests
+#### Exercise 1.3: Declarative Deployment Manifests
 
 **Objective**: Move the "Log output" app to a declarative Kubernetes manifest and verify it runs by restarting and following logs.
 
@@ -238,7 +240,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.4: Declarative Deployment for TODO app
+#### Exercise 1.4: Declarative Deployment for TODO app
 
 **Objective**: Create a `deployment.yaml` for the course project you started in Exercise 1.2 (`todo-app`). You won’t have access to the port yet — that comes later.
 
@@ -271,7 +273,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Introduction to Debugging
+### Introduction to Debugging
 
 Some useful commands:
 
@@ -282,13 +284,13 @@ Some useful commands:
 
 Using [Lens](https://k8slens.dev/), the Kubernetes IDE, can also make for a smoother debugging experience.
 
-## Introduction to Networking
+### Introduction to Networking
 
 The `kubectl port-forward` command is used to forward a local port to a pod. It is not meant for production use.
 
 ---
 
-### Exercise 1.5: Port forwarding for the TODO app
+#### Exercise 1.5: Port forwarding for the TODO app
 
 **Objective**: Return a simple HTML website and use port-fowarding to reach it from your local machine
 
@@ -305,7 +307,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.6: Use a NodePort service for the TODO app
+#### Exercise 1.6: Use a NodePort service for the TODO app
 
 **Objective**: Use a NodePort service to reach your TODO-app from your local machine
 
@@ -337,18 +339,20 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Exercise 1.7: Add HTTP Endpoint to Log Output App
+#### Exercise 1.7: Add HTTP Endpoint to Log Output App
 
-**Objective**: "Log output" application currently outputs a timestamp and a random string (that it creates on startup) to the logs. Add an endpoint to request the current status (timestamp and the random string) and an Ingress so that you can access it with a browser.
+**Objective:**
 
-### Solution
+"Log output" application currently outputs a timestamp and a random string (that it creates on startup) to the logs. Add an endpoint to request the current status (timestamp and the random string) and an Ingress so that you can access it with a browser.
+
+**Solution:**
 
 I extended the `log_output/app.js` to include an HTTP server with a `/status` endpoint that returns the current timestamp and the application's UUID as JSON.
 
 The key changes were:
 
 - Added HTTP server using Node.js built-in `http` module
-- Created `/status` endpoint that returns `{timestamp, appId}` 
+- Created `/status` endpoint that returns `{timestamp, appId}`
 - Kept the existing 5-second logging functionality
 - Random string (UUID) is stored in memory for the application lifetime
 
@@ -358,7 +362,7 @@ I also needed to update the Kubernetes manifests:
 - **Created service.yaml**: ClusterIP service exposing port 2345, targeting container port 3000
 - **Created ingress.yaml**: Ingress resource to route HTTP traffic from the browser to the service
 
-### Networking and Port Configuration
+**Networking and Port Configuration:**
 
 The networking flow works as follows:
 
@@ -382,7 +386,9 @@ curl http://localhost:3000/status
 # Returns: {"timestamp":"2025-08-21 19:47:06","appId":"f67b6cb3-9982-40d9-b50f-0eb85059bbae"}
 ```
 
-**Key Insight**: The random string (UUID) is stored in memory and persists for the lifetime of the application. Each restart generates a new UUID, but it remains constant while the container is running.
+**Key Insight:**
+
+The random string (UUID) is stored in memory and persists for the lifetime of the application. Each restart generates a new UUID, but it remains constant while the container is running.
 
 **Release:**
 
@@ -390,9 +396,11 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.8: Use Ingress for the TODO app
+#### Exercise 1.8: Use Ingress for the TODO app
 
-**Objective**: Use a Ingress service to reach your TODO-app from your local machine
+**Objective:**
+
+Use a Ingress service to reach your TODO-app from your local machine
 
 - **Delete the existing cluster**: `k3d cluster delete k3s-default`
 - **Create a new cluster with the port mapping to port 80 (where Ingress listens)**: `k3d cluster create k3s-default --port "3000:80@loadbalancer" --agents 2`
@@ -409,16 +417,18 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.9: Ping-Pong Application with Shared Ingress
+#### Exercise 1.9: Ping-Pong Application with Shared Ingress
 
-**Objective**: Develop a second application that responds with "pong X" to GET requests and increases a counter. Create a deployment for it and have it share the same Ingress with the "Log output" application by routing requests directed to '/pingpong' to it.
+**Objective:**
+
+Develop a second application that responds with "pong X" to GET requests and increases a counter. Create a deployment for it and have it share the same Ingress with the "Log output" application by routing requests directed to '/pingpong' to it.
 
 - **Create the ping-pong application**: Express.js app that handles `/pingpong` endpoint directly
 - **Build and push the Docker image**: `docker build -t aljazkovac/pingpong:latest ./pingpong && docker push aljazkovac/pingpong:latest`
 - **Create deployment and service manifests**: Deploy with resource limits and expose on port 2346
 - **Update the existing Ingress**: Add a new path rule for `/pingpong` to route to `pingpong-svc`
 - **Apply the manifests**: `kubectl apply -f pingpong/manifests/`
-- **Test both endpoints**: 
+- **Test both endpoints**:
   - `curl http://localhost:3000/status` - returns log-output status
   - `curl http://localhost:3000/pingpong` - returns "pong 0", "pong 1", etc.
 
@@ -443,7 +453,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Introduction to Storage
+### Introduction to Storage
 
 There are two really hard things in Kubernetes: networking and [storage](https://softwareengineeringdaily.com/2019/01/11/why-is-storage-on-kubernetes-is-so-hard/).
 
@@ -454,9 +464,11 @@ There are several types of storage in Kubernetes:
 
 ---
 
-### Exercise 1.10: Multi-Container Pod with Shared Storage
+#### Exercise 1.10: Multi-Container Pod with Shared Storage
 
-**Objective**: Split the log-output application into two applications: one that writes timestamped logs to a file every 5 seconds, and another that reads from that file and serves the content via HTTP endpoint. Both applications should run in the same pod and share data through a volume.
+**Objective:**
+
+Split the log-output application into two applications: one that writes timestamped logs to a file every 5 seconds, and another that reads from that file and serves the content via HTTP endpoint. Both applications should run in the same pod and share data through a volume.
 
 - **Restructure the application**: Split `log_output/` into `log-writer/` and `log-reader/` subdirectories
 - **Create log-writer app**: Writes `timestamp: appId` to `/shared/logs.txt` every 5 seconds, serves status on port 3001
@@ -539,11 +551,13 @@ The scaling approach is much more efficient than deleting and recreating deploym
 
 ---
 
-### Exercise 1.11: Shared Persistent Volume Storage
+#### Exercise 1.11: Shared Persistent Volume Storage
 
-**Objective**: Enable data sharing between "Ping-pong" and "Log output" applications using persistent volumes. Save the number of requests to the ping-pong application into a file in the shared volume and display it alongside the timestamp and random string when accessing the log output application.
+**Objective:**
 
-**Expected final output**:
+Enable data sharing between "Ping-pong" and "Log output" applications using persistent volumes. Save the number of requests to the ping-pong application into a file in the shared volume and display it alongside the timestamp and random string when accessing the log output application.
+
+**Expected final output:**
 
 ```bash
 2020-03-30T12:15:17.705Z: 8523ecb1-c716-4cb6-a044-b9e83bb98e43.
@@ -551,6 +565,7 @@ Ping / Pongs: 3
 ```
 
 **Implementation Summary:**
+
 This exercise demonstrates persistent data sharing between two separate Kubernetes deployments using PersistentVolumes and PersistentVolumeClaims. The key challenge was enabling the ping-pong application to save its request counter to shared storage that the log-output application could read and display.
 
 **Step-by-Step Process:**
@@ -604,9 +619,11 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.12: Random Image from Lorem Picsum
+#### Exercise 1.12: Random Image from Lorem Picsum
 
-**Objective**: Add a random picture from Lorem Picsum to the TODO app that refreshes hourly and is cached in a persistent volume to avoid repeated API calls.
+**Objective:**
+
+Add a random picture from Lorem Picsum to the TODO app that refreshes hourly and is cached in a persistent volume to avoid repeated API calls.
 
 **Requirements:**
 
@@ -616,6 +633,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 - Store images in a persistent volume so they survive container crashes
 
 **Implementation Summary:**
+
 This exercise focused on integrating external API calls with persistent storage and implementing smart caching logic. The main challenge was ensuring the image fetching logic executed properly within the Express.js middleware stack.
 
 **Key Technical Issues and Solutions:**
@@ -646,15 +664,17 @@ _Networking Flow:_ Requests flow through the ingress controller to the service (
 
 The solution uses existing persistent volume infrastructure from previous exercises, mounting the image storage at `/app/images` in the container. This ensures cached images persist across pod restarts while maintaining the 10-minute caching behavior.
 
-**Release**:
+**Release:**
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
 
 ---
 
-### Exercise 1.13: TODO App Input Functionality
+#### Exercise 1.13: TODO App Input Functionality
 
-**Objective**: Add real todo functionality to the project by implementing an input field with character validation, a send button, and a list of hardcoded todos.
+**Objective:**
+
+Add real todo functionality to the project by implementing an input field with character validation, a send button, and a list of hardcoded todos.
 
 **Requirements:**
 
@@ -663,11 +683,12 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 - Display a list of existing todos with hardcoded content
 
 **Implementation Summary:**
+
 This exercise transformed the basic TODO app from a simple image display into an interactive web application with form inputs and validation. The focus was on frontend development with proper user experience enhancements while maintaining the existing image caching functionality.
 
 **Key Technical Issues and Solutions:**
 
-_Local Development Path Issues:_ The application initially used absolute paths (`/app/images`) designed for containerized environments, causing filesystem errors when running locally with `npm start`. 
+_Local Development Path Issues:_ The application initially used absolute paths (`/app/images`) designed for containerized environments, causing filesystem errors when running locally with `npm start`.
 
 _Solution:_ Changed to relative paths (`./images`) that automatically resolve to the correct location in both environments - local development uses the project directory while Docker containers use the `/app` working directory set by `WORKDIR`.
 
@@ -701,8 +722,86 @@ The exercise builds upon existing Kubernetes infrastructure with persistent volu
 
 The deployment continues to use the established ingress routing, service configuration, and persistent volume claims from previous exercises, demonstrating how frontend enhancements integrate with existing infrastructure.
 
-**Release**:
+**Release:**
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.13`
 
 ---
+
+### Summary
+
+After working through the initial exercises, I wanted to document my understanding of how the different layers of Kubernetes architecture work together, especially in the context of a local k3d development environment.
+
+When you run `docker ps` on a machine with a k3d cluster, you see something interesting - containers that represent your Kubernetes infrastructure:
+
+```bash
+CONTAINER ID   IMAGE                            COMMAND                  NAMES
+311b2778408d   ghcr.io/k3d-io/k3d-proxy:5.8.3   "/bin/sh -c nginx-pr…"   k3d-k3s-default-serverlb
+b35493fe473c   rancher/k3s:v1.31.5-k3s1         "/bin/k3d-entrypoint…"   k3d-k3s-default-agent-1
+47ecdcc4a1da   rancher/k3s:v1.31.5-k3s1         "/bin/k3d-entrypoint…"   k3d-k3s-default-agent-0
+81cfe6fe0850   rancher/k3s:v1.31.5-k3s1         "/bin/k3d-entrypoint…"   k3d-k3s-default-server-0
+```
+
+**These containers ARE your Kubernetes cluster.** Here's how they map to Kubernetes concepts:
+
+```bash
+🏢 Cluster: k3s-default
+├── 🖥️  Node: k3d-k3s-default-server-0 (control plane)
+├── 🖥️  Node: k3d-k3s-default-agent-0 (worker)
+├── 🖥️  Node: k3d-k3s-default-agent-1 (worker)
+└── 🌐 Load Balancer: k3d-k3s-default-serverlb (external)
+    └── Each worker node runs multiple pods
+        └── Each pod contains one or more containers
+```
+
+The load balancer container is **infrastructure outside the cluster**, not a compute node where workloads can be scheduled. When you run `kubectl get nodes`, you only see the schedulable compute nodes:
+
+- **k3d-k3s-default-server-0** (control plane)
+- **k3d-k3s-default-agent-0** (worker)
+- **k3d-k3s-default-agent-1** (worker)
+
+The load balancer's job is to route traffic from your host machine into the cluster, similar to how cloud load balancers work in production.
+
+When you access your applications through `localhost:3000`, the traffic flows like this:
+
+```bash
+Your Browser (localhost:3000)
+    ↓
+🌐 Load Balancer Container (k3d-k3s-default-serverlb)
+    ↓
+🏢 Kubernetes Cluster
+├── 🖥️ Control Plane Node (server-0)
+├── 🖥️ Worker Node (agent-0) ← Your pods run here
+└── 🖥️ Worker Node (agent-1) ← Your pods run here
+```
+
+The beautiful thing about this setup is that your local k3d cluster behaves identically to a production cluster with separate physical machines - same `kubectl` commands, same scheduling behavior, same networking concepts, just implemented with Docker containers instead of VMs.
+
+In the applications we've built:
+
+- **Most common**: 1 pod = 1 container (todo-app, pingpong)
+- **Sometimes**: 1 pod = multiple containers (log-writer + log-reader in Exercise 1.10)
+- **Never**: 1 container spanning multiple pods
+
+When you deploy with `kubectl apply -f manifests/`, Kubernetes decides:
+
+1. **Which worker node** (agent-0 or agent-1) gets the pod
+2. **Creates a pod** on that chosen node
+3. **Runs your container** inside that pod
+
+You can see exactly where your pods are running with:
+
+```bash
+kubectl get pods -o wide
+# Shows which node each pod is scheduled on!
+```
+
+The genius of Kubernetes is how it creates clean abstractions:
+
+- **Physical Layer**: Docker containers (what `docker ps` shows)
+- **Kubernetes Layer**: Nodes, pods, services (what `kubectl` manages)
+- **Application Layer**: Your todo-app, pingpong, log-output applications
+
+Each layer hides the complexity of the layer below while providing the building blocks for the layer above. Your applications don't need to know they're running in Docker containers on a k3d cluster - they just see the Kubernetes environment that's been created for them.
+
+This understanding becomes crucial as we move into more complex topics like persistent storage, service networking, and multi-container communication patterns.
