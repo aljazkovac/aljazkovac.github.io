@@ -666,7 +666,7 @@ The solution uses existing persistent volume infrastructure from previous exerci
 
 **Release:**
 
-Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12`
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.12/todo_app`
 
 ---
 
@@ -724,7 +724,7 @@ The deployment continues to use the established ingress routing, service configu
 
 **Release:**
 
-Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.13`
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.13/todo_app`
 
 ---
 
@@ -808,6 +808,12 @@ This understanding becomes crucial as we move into more complex topics like pers
 
 ---
 
+## More Building Blocks
+
+### Networking Between Pods
+
+For debugging, consider using [BusyBox](https://en.wikipedia.org/wiki/BusyBox).
+
 #### Exercise 2.1: Connect Log Output and Ping Pong Applications with HTTP
 
 **Objective:**
@@ -866,4 +872,6 @@ _Service Communication Setup:_ Leveraged existing ClusterIP services with proper
 
 **Release**:
 
-Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/exercise-2.1`.
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.1`.
+
+---
