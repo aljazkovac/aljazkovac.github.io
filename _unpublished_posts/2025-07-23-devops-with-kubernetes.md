@@ -805,3 +805,65 @@ The genius of Kubernetes is how it creates clean abstractions:
 Each layer hides the complexity of the layer below while providing the building blocks for the layer above. Your applications don't need to know they're running in Docker containers on a k3d cluster - they just see the Kubernetes environment that's been created for them.
 
 This understanding becomes crucial as we move into more complex topics like persistent storage, service networking, and multi-container communication patterns.
+
+---
+
+#### Exercise 2.1: Connect Log Output and Ping Pong Applications with HTTP
+
+**Objective:**
+
+Connect the Log output application and the Ping pong application with HTTP. So, instead of sharing data via files, use an HTTP GET endpoint in the Ping pong app to respond with the number of pongs for the Log output app. Remove the volume between the two applications for the time being.
+
+**Requirements:**
+
+- Replace file-based communication between Log output and Ping pong applications with HTTP requests
+- Add HTTP GET endpoint in Ping pong app to serve counter data
+- Remove shared volume dependency for pingpong app while preserving log-writer functionality
+- Maintain identical user experience and response format
+- Ensure proper service-to-service communication within Kubernetes cluster
+
+**Implementation Summary:**
+
+This exercise marked a significant architectural shift from file-based inter-service communication to HTTP-based microservice communication. The solution involved restructuring three applications: converting pingpong to a stateless HTTP service, updating log-reader to make HTTP requests instead of file reads, and simplifying log-writer to a pure background service. The implementation preserved the exact same user experience while demonstrating proper Kubernetes service discovery and networking.
+
+**Key Technical Issues and Solutions:**
+
+_Container Image Caching Problem:_ Despite setting `imagePullPolicy: Always` and rebuilding images, the k3d cluster continued running old application code because local Docker images weren't being pulled into the cluster.
+
+_Solution:_ Used `docker push` to upload updated images to Docker Hub, then `kubectl rollout restart` to force pods to pull fresh images from the registry. This resolved the discrepancy between local builds and cluster execution.
+
+_Service Endpoint Routing Conflicts:_ The log-writer contained a conflicting `/status` endpoint that returned JSON format instead of plain text, creating confusion about which service was handling requests.
+
+_Solution:_ Removed HTTP server entirely from log-writer, making it a pure background service focused solely on log generation. This eliminated endpoint conflicts and clarified service responsibilities.
+
+_Ingress Path Routing Issues:_ The ingress routed `/` to log-output-svc but log-reader only exposed `/status` endpoint, causing "Cannot GET /" errors when accessing the root path.
+
+_Solution:_ Added a root route handler in log-reader that issues HTTP 302 redirect to `/status`, maintaining user-friendly access while preserving proper endpoint organization.
+
+**Application Workflow:**
+
+_Service Communication Architecture:_ The system now operates as three distinct microservices: log-writer generates timestamped entries to shared volume every 5 seconds, log-reader serves HTTP requests by combining file-read log data with HTTP-fetched counter data from pingpong service, and pingpong maintains in-memory counter state and serves it via `/counter` endpoint.
+
+_HTTP Request Flow:_ When users access the status endpoint, log-reader makes an internal HTTP request to `http://pingpong-svc:2346/counter` using Kubernetes service discovery, combines the response with timestamp data from shared volume, and returns the unified response maintaining the original format.
+
+_Graceful Error Handling:_ The log-reader includes fallback logic for HTTP communication failures, defaulting to "Ping / Pongs: 0" if the pingpong service is unavailable, ensuring system resilience during service restarts or network issues.
+
+**Debugging and Deployment:**
+
+_Service Discovery Verification:_ Used `kubectl exec` to test internal service communication directly from pods, confirming that `pingpong-svc:2346` correctly resolved to the service cluster IP and that HTTP requests succeeded between services.
+
+_Multi-Stage Debugging Process:_ Systematically verified each component: tested pingpong endpoints independently, confirmed HTTP client code in log-reader, validated ingress routing rules, and traced the complete request flow from external access through internal service communication.
+
+_Docker Image Management:_ Established proper workflow for updating containerized applications in k3d: local development and testing, Docker Hub image push, Kubernetes deployment restart, and verification of updated code execution in cluster.
+
+**Kubernetes Resource Configuration:**
+
+_Volume Configuration Adjustment:_ Removed volume mounts and PVC references from pingpong deployment while preserving shared volume infrastructure for log-writer/log-reader communication, demonstrating selective decoupling of storage dependencies.
+
+_Ingress Rule Enhancement:_ Extended the shared ingress resource to include `/counter` path routing, enabling external access to pingpong API while maintaining consolidated traffic management through a single ingress controller.
+
+_Service Communication Setup:_ Leveraged existing ClusterIP services with proper port mapping (pingpong-svc:2346 → container:9000) to enable HTTP communication between services using Kubernetes built-in service discovery and load balancing.
+
+**Release**:
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/exercise-2.1`.
