@@ -348,7 +348,7 @@ I extended the `log_output/app.js` to include an HTTP server with a `/status` en
 The key changes were:
 
 - Added HTTP server using Node.js built-in `http` module
-- Created `/status` endpoint that returns `{timestamp, appId}` 
+- Created `/status` endpoint that returns `{timestamp, appId}`
 - Kept the existing 5-second logging functionality
 - Random string (UUID) is stored in memory for the application lifetime
 
@@ -418,7 +418,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 - **Create deployment and service manifests**: Deploy with resource limits and expose on port 2346
 - **Update the existing Ingress**: Add a new path rule for `/pingpong` to route to `pingpong-svc`
 - **Apply the manifests**: `kubectl apply -f pingpong/manifests/`
-- **Test both endpoints**: 
+- **Test both endpoints**:
   - `curl http://localhost:3000/status` - returns log-output status
   - `curl http://localhost:3000/pingpong` - returns "pong 0", "pong 1", etc.
 
@@ -667,7 +667,7 @@ This exercise transformed the basic TODO app from a simple image display into an
 
 **Key Technical Issues and Solutions:**
 
-_Local Development Path Issues:_ The application initially used absolute paths (`/app/images`) designed for containerized environments, causing filesystem errors when running locally with `npm start`. 
+_Local Development Path Issues:_ The application initially used absolute paths (`/app/images`) designed for containerized environments, causing filesystem errors when running locally with `npm start`.
 
 _Solution:_ Changed to relative paths (`./images`) that automatically resolve to the correct location in both environments - local development uses the project directory while Docker containers use the `/app` working directory set by `WORKDIR`.
 
@@ -704,5 +704,169 @@ The deployment continues to use the established ingress routing, service configu
 **Release**:
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/1.13`
+
+---
+
+### Exercise 2.2: Microservices Architecture with Todo Backend
+
+**Objective:**
+
+Create a separate backend service (todo-backend) that handles todo data management through REST API endpoints. This service should provide GET /todos and POST /todos endpoints with in-memory storage, while the existing todo-app serves the frontend and acts as a proxy to the backend service.
+
+**Requirements:**
+
+- Create a new todo-backend microservice with RESTful API endpoints
+- Implement GET /todos endpoint for fetching all todos from memory
+- Implement POST /todos endpoint for creating new todos
+- Modify todo-app to communicate with todo-backend via HTTP
+- Make todo list dynamic by fetching data from backend API
+- Deploy both services as separate Kubernetes deployments
+- Enable communication between services using Kubernetes networking
+
+**Implementation Summary:**
+
+This exercise successfully implemented a **microservices architecture** by separating the todo application into two distinct services: a frontend service (todo-app) that handles user interface and static content, and a backend service (todo-backend) that manages todo data through REST API endpoints.
+
+The **todo-backend service** was built as a lightweight Express.js API that stores todos in memory and exposes two core endpoints: `GET /todos` returns all todos in JSON format, while `POST /todos` creates new todos with auto-generated IDs and timestamps. The service includes proper input validation and HTTP status codes (400 for validation errors, 201 for successful creation).
+
+The **todo-app service** was enhanced to act as both a frontend server and API proxy. It serves the HTML interface and handles form submissions server-side (traditional web approach), while also providing an `/api/todos` endpoint that acts as a bridge between browser JavaScript and the todo-backend microservice for dynamic content loading.
+
+**Key Technical Issues and Solutions:**
+
+_Architecture Pattern Decision:_ The implementation uses a **hybrid rendering approach** that combines server-side and client-side techniques. Form submissions are handled server-side with redirects (traditional web pattern), while todo list population happens client-side via JavaScript fetch calls (modern SPA pattern).
+
+_Service-to-Service Communication:_ The todo-app communicates with todo-backend using internal Kubernetes service discovery (`todo-backend-svc:3001`). This enables secure, cluster-internal communication without exposing the backend API externally.
+
+_Container Port Configuration:_ Resolved confusion about Kubernetes `containerPort` declarations by adding documentation explaining that while not strictly required for functionality, containerPort serves as important metadata for tooling, monitoring, and team communication.
+
+_Networking Architecture:_ Implemented proper microservices networking where only todo-app is exposed externally via Ingress, while todo-backend remains internal. The backend service uses ClusterIP (port 3001) for internal communication only.
+
+**Application Workflow:**
+
+The application follows a **two-phase loading pattern** that optimizes both performance and user experience:
+
+**Phase 1 - Server-Side HTML Delivery:**
+
+1. User visits `localhost:3000` → todo-app serves static HTML immediately
+2. Browser receives complete page structure including forms and containers
+3. Page renders instantly with empty todo list placeholder
+
+**Phase 2 - Client-Side Dynamic Content:**
+
+1. Browser JavaScript executes `DOMContentLoaded` event → triggers `loadTodos()`
+2. JavaScript makes AJAX call: `fetch('/api/todos')` → todo-app `/api/todos` endpoint
+3. todo-app acts as proxy: `axios.get('todo-backend-svc:3001/todos')` → todo-backend service
+4. Data flows back: todo-backend → todo-app → browser → DOM updates
+5. User sees todos appear dynamically without page refresh
+
+**Form Submission Flow:**
+
+1. User submits form → `POST /todos` → todo-app server
+2. todo-app validates and forwards: `axios.post('todo-backend-svc:3001/todos')` → todo-backend
+3. todo-backend creates todo, returns data → todo-app redirects browser to `/`
+4. Browser reloads page → triggers dynamic loading cycle again with updated data
+
+**Debugging and Deployment:**
+
+_Docker Image Management:_ Built and pushed separate Docker images for both services using consistent multi-stage build patterns with Node.js 24-alpine base images and production-only dependency installation.
+
+_Kubernetes Resource Management:_ Deployed services as independent deployments with separate service definitions, enabling independent scaling and management. Used `kubectl rollout restart` to deploy updated code without downtime.
+
+_Service Communication Testing:_ Verified internal service discovery by confirming that todo-backend-svc resolves correctly within the cluster while remaining inaccessible from external traffic.
+
+_Ingress Configuration:_ Removed conflicting ingress rules and ensured only todo-app ingress handles external traffic routing, preventing interference between different applications in the cluster.
+
+**Kubernetes Resource Configuration:**
+
+The microservices architecture required distinct Kubernetes resources for each service:
+
+**todo-backend deployment and service:**
+
+- Deployment: Runs on port 3001 with resource limits (100m CPU, 128Mi memory)
+- Service: ClusterIP type exposing port 3001 for internal cluster communication
+- No external access - purely internal API service
+
+**todo-app deployment and service:**
+
+- Enhanced deployment: Updated image with proxy endpoints and dynamic frontend
+- Service: Continues using existing ClusterIP on port 2345
+- Ingress: Routes external traffic from `localhost:3000` to todo-app service
+- Persistent volume: Maintains image caching functionality from previous exercises
+
+The networking architecture ensures **secure microservices communication** where:
+
+- External users access only the todo-app frontend via Ingress
+- Internal API calls flow through Kubernetes service discovery
+- todo-backend remains protected within the cluster perimeter
+
+**Understanding Client-Side vs Server-Side Rendering:**
+
+A fundamental concept demonstrated in this exercise is the distinction between **client-side and server-side rendering** - this refers to **where HTML assembly happens**, not where data comes from.
+
+**Server-Side Rendering:** The server builds complete HTML with data before sending to browser. Example: `res.send('<ul><li>Todo 1</li><li>Todo 2</li></ul>')` - HTML is assembled on the server.
+
+**Client-Side Rendering:** The browser JavaScript builds HTML elements dynamically. Example:
+
+```javascript
+data.todos.forEach((todo) => {
+  const li = document.createElement("li"); // HTML created in browser
+  li.textContent = todo.text;
+  todoList.appendChild(li);
+});
+```
+
+**Key Insight:** Both approaches typically fetch data from backend APIs for security reasons. Direct database access from browsers would be a massive security vulnerability. The "client-side" part refers to DOM manipulation and HTML generation happening in the browser, while data still comes from secure backend endpoints.
+
+**Benefits of Client-Side Rendering:**
+
+- Instant updates without page refreshes (better user experience)
+- Reduced server load (server only sends data, not complete HTML)
+- Rich interactivity (drag-and-drop, real-time updates, animations)
+- Offline capabilities with service workers and local storage
+
+**Benefits of Server-Side Rendering:**
+
+- Excellent SEO (search engines see complete HTML immediately)
+- Faster initial page loads (complete content sent immediately)
+- Simpler development (no complex client-side state management)
+- Works without JavaScript (progressive enhancement)
+
+**Our Hybrid Approach:** Combines benefits by serving HTML structure immediately (fast initial load) while using JavaScript for dynamic updates (better interactivity). Form submissions use server-side redirects for reliability, while todo loading uses client-side rendering for smooth updates.
+
+**How Browsers Work:**
+
+A browser is fundamentally a **universal code interpreter and execution environment** that downloads code from servers worldwide and transforms it into interactive visual experiences.
+
+**Core Browser Components:**
+
+**1. Multi-Language Runtime Environment:**
+
+- **HTML Parser:** Converts markup into DOM tree structure
+- **CSS Engine:** Applies styling and layout rules
+- **JavaScript Engine:** (V8, SpiderMonkey) Executes application logic
+- **Network Stack:** Handles HTTP/HTTPS requests, DNS resolution, security
+
+**2. Operating System for Web Applications:**
+Browsers provide system-level services like file system access, camera/microphone APIs, notifications, local storage, and networking - essentially acting as a platform for web applications.
+
+**3. Security Sandbox:**
+Prevents malicious code from accessing your computer through same-origin policies, content security policies, and process isolation.
+
+**Browser Execution Model:**
+
+When you visit `localhost:3000`, your browser:
+
+1. **Downloads code:** HTML, CSS, JavaScript files from the todo-app server
+2. **Parses and interprets:** Uses your CPU to build DOM trees and execute JavaScript
+3. **Renders interface:** Uses your GPU to display visual elements
+4. **Manages interactions:** Handles clicks, form submissions, API calls using your local resources
+
+**Key Insight:** Browsers are **local desktop applications** (like Chrome.exe) that download and execute code from remote servers, but all the processing happens on your own computer. When you visit a website, you're essentially downloading a temporary application that runs on your machine using your CPU, memory, and graphics card.
+
+The browser acts as a **universal application platform** that can instantly run applications from any server worldwide without installation, making the web the most accessible software distribution platform ever created.
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.2`
 
 ---
