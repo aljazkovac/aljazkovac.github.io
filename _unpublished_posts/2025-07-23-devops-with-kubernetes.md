@@ -870,3 +870,56 @@ The browser acts as a **universal application platform** that can instantly run 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.2`
 
 ---
+
+## Organizing a cluster
+
+### Namespaces
+
+We can use namespaces to organize a cluster and keep resources separated. With namespaces you can split a cluster into several virtual clusters. Most commonly namespaces would be used to separated environments, e.g., into development, staging and production. "DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called cat-pictures is in a namespace ns-test, it could be found from other namespaces via http://cat-pictures.ns-test(opens in a new tab)."
+
+**Useful Commands:**
+
+- `kubectl get namespace`
+- `kubectl get all --all-namespaces`
+- `kubectl get pods -n <namespace>`
+- `kubectl create namespace <name>`
+
+All commands are run against the current active namespace! You can switch between them easily using the `kubens` tool.
+
+**Useful Tools:**
+
+- [Kubectx and Kubens](https://github.com/ahmetb/kubectx) == kubectx is a tool to switch between contexts (clusters) on kubectl faster,kubens is a tool to switch between Kubernetes namespaces (and configure them for kubectl) easily.
+
+Kubernetes comes with three namespaces out-of-the-box:
+
+- default = can be used out-of-the-box, and can be deleted, but should be avoided in large production systems
+- kube-system = good to leave alone
+- kube-public = not used for much
+
+Services can communicate across namespaces like so: `service-name>.<namespace-name>`.
+
+Namespaces act as deletion boundaries in Kubernetes - deleting a namespace is like `rm -rf` for everything inside it. This makes namespaces powerful for environment cleanup (dev/test/staging) but dangerous if used accidentally. Always double-check which namespace you're targeting!
+
+### Labels
+
+We can use labels to separate applications from others inside a namespace, and to group different resources together. They can be added to almost anything. They are key-value pairs.
+
+We can use them in combination with other tools to group objects, e.g., `nodeSelector`.
+
+---
+
+### Exercise 2.3: Keep them separated
+
+**Objective**: Move the "Log output" and "Ping-pong" to a new namespace called "exercises".
+
+This was just about adding the namespace to all the manifests files. A good way of creating namespaces is having a `namespace.yaml` file where you can define all your namespaces.
+
+---
+
+### Exercise 2.4: Keep them separated
+
+**Objective**: Move the "Todo App" and "Todo Backend" to a new namespace called "project".
+
+This was just about adding the namespace to all the manifests files. If things get stuck in a "terminating" state while you are deleting or moving them you need to figure out the dependencies and sort them out.
+
+---
