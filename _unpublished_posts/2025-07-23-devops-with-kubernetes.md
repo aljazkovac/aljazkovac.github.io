@@ -923,3 +923,115 @@ This was just about adding the namespace to all the manifests files. A good way 
 This was just about adding the namespace to all the manifests files. If things get stuck in a "terminating" state while you are deleting or moving them you need to figure out the dependencies and sort them out.
 
 ---
+
+## Configuring Applications
+
+---
+
+### Exercise 2.5 and Exercise 2.6.: Documentation and ConfigMaps
+
+**Objective**: Use a ConfigMap to inject the container with environment variables
+
+ConfigMaps are a practical way to inject data into a pod. It was interesting to look inside a pod and see that even the environment variables are mapped as files.
+
+I was also wondering about how to update a config map, especially one that has been created partially declaratively (using a configmap.yaml) and partially imperatively (using the `kubectl create configmap` command).
+
+This seems to be a good way: add `-dry-run=client -o yaml | kubectl apply -f -` which:
+
+- Generates the ConfigMap YAML
+- Pipes it to kubectl apply
+- Updates the existing ConfigMap instead of failing with "already exists"
+
+---
+
+## StatefulSets and Jobs
+
+[StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are similar to deployments but are "sticky", meaning that they maintain a persistent storage and a stable, unique network identity for each pod.
+
+Useful command: `kubectl get all --all-namespaces` == a way to see all the resources in all the namespaces
+
+---
+
+### Exercise 2.7: PostgreSQL StatefulSet for Persistent Counter Storage
+
+**Objective**: Run a PostgreSQL database as a StatefulSet (with one replica) and save the Ping-pong application counter into the database. This replaces the in-memory counter with persistent database storage that survives pod restarts.
+
+**Requirements:**
+
+- Deploy PostgreSQL as a StatefulSet with persistent storage
+- Modify the ping-pong application to use PostgreSQL for counter persistence
+- Ensure the database is operational before the application tries to connect
+- Test that counter values persist across pod restarts
+
+The final architecture implements a complete database persistence layer:
+
+**Database Layer:**
+
+- **PostgreSQL StatefulSet**: Single replica with persistent volume for data storage
+- **Counter Table**: Stores application state with auto-incrementing counter values
+- **Connection Management**: Retry logic handles database startup delays
+
+**Application Layer:**
+
+- **Database Initialization**: Creates counter table and initial row on startup
+- **State Persistence**: All counter operations (increment, read) use PostgreSQL queries
+- **Error Handling**: Graceful degradation with database connection failures
+
+**Networking and Service Discovery:**
+
+- **Internal Communication**: ping-pong app connects to `postgres-svc:5432`
+- **Environment Configuration**: Database credentials shared via ConfigMap
+- **Service Abstraction**: PostgreSQL service provides stable endpoint for database access
+
+**Data Persistence Comparison:**
+
+**Before (In-Memory Counter):**
+
+- Counter stored in JavaScript variable (`let counter = 0`)
+- **Pod restart**: Counter resets to 0 ❌
+- **Cluster destruction**: Counter lost forever ❌
+- **Scaling**: Each replica has separate counter ❌
+
+**After (PostgreSQL Database):**
+
+- Counter stored in PostgreSQL table on persistent volume
+- **Pod restart**: Counter survives (reads from database) ✅
+- **Pod scaling**: All replicas share same database ✅
+- **Cluster destruction**: Data survives with proper storage configuration ⚠️
+
+**Storage Persistence Levels:**
+
+**Current Setup (local-path):**
+
+- **k3d cluster destruction**: Data is LOST ❌ (`local-path` stores data on cluster nodes)
+- **Pod restarts**: Data survives ✅ (persistent volume remains intact)
+- **Node failures**: Data may be lost ⚠️ (depends on node-local storage)
+
+**Production Setup (external storage):**
+
+- **Cluster destruction**: Data survives ✅ (external storage systems)
+- **Node failures**: Data survives ✅ (storage independent of nodes)
+- **Disaster recovery**: Possible with proper backup strategies ✅
+
+**Key Kubernetes Concepts Demonstrated:**
+
+**StatefulSet vs Deployment:**
+StatefulSets provide stable network identities, ordered deployment/scaling, and persistent storage associations that survive pod rescheduling.
+
+## Key Insights Summary
+
+**Database Configuration & Environment Variables:**
+• PostgreSQL initialization: postgres:13 image uses POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD env vars for automatic database/user creation
+• Configuration consistency: Database credentials must match between StatefulSet and application containers
+• Environment variable priority: process.env values take precedence over hardcoded defaults - without deployment env vars, you use hardcoded values, not ConfigMap values
+
+**Storage & Persistence:**
+• StorageClass differences: local-path (dynamic provisioning, automatic) vs manual (static provisioning, requires pre-created PV)
+• StatefulSet persistence: StatefulSets automatically recreate pods and maintain persistent volumes
+• Resource visibility: Kubernetes resources are namespace-scoped and can't see across namespace boundaries
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.7`
+
+---
