@@ -1035,3 +1035,55 @@ StatefulSets provide stable network identities, ordered deployment/scaling, and 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.7`
 
 ---
+
+### Exercise 2.9: Wikipedia Reading Reminder CronJob
+
+**Objective**: Create a CronJob that generates a new todo every hour to remind you to read a random Wikipedia article. The job should fetch a random Wikipedia URL and POST it as a todo to the existing todo application.
+
+**Requirements:**
+
+- CronJob runs every hour (`0 * * * *`)
+- Fetch random Wikipedia article URL from `https://en.wikipedia.org/wiki/Special:Random`
+- Extract the actual article URL from the redirect response
+- POST the todo to the todo-app service with format "Read <URL>"
+- Use cluster-internal service communication
+
+**CronJob Architecture:**
+
+The implementation uses a **lightweight container approach** with the `curlimages/curl` image and inline shell scripting rather than building a custom Docker image. This design choice prioritizes simplicity and maintainability - the entire job logic is contained within the Kubernetes manifest, making it easy to modify without rebuilding containers.
+
+**Wikipedia URL Resolution Process:**
+
+The most technically interesting aspect involves **HTTP redirect parsing** to extract random Wikipedia URLs:
+
+```bash
+WIKI_URL=$(curl -s -I "https://en.wikipedia.org/wiki/Special:Random" | grep -i "^location:" | sed 's/location: //i' | tr -d '\r\n')
+```
+
+This command chain demonstrates several **HTTP optimization patterns**:
+
+- **HEAD requests only** (`-I`): Fetches headers without downloading full page content
+- **Location header extraction**: Parses redirect target from HTTP 302 responses
+- **Bandwidth efficiency**: Minimal data transfer compared to following redirects with full page downloads
+
+**Service-to-Service Communication:**
+
+The CronJob POSTs todos using **internal Kubernetes service discovery**:
+
+```bash
+curl -X POST "http://todo-app-svc.project.svc.cluster.local:2345/todos" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "todo=$TODO_TEXT"
+```
+
+**Key networking insights:**
+
+- **Full DNS names**: Uses complete Kubernetes FQDN for cross-namespace reliability
+- **Internal-only traffic**: CronJob communicates directly with todo-app, which proxies to todo-backend
+- **Form data compatibility**: Matches the existing HTML form submission format for seamless integration
+
+**Release:**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.9`
+
+---
