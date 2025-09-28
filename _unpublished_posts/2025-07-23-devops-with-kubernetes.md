@@ -1082,6 +1082,67 @@ curl -X POST "http://todo-app-svc.project.svc.cluster.local:2345/todos" \
 - **Internal-only traffic**: CronJob communicates directly with todo-app, which proxies to todo-backend
 - **Form data compatibility**: Matches the existing HTML form submission format for seamless integration
 
+**Deep Dive: CronJob Lifecycle and Resource Management:**
+
+Understanding the relationship between CronJobs, Jobs, and Pods reveals important Kubernetes design principles for batch workload management.
+
+**Three-Tier Execution Model:**
+
+```bash
+CronJob (wikipedia-todo-cronjob)
+  ↓ Every hour creates...
+Job (wikipedia-todo-cronjob-29317560)
+  ↓ Which creates...
+Pod (wikipedia-todo-cronjob-29317560-dkz6x)
+  ↓ Which runs...
+Container (curlimages/curl + our script)
+```
+
+**CronJob = Scheduler/Template:**
+
+- **Purpose**: Defines when and how to run recurring tasks
+- **Lifecycle**: Permanent until explicitly deleted
+- **Responsibility**: Creates Jobs according to schedule (`0 * * * *`)
+
+**Job = Execution Record:**
+
+- **Purpose**: Manages individual execution attempts with retry logic
+- **Lifecycle**: Controlled by history limits (`successfulJobsHistoryLimit: 3`)
+- **Responsibility**: Creates and monitors Pods until successful completion
+
+**Pod = Runtime Environment:**
+
+- **Purpose**: Provides isolated execution environment for the script
+- **Lifecycle**: Created fresh for each execution, deleted with parent Job
+- **Responsibility**: Runs the actual container and captures logs/exit codes
+
+**Resource Cleanup and History Management:**
+
+The CronJob configuration controls how long execution history is retained:
+
+```yaml
+successfulJobsHistoryLimit: 3  # Keep 3 successful Jobs
+failedJobsHistoryLimit: 1      # Keep 1 failed Job for debugging
+```
+
+**Cleanup Timeline:**
+
+1. **Job completion**: Pod status changes to "Completed" but remains accessible
+2. **History retention**: Jobs and their Pods persist for debugging/audit purposes
+3. **Automatic cleanup**: When history limits are exceeded, oldest Jobs (and Pods) are deleted
+4. **Resource efficiency**: Completed Pods consume no CPU/memory, only etcd metadata
+
+**Why New Pods for Each Execution:**
+
+Kubernetes Jobs create fresh Pods for each execution rather than reusing containers, demonstrating several design principles:
+
+**Fresh Execution Environment Benefits:**
+
+- **State isolation**: No leftover files, environment variables, or memory state
+- **Failure isolation**: Crashes or corruption don't affect subsequent executions
+- **Resource cleanup**: Each Pod gets dedicated CPU/memory that's released on completion
+- **Debugging clarity**: Each execution has distinct logs and resource metrics
+
 **Release:**
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.9`
