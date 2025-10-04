@@ -1121,8 +1121,8 @@ Container (curlimages/curl + our script)
 The CronJob configuration controls how long execution history is retained:
 
 ```yaml
-successfulJobsHistoryLimit: 3  # Keep 3 successful Jobs
-failedJobsHistoryLimit: 1      # Keep 1 failed Job for debugging
+successfulJobsHistoryLimit: 3 # Keep 3 successful Jobs
+failedJobsHistoryLimit: 1 # Keep 1 failed Job for debugging
 ```
 
 **Cleanup Timeline:**
@@ -1146,5 +1146,38 @@ Kubernetes Jobs create fresh Pods for each execution rather than reusing contain
 **Release:**
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.9`
+
+---
+
+```bash
+❯ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
+NAME: kube-prometheus-stack-1759062859
+LAST DEPLOYED: Sun Sep 28 14:34:24 2025
+NAMESPACE: prometheus
+STATUS: deployed
+REVISION: 1
+NOTES:
+kube-prometheus-stack has been installed. Check its status by running:
+  kubectl --namespace prometheus get pods -l "release=kube-prometheus-stack-1759062859"
+
+Get Grafana 'admin' user password by running:
+
+  kubectl --namespace prometheus get secrets kube-prometheus-stack-1759062859-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
+
+Access Grafana local instance:
+
+  export POD_NAME=$(kubectl --namespace prometheus get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack-1759062859" -oname)
+  kubectl --namespace prometheus port-forward $POD_NAME 3000
+
+Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
+```
+
+---
+
+### Exercise 2.10: Set up Monitoring
+
+**Objective**: Set up monitoring for the project. Use Prometheus for metrics, Loki for logs, and Grafana for dasbhoards.
+
+Used Helm to install the kube-prometheus stack. Otherwise just followed instructions in the course and in the docs to set everything up.
 
 ---
