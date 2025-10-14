@@ -1180,4 +1180,115 @@ Visit https://github.com/prometheus-operator/kube-prometheus for instructions on
 
 Used Helm to install the kube-prometheus stack. Otherwise just followed instructions in the course and in the docs to set everything up.
 
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/2.10`
+
+---
+
+## Introduction to Google Kubernetes Engine
+
+### Exercise 3.1: Pingpong GKE
+
+**Objective**: Set up the pingpong app in the Google Kubernetes Engine
+
+Created the cluster with: `gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-micro` or `maching-type=e2-small`.
+P.S. Delete the cluster whenever you're not using it: `gcloud container clusters delete dwk-cluster --zone=europe-north1-b`
+
+Then I removed the service file and replaced it with a loadbalancer config. I had trouble with the container crashing. The logs from `kubectl logs` showed an `exec format error`.
+This indicated the Docker image was built for the wrong CPU architecture (e.g., ARM on an Apple Silicon Mac) for the x86/amd64 GKE nodes.
+I rebuilt the image as a multi-architecture image using `docker buildx build --platform linux/amd64,linux/arm64`. I had to switch to a [containerd runtime](https://docs.docker.com/desktop/features/containerd/) in Docker to be able to build multi-architecture images.
+
+Another problem was that the database was stuck in a pending stage. `kubectl describe pod` showed an `unbound immediate PersistentVolumeClaims` error. The `statefulset.yaml` was requesting a `storageClassName: local-path`, which is common for local clusters but doesn't exist on GKE. I removed the `storageClassName` line from the `statefulset.yaml`. This allowed Kubernetes to use the default `standard-rwo` storage class provided by GKE.
+
+After fixing the storage class, the `postgres` pod went into an `Error` state. The logs showed `initdb: error: directory "/var/lib/postgresql/data" exists but is not empty`. This happens because the new persistent disk comes with a `lost+found` directory, which the `postgres` `initdb` script doesn't like. I added a `subPath: postgres` to the `volumeMount` in the `statefulset.yaml`. This mounts a clean subdirectory from the persistent disk into the container, allowing the database to initialize correctly.
+
+**Key Takeaways:**
+
+- Always check pod events with `kubectl describe` when a pod is `Pending`.
+- `exec format error` in logs almost always means a CPU architecture mismatch in your Docker image.
+- Ensure your `storageClassName` in manifests matches what your cloud provider offers.
+- StatefulSets are largely immutable; you often need to `delete` and `apply` to make changes to their pod or volume specifications.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.1`
+
+---
+
+### Exercise 3.2: Pingpong and LogOutput in GKE
+
+**Objective**: Set up the pingpong app and the logoutput app in the Google Kubernetes Engine
+
+In this exercise, we deployed two applications, "ping-pong" and "log-output," into a GKE cluster and exposed them through a single Ingress. This process uncovered critical issues related to resource allocation, storage configuration, health checks, and deployment strategies, providing a realistic debugging experience.
+
+The first step was to establish a unified entry point for both applications.
+
+- **Action:** We configured a single `ingress.yaml` to handle routing for both services, with the `log-output` app at the root (`/`) and the `pingpong` app at `/pingpong`.
+- **Action:** We replaced the `pingpong` app's `LoadBalancer` service with a `ClusterIP` service, as it no longer needed a dedicated external IP.
+
+_The initial deployment failed with all application pods stuck in a `Pending` state._
+
+- **Diagnosis 1: Insufficient Memory.** Using `kubectl describe pod`, we found the error `Insufficient memory`. An analysis of the cluster nodes (`kubectl describe nodes`) revealed the `e2-micro` instances were too small; after accounting for GKE's system pods, there was not enough memory left for our applications.
+- **Solution 1:** The cluster was recreated with larger `e2-small` nodes, which provided sufficient memory.
+
+- **Diagnosis 2: Incompatible Storage.** The `log-output` pod and its `PersistentVolumeClaim` (PVC) were still `Pending`. We found the `PersistentVolume` was defined with `hostPath` and a `nodeAffinity` for a `k3d` node, making it incompatible with GKE.
+- **Solution 2:** We abandoned the static provisioning model. We deleted the `persistentvolume.yaml` and `persistentvolumeclaim.yaml` files and replaced them with a single, dynamic PVC manifest that requests storage from GKE's default `StorageClass`.
+
+_With the pods scheduled, the Ingress failed to become healthy, returning a "Server Error". `kubectl describe ingress` showed the backends were `UNHEALTHY`._
+
+- **Diagnosis 1 (log-output):** The `log-output` app's `/` route was returning a `302` redirect. The health checker requires a `200 OK` and treats a redirect as a failure.
+- **Solution 1:** We modified the `/` route in the `log-reader/app.js` to respond directly with `200 OK`.
+
+- **Diagnosis 2 (Stale Images):** The backends remained unhealthy. We realized that after fixing the code, the Docker images had not been rebuilt and pushed.
+- **Solution 2:** We rebuilt all application images using `docker buildx` to create multi-architecture images and pushed them with new, unique tags (e.g., `:v2`, `:v3`). Using unique tags is a best practice to avoid caching issues with the `:latest` tag.
+
+_The applications would run for a while and then become unavailable. `kubectl get pods` showed a high `RESTARTS` count._
+
+- **Diagnosis:** The logs of the previous containers (`kubectl logs --previous`) showed no errors, indicating a "silent crash." This led us to `describe` the pod, which revealed the termination reason: `OOMKilled`. The containers were using more memory than their configured `limit`.
+- **Solution:** We edited the `deployment.yaml` files to increase the memory `limit` for the crashing containers (e.g., from `32Mi` to `128Mi`), while keeping the memory `request` low. This allowed the applications to run without being killed for exceeding their memory allowance.
+
+This exercise was a comprehensive tour of the entire application lifecycle on Kubernetes, from initial deployment and configuration to debugging complex issues with scheduling, storage, health checks, and resource limits.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.2`
+
+---
+
+### Exercise 3.3: Use Gateway API Instead of Ingress
+
+In this exercise, we migrated the traffic management for the `log-output` and `pingpong` applications from the traditional `Ingress` API to the newer and more powerful `Gateway` API. This process led to one final, crucial lesson in Kubernetes resource allocation.
+
+First, we replaced the `Ingress` resource with two new, more expressive resources:
+
+- **A `Gateway` Resource:** This defined the entry point for our cluster: `gcloud container clusters update clustername --location=europe-north1-b --gateway-api=standard`
+- **An `HTTPRoute` Resource:** This defined the actual routing rules. We configured it to attach to our `Gateway` and specified how paths should be directed to our internal `ClusterIP` services:
+  - Requests to `/` were routed to the `log-output-svc`.
+  - Requests to `/pingpong` and `/counter` were routed to the `pingpong-svc`.
+
+Even with a correct Gateway API configuration, the deployment failed.
+
+- **Symptom:** After applying the manifests, the `log-output` pod was stuck in the `Pending` state.
+- **Diagnosis:** Using `kubectl describe pod`, we discovered the familiar error: `Insufficient memory`. Although the `e2-small` cluster was larger than our first attempt, it was still not enough. After the GKE system pods, the `postgres` pod, and the `pingpong` pod were scheduled, there was not enough free memory left on any node to accommodate the `log-output` pod's request.
+
+This confirmed that the total resource demand of the Kubernetes system combined with the full suite of applications was too great for the `e2-small` nodes.
+
+- **Action:** The cluster was deleted and recreated one last time using the **`e2-medium`** machine type.
+- **Outcome:** The `e2-medium` nodes provided a substantial amount of memory, creating a large enough buffer to comfortably run all the GKE system pods _and_ all of our application pods. When the manifests were applied to this new cluster, all pods started quickly and without issue.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.3`
+
+---
+
+### Exercise 3.4: Use rewrite on the /pingpong route
+
+The goal was to make the `pingpong` application more portable by having its main logic served from its root path (`/`) internally, while still being accessible from the `/pingpong` path externally.
+
+This was accomplished with a two-part solution: one change in the application code and one in the Kubernetes configuration.
+
+First, we modified the `pingpong/app.js` file. The core logic for incrementing the database counter was moved from the `app.get('/pingpong', ...)` route to the `app.get('/', ...)` route. This made the application self-contained, serving its primary function from its own root path.
+
+Second, we edited the `HTTPRoute` resource (`route.yaml`). We added a `filters` section to the rule that matches the `/pingpong` path.
+
+This filter intercepts any incoming request for `/pingpong`, replaces that prefix with `/`, and forwards the modified request to the `pingpong` service.
+
+Since the GKE health checker probes the `/` path, and the main application logic was now also at `/`, **every health check would increment the counter.**
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.4`
+
 ---
