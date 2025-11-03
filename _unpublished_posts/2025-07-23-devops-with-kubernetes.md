@@ -1186,16 +1186,17 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ## Introduction to Google Kubernetes Engine
 
+---
+
 ### Exercise 3.1: Pingpong GKE
 
 **Objective**: Set up the pingpong app in the Google Kubernetes Engine
 
-Created the cluster with: `gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-micro` or `maching-type=e2-small`.
+Created the cluster with: `gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-micro` or `machine-type=e2-small`.
 P.S. Delete the cluster whenever you're not using it: `gcloud container clusters delete dwk-cluster --zone=europe-north1-b`
 
 Then I removed the service file and replaced it with a loadbalancer config. I had trouble with the container crashing. The logs from `kubectl logs` showed an `exec format error`.
 This indicated the Docker image was built for the wrong CPU architecture (e.g., ARM on an Apple Silicon Mac) for the x86/amd64 GKE nodes.
-I rebuilt the image as a multi-architecture image using `docker buildx build --platform linux/amd64,linux/arm64`. I had to switch to a [containerd runtime](https://docs.docker.com/desktop/features/containerd/) in Docker to be able to build multi-architecture images.
 
 Another problem was that the database was stuck in a pending stage. `kubectl describe pod` showed an `unbound immediate PersistentVolumeClaims` error. The `statefulset.yaml` was requesting a `storageClassName: local-path`, which is common for local clusters but doesn't exist on GKE. I removed the `storageClassName` line from the `statefulset.yaml`. This allowed Kubernetes to use the default `standard-rwo` storage class provided by GKE.
 
@@ -1290,5 +1291,32 @@ This filter intercepts any incoming request for `/pingpong`, replaces that prefi
 Since the GKE health checker probes the `/` path, and the main application logic was now also at `/`, **every health check would increment the counter.**
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.4`
+
+---
+
+## Deployment Pipeline
+
+[Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool for configuration customization, baked into `kubectl`.
+Alternatively, we could use Helm or [Helmsman](https://github.com/mkubaczyk/helmsman).
+
+Add a file `kustomization.yaml` and apply with `kubectl apply -k`. A dry run can be run with `kubectl kustomize .`.
+Read the [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sheet-8e2d31b74d8f).
+
+---
+
+### Exercise 3.5: Deploy the TODO project to the GKE
+
+To enable the gateway-API from the start, I added the appropriate flag when creating the cluster:
+`gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-medium --gateway-api=standard`
+
+1. Kustomize Setup: We organized the todo-project with a Kustomize base and moved all manifests into it, renaming them for clarity.
+2. GKE Preparation: We identified the need to replace Ingress with Gateway and adjust PersistentVolume handling for GKE.
+3. PostgreSQL Fix: We resolved a CrashLoopBackOff in PostgreSQL caused by the lost+found directory by correctly implementing subPath for its volume.
+4. Backend Image Fix: We fixed an exec format error in the backend by rebuilding and pushing multi-architecture Docker images.
+5. Backend Config Fix: We resolved a CreateContainerConfigError in the backend by correcting case sensitivity mismatches in ConfigMap and Deployment environment variable keys.
+6. Frontend Volume Fix: We overcame a Multi-Attach error for the frontend's volume by deleting a lingering old ReplicaSet.
+7. API Routing Fix: Finally, we resolved the "Error loading todos" by correcting the HTTPRoute to ensure all traffic, including API calls, correctly flowed through the frontend application, which acts as a proxy.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.5`
 
 ---
