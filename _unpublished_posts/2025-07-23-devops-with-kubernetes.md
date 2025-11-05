@@ -1320,3 +1320,14 @@ To enable the gateway-API from the start, I added the appropriate flag when crea
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.5`
 
 ---
+
+### Exercise 3.6: Deploy the TODO project to the GKE with GitHub Actions
+
+We followed the instructions on how to set up the necessary resources in GKE (artifact registry) and authentication, and prepare a GHA workflow. We did run into some issues or challenges:
+
+1. Changing Deployment Strategy: Updated todo-app-deployment.yaml to use the Recreate strategy, resolving ReadWriteOnce PVC conflicts.
+2. Correcting Workflow Paths: Adjusted docker build commands and kustomize paths in the workflow to correctly reference project subdirectories and the kustomization base.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.6`
+
+---
