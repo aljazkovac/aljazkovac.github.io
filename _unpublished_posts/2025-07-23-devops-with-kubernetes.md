@@ -1331,3 +1331,33 @@ We followed the instructions on how to set up the necessary resources in GKE (ar
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.6`
 
 ---
+
+### Exercise 3.7: Each branch should create a separate deployment
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.7`
+
+---
+
+### Exercise 3.8: Deleting a branch should delete the environment
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.8`
+
+---
+
+### Exercise 3.10: Backup project database to Google Cloud
+
+To create a Kubernetes CronJob that backs up the todo database to Google Cloud Storage, we performed the following:
+
+1. Initial CronJob Setup: Started with a basic CronJob manifest (todo-backend-dbdump-cronjob.yaml) and integrated it into Kustomize.
+2. GCS Credentials: Created a Kubernetes Secret (gcs-credentials) from a Google Cloud Service Account key, and configured the CronJob to use it for GCS authentication.
+3. Database Credentials: Created a Kubernetes Secret (todo-backend-postgres-credentials) for the PostgreSQL password, as the CronJob was configured to retrieve it securely
+   from a Secret, not the insecure ConfigMap.
+4. Diagnosed Node Access Scopes: Discovered that the GKE cluster's default node pool had devstorage.read_only access scopes, preventing GCS write operations despite correct
+   IAM roles.
+5. Created Specialized Node Pool: Created a new GKE node pool (backup-pool) with broader cloud-platform access scopes to allow GCS write operations.
+6. Targeted Backup Pod: Modified the CronJob to include a nodeSelector, ensuring the backup pod runs exclusively on the new backup-pool.
+7. Verification: Applied all changes and successfully ran a test job, confirming the database backup was uploaded to the Google Cloud Storage bucket.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.10`
+
+---
