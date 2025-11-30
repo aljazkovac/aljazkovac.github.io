@@ -1391,3 +1391,11 @@ Additionally, to ensure the stability of the `project` namespace, I implemented:
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.11`
 
 ---
+
+### Exercise 3.12: Logging
+
+**Objective**: Turn no logging on the cluster
+
+Ran the command: `gcloud container clusters update dwk-cluster --zone europe-north1-b --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM`
+
+---
