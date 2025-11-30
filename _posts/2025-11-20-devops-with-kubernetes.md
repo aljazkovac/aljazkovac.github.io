@@ -1361,3 +1361,33 @@ To create a Kubernetes CronJob that backs up the todo database to Google Cloud S
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.10`
 
 ---
+
+### Exercise 3.11: Resource limits
+
+**Objective**: Set sensible resource requests and limits for the project.
+
+**Notes**:
+
+- **Vertical scaling** (more resources) vs. **Horizontal scaling** (more pods or nodes).
+- Resources can have `requests` (guaranteed minimum) and `limits` (hard maximum) defined for specific containers.
+- [**HorizontalPodAutoscaler**](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/): Automatically scales pods horizontally based on CPU/memory usage.
+- [**VerticalPodAutoscaler**](https://cloud.google.com/kubernetes-engine/docs/concepts/verticalpodautoscaler): Automatically scales pods vertically (adjusts requests/limits).
+- **PodDisruptionBudget**: Determines how many pods must always be available during voluntary disruptions.
+- **ResourceQuotas**: Put a hard cap on total aggregate resource consumption (CPU and memory) for a specific namespace.
+- **LimitRange**: Similar to ResourceQuotas but applies to individual containers, creating default values and min/max constraints.
+
+**Implementation:**
+
+I verified that `todo-app` and `todo-backend` deployments already had sensible resource requests and limits defined. However, the `postgres` StatefulSet was missing them, so I added:
+
+- Requests: `cpu: 200m`, `memory: 256Mi`
+- Limits: `cpu: 500m`, `memory: 512Mi`
+
+Additionally, to ensure the stability of the `project` namespace, I implemented:
+
+1. **ResourceQuota**: Capped the namespace at 20 Pods, 2 CPU cores, and 2GB RAM (requests). This prevents any single project from consuming all cluster resources.
+2. **LimitRange**: Defined default requests/limits for any new containers and set min/max constraints to prevent "tiny" or "monster" pods.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.11`
+
+---
