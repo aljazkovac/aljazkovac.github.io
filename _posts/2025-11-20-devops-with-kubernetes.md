@@ -6,7 +6,9 @@ tags: [devops, kubernetes, prometheus, grafana, google, cloud] # TAG names shoul
 description: University of Helsinki course on Kubernetes
 ---
 
-## First deploy
+## Chapter 2 - Kubernetes Basics
+
+### First deploy
 
 **Learning goals**:
 
@@ -47,7 +49,7 @@ _Basic Kubernetes concepts_:
 
 For most learning and development scenarios, k3s/k3d is sufficient and much simpler to use than a full Kubernetes. If you use k3d then you don't need to install k3s separately.
 
-## Containers in k3d Cluster
+#### Containers in k3d Cluster
 
 When you run the command `k3d cluster create -a 2`, the following containers are created as part of the Kubernetes cluster:
 
@@ -62,7 +64,7 @@ If we run the command `k3d kubeconfig get k3s-default` then we can see the auto-
 
 Some more basic `k3d` commands: `k3d cluster start`, `k3d cluster stop`, `k3d cluster delete`.
 
-### Common k3d Troubleshooting
+#### Common k3d Troubleshooting
 
 **Connection Refused Error**:
 
@@ -90,7 +92,7 @@ After starting, verify the cluster is running:
 - Agents should show `2/2`
 - `kubectl get nodes` should now work successfully
 
-### kubectl and its role in k3d and k3s
+#### kubectl and its role in k3d and k3s
 
 `kubectl` is the command-line tool used to interact with Kubernetes clusters. It works seamlessly with `k3d` and `k3s` as follows:
 
@@ -118,7 +120,7 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 ---
 
-### Ex. 1.1 - First Application Deploy
+#### Ex. 1.1 - First Application Deploy
 
 **Goal**: Create a simple application that outputs a timestamp and UUID every 5 seconds, containerize it, and deploy it to Kubernetes.
 
@@ -159,7 +161,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.2: TODO Application
+#### Exercise 1.2: TODO Application
 
 **Objective**: Create a web server that outputs "Server started in port NNNN" when started, uses PORT environment variable, and deploy to Kubernetes.
 
@@ -196,14 +198,14 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.3: Declarative Deployment Manifests
+#### Exercise 1.3: Declarative Deployment Manifests
 
 **Objective**: Move the "Log output" app to a declarative Kubernetes manifest and verify it runs by restarting and following logs.
 
 - **Manifests folder**: Created `devops-with-kubernetes/log_output/manifests/` and added [`deployment.yaml`](https://github.com/aljazkovac/devops-with-kubernetes/blob/1.3/log_output/manifests/deployment.yaml).
 - **Deployment spec**: `apps/v1` Deployment named `log-output`, label `app=log-output`, 1 replica, image `aljazkovac/kubernetes-1-1:latest`.
 
-### Apply & verify
+**Apply & verify**:
 
 ```bash
 # Apply the declarative deployment
@@ -219,7 +221,7 @@ kubectl get pods -l app=log-output
 kubectl logs -f -l app=log-output --prefix=true
 ```
 
-### Restart test
+**Restart test**:
 
 ```bash
 # Trigger a rolling restart and watch logs
@@ -238,14 +240,14 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.4: Declarative Deployment for TODO app
+#### Exercise 1.4: Declarative Deployment for TODO app
 
 **Objective**: Create a `deployment.yaml` for the course project you started in Exercise 1.2 (`todo-app`). You won’t have access to the port yet — that comes later.
 
 - **Manifests folder**: Created `devops-with-kubernetes/todo_app/manifests/` and added [`deployment.yaml`](https://github.com/aljazkovac/devops-with-kubernetes/blob/1.4/todo_app/manifests/deployment.yaml).
 - **Deployment spec**: `apps/v1` Deployment named `todo-app`, label `app=todo-app`, 1 replica, image `aljazkovac/todo-app:latest`, with resource requests/limits.
 
-### Apply & verify (Deployment)
+**Apply & verify (Deployment):**
 
 ```bash
 # Apply the declarative deployment
@@ -271,7 +273,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Introduction to Debugging
+### Introduction to Debugging
 
 Some useful commands:
 
@@ -282,13 +284,13 @@ Some useful commands:
 
 Using [Lens](https://k8slens.dev/), the Kubernetes IDE, can also make for a smoother debugging experience.
 
-## Introduction to Networking
+### Introduction to Networking
 
 The `kubectl port-forward` command is used to forward a local port to a pod. It is not meant for production use.
 
 ---
 
-### Exercise 1.5: Port forwarding for the TODO app
+#### Exercise 1.5: Port forwarding for the TODO app
 
 **Objective**: Return a simple HTML website and use port-fowarding to reach it from your local machine
 
@@ -305,7 +307,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.6: Use a NodePort service for the TODO app
+#### Exercise 1.6: Use a NodePort service for the TODO app
 
 **Objective**: Use a NodePort service to reach your TODO-app from your local machine
 
@@ -337,11 +339,11 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Exercise 1.7: Add HTTP Endpoint to Log Output App
+#### Exercise 1.7: Add HTTP Endpoint to Log Output App
 
-**Objective**: "Log output" application currently outputs a timestamp and a random string (that it creates on startup) to the logs. Add an endpoint to request the current status (timestamp and the random string) and an Ingress so that you can access it with a browser.
+**Objective:** "Log output" application currently outputs a timestamp and a random string (that it creates on startup) to the logs. Add an endpoint to request the current status (timestamp and the random string) and an Ingress so that you can access it with a browser.
 
-### Solution
+**Solution:**
 
 I extended the `log_output/app.js` to include an HTTP server with a `/status` endpoint that returns the current timestamp and the application's UUID as JSON.
 
@@ -358,7 +360,7 @@ I also needed to update the Kubernetes manifests:
 - **Created service.yaml**: ClusterIP service exposing port 2345, targeting container port 3000
 - **Created ingress.yaml**: Ingress resource to route HTTP traffic from the browser to the service
 
-### Networking and Port Configuration
+**Networking and Port Configuration:**
 
 The networking flow works as follows:
 
@@ -390,9 +392,9 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.8: Use Ingress for the TODO app
+#### Exercise 1.8: Use Ingress for the TODO app
 
-**Objective**: Use a Ingress service to reach your TODO-app from your local machine
+**Objective:** Use a Ingress service to reach your TODO-app from your local machine
 
 - **Delete the existing cluster**: `k3d cluster delete k3s-default`
 - **Create a new cluster with the port mapping to port 80 (where Ingress listens)**: `k3d cluster create k3s-default --port "3000:80@loadbalancer" --agents 2`
@@ -409,9 +411,9 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.9: Ping-Pong Application with Shared Ingress
+#### Exercise 1.9: Ping-Pong Application with Shared Ingress
 
-**Objective**: Develop a second application that responds with "pong X" to GET requests and increases a counter. Create a deployment for it and have it share the same Ingress with the "Log output" application by routing requests directed to '/pingpong' to it.
+**Objective:** Develop a second application that responds with "pong X" to GET requests and increases a counter. Create a deployment for it and have it share the same Ingress with the "Log output" application by routing requests directed to '/pingpong' to it.
 
 - **Create the ping-pong application**: Express.js app that handles `/pingpong` endpoint directly
 - **Build and push the Docker image**: `docker build -t aljazkovac/pingpong:latest ./pingpong && docker push aljazkovac/pingpong:latest`
@@ -443,7 +445,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Introduction to Storage
+### Introduction to Storage
 
 There are two really hard things in Kubernetes: networking and [storage](https://softwareengineeringdaily.com/2019/01/11/why-is-storage-on-kubernetes-is-so-hard/).
 
@@ -454,7 +456,7 @@ There are several types of storage in Kubernetes:
 
 ---
 
-### Exercise 1.10: Multi-Container Pod with Shared Storage
+#### Exercise 1.10: Multi-Container Pod with Shared Storage
 
 **Objective**: Split the log-output application into two applications: one that writes timestamped logs to a file every 5 seconds, and another that reads from that file and serves the content via HTTP endpoint. Both applications should run in the same pod and share data through a volume.
 
@@ -490,7 +492,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-**Scaling Deployments:**
+#### Scaling Deployments
 
 The `kubectl scale` command allows you to dynamically adjust the number of replicas (pods) for a deployment. This is essential for managing resource consumption and handling varying workloads.
 
@@ -539,7 +541,7 @@ The scaling approach is much more efficient than deleting and recreating deploym
 
 ---
 
-### Exercise 1.11: Shared Persistent Volume Storage
+#### Exercise 1.11: Shared Persistent Volume Storage
 
 **Objective**: Enable data sharing between "Ping-pong" and "Log output" applications using persistent volumes. Save the number of requests to the ping-pong application into a file in the shared volume and display it alongside the timestamp and random string when accessing the log output application.
 
@@ -604,7 +606,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.12: Random Image from Lorem Picsum
+#### Exercise 1.12: Random Image from Lorem Picsum
 
 **Objective**: Add a random picture from Lorem Picsum to the TODO app that refreshes hourly and is cached in a persistent volume to avoid repeated API calls.
 
@@ -652,7 +654,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 1.13: TODO App Input Functionality
+#### Exercise 1.13: TODO App Input Functionality
 
 **Objective**: Add real todo functionality to the project by implementing an input field with character validation, a send button, and a list of hardcoded todos.
 
@@ -707,7 +709,13 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 2.2: Microservices Architecture with Todo Backend
+## Chapter 3 - More Building Blocks
+
+### Networking Between Pods
+
+---
+
+#### Exercise 2.2: Microservices Architecture with Todo Backend
 
 **Objective:**
 
@@ -871,9 +879,9 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Organizing a cluster
+### Organizing a cluster
 
-### Namespaces
+#### Namespaces
 
 We can use namespaces to organize a cluster and keep resources separated. With namespaces you can split a cluster into several virtual clusters. Most commonly namespaces would be used to separated environments, e.g., into development, staging and production. "DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called cat-pictures is in a namespace ns-test, it could be found from other namespaces via http://cat-pictures.ns-test(opens in a new tab)."
 
@@ -900,7 +908,7 @@ Services can communicate across namespaces like so: `service-name>.<namespace-na
 
 Namespaces act as deletion boundaries in Kubernetes - deleting a namespace is like `rm -rf` for everything inside it. This makes namespaces powerful for environment cleanup (dev/test/staging) but dangerous if used accidentally. Always double-check which namespace you're targeting!
 
-### Labels
+**Labels:**
 
 We can use labels to separate applications from others inside a namespace, and to group different resources together. They can be added to almost anything. They are key-value pairs.
 
@@ -908,7 +916,7 @@ We can use them in combination with other tools to group objects, e.g., `nodeSel
 
 ---
 
-### Exercise 2.3: Keep them separated
+#### Exercise 2.3: Keep them separated
 
 **Objective**: Move the "Log output" and "Ping-pong" to a new namespace called "exercises".
 
@@ -916,7 +924,7 @@ This was just about adding the namespace to all the manifests files. A good way 
 
 ---
 
-### Exercise 2.4: Keep them separated
+#### Exercise 2.4: Keep them separated
 
 **Objective**: Move the "Todo App" and "Todo Backend" to a new namespace called "project".
 
@@ -924,7 +932,7 @@ This was just about adding the namespace to all the manifests files. If things g
 
 ---
 
-## Configuring Applications
+### Configuring Applications
 
 ---
 
@@ -944,7 +952,7 @@ This seems to be a good way: add `-dry-run=client -o yaml | kubectl apply -f -` 
 
 ---
 
-## StatefulSets and Jobs
+### StatefulSets and Jobs
 
 [StatefulSets](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) are similar to deployments but are "sticky", meaning that they maintain a persistent storage and a stable, unique network identity for each pod.
 
@@ -952,9 +960,9 @@ Useful command: `kubectl get all --all-namespaces` == a way to see all the resou
 
 ---
 
-### Exercise 2.7: PostgreSQL StatefulSet for Persistent Counter Storage
+#### Exercise 2.7: PostgreSQL StatefulSet for Persistent Counter Storage
 
-**Objective**: Run a PostgreSQL database as a StatefulSet (with one replica) and save the Ping-pong application counter into the database. This replaces the in-memory counter with persistent database storage that survives pod restarts.
+**Objective:** Run a PostgreSQL database as a StatefulSet (with one replica) and save the Ping-pong application counter into the database. This replaces the in-memory counter with persistent database storage that survives pod restarts.
 
 **Requirements:**
 
@@ -1018,7 +1026,7 @@ The final architecture implements a complete database persistence layer:
 **StatefulSet vs Deployment:**
 StatefulSets provide stable network identities, ordered deployment/scaling, and persistent storage associations that survive pod rescheduling.
 
-## Key Insights Summary
+**Key Insights Summary:**
 
 **Database Configuration & Environment Variables:**
 • PostgreSQL initialization: postgres:13 image uses POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD env vars for automatic database/user creation
@@ -1036,7 +1044,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 2.9: Wikipedia Reading Reminder CronJob
+#### Exercise 2.9: Wikipedia Reading Reminder CronJob
 
 **Objective**: Create a CronJob that generates a new todo every hour to remind you to read a random Wikipedia article. The job should fetch a random Wikipedia URL and POST it as a todo to the existing todo application.
 
@@ -1149,32 +1157,9 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-```bash
-❯ helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus
-NAME: kube-prometheus-stack-1759062859
-LAST DEPLOYED: Sun Sep 28 14:34:24 2025
-NAMESPACE: prometheus
-STATUS: deployed
-REVISION: 1
-NOTES:
-kube-prometheus-stack has been installed. Check its status by running:
-  kubectl --namespace prometheus get pods -l "release=kube-prometheus-stack-1759062859"
+### Monitoring
 
-Get Grafana 'admin' user password by running:
-
-  kubectl --namespace prometheus get secrets kube-prometheus-stack-1759062859-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo
-
-Access Grafana local instance:
-
-  export POD_NAME=$(kubectl --namespace prometheus get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=kube-prometheus-stack-1759062859" -oname)
-  kubectl --namespace prometheus port-forward $POD_NAME 3000
-
-Visit https://github.com/prometheus-operator/kube-prometheus for instructions on how to create & configure Alertmanager and Prometheus instances using the Operator.
-```
-
----
-
-### Exercise 2.10: Set up Monitoring
+#### Exercise 2.10: Set up Monitoring
 
 **Objective**: Set up monitoring for the project. Use Prometheus for metrics, Loki for logs, and Grafana for dasbhoards.
 
@@ -1184,13 +1169,13 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Introduction to Google Kubernetes Engine
+## Chapter 4 - To the Cloud
 
----
+### Introduction to Google Kubernetes Engine
 
-### Exercise 3.1: Pingpong GKE
+#### Exercise 3.1: Pingpong GKE
 
-**Objective**: Set up the pingpong app in the Google Kubernetes Engine
+**Objective:** Set up the pingpong app in the Google Kubernetes Engine
 
 Created the cluster with: `gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-micro` or `machine-type=e2-small`.
 P.S. Delete the cluster whenever you're not using it: `gcloud container clusters delete dwk-cluster --zone=europe-north1-b`
@@ -1213,7 +1198,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.2: Pingpong and LogOutput in GKE
+#### Exercise 3.2: Pingpong and LogOutput in GKE
 
 **Objective**: Set up the pingpong app and the logoutput app in the Google Kubernetes Engine
 
@@ -1251,7 +1236,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.3: Use Gateway API Instead of Ingress
+#### Exercise 3.3: Use Gateway API Instead of Ingress
 
 In this exercise, we migrated the traffic management for the `log-output` and `pingpong` applications from the traditional `Ingress` API to the newer and more powerful `Gateway` API. This process led to one final, crucial lesson in Kubernetes resource allocation.
 
@@ -1276,7 +1261,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.4: Use rewrite on the /pingpong route
+#### Exercise 3.4: Use rewrite on the /pingpong route
 
 The goal was to make the `pingpong` application more portable by having its main logic served from its root path (`/`) internally, while still being accessible from the `/pingpong` path externally.
 
@@ -1294,7 +1279,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-## Deployment Pipeline
+### Deployment Pipeline
 
 [Kustomize](https://github.com/kubernetes-sigs/kustomize) is a tool for configuration customization, baked into `kubectl`.
 Alternatively, we could use Helm or [Helmsman](https://github.com/mkubaczyk/helmsman).
@@ -1321,7 +1306,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.6: Deploy the TODO project to the GKE with GitHub Actions
+#### Exercise 3.6: Deploy the TODO project to the GKE with GitHub Actions
 
 We followed the instructions on how to set up the necessary resources in GKE (artifact registry) and authentication, and prepare a GHA workflow. We did run into some issues or challenges:
 
@@ -1332,19 +1317,21 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.7: Each branch should create a separate deployment
+#### Exercise 3.7: Each branch should create a separate deployment
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.7`
 
 ---
 
-### Exercise 3.8: Deleting a branch should delete the environment
+#### Exercise 3.8: Deleting a branch should delete the environment
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.8`
 
 ---
 
-### Exercise 3.10: Backup project database to Google Cloud
+### GKE Features
+
+#### Exercise 3.10: Backup project database to Google Cloud
 
 To create a Kubernetes CronJob that backs up the todo database to Google Cloud Storage, we performed the following:
 
@@ -1362,7 +1349,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.11: Resource limits
+#### Exercise 3.11: Resource limits
 
 **Objective**: Set sensible resource requests and limits for the project.
 
@@ -1392,10 +1379,14 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-### Exercise 3.12: Logging
+#### Exercise 3.12: Logging
 
 **Objective**: Turn on logging on the cluster
 
 Ran the command: `gcloud container clusters update dwk-cluster --zone europe-north1-b --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM`
 
 ---
+
+## Chapter 5 - GitOps and Friends
+
+### Update Strategies and Prometheus
