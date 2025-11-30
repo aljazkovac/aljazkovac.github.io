@@ -936,7 +936,7 @@ This was just about adding the namespace to all the manifests files. If things g
 
 ---
 
-### Exercise 2.5 and Exercise 2.6.: Documentation and ConfigMaps
+#### Exercise 2.5 and Exercise 2.6.: Documentation and ConfigMaps
 
 **Objective**: Use a ConfigMap to inject the container with environment variables
 
@@ -1289,7 +1289,7 @@ Read the [Kustomize Cheat Sheet](https://itnext.io/kubernetes-kustomize-cheat-sh
 
 ---
 
-### Exercise 3.5: Deploy the TODO project to the GKE
+#### Exercise 3.5: Deploy the TODO project to the GKE
 
 To enable the gateway-API from the start, I added the appropriate flag when creating the cluster:
 `gcloud container clusters create dwk-cluster --zone=europe-north1-b --cluster-version=1.32 --disk-size=32 --num-nodes=3 --machine-type=e2-medium --gateway-api=standard`
