@@ -16,10 +16,10 @@ timezone: Europe/Stockholm
 
 title: Aljaz Kovac # the main title
 
-tagline: .NET Developer and Azure DevOps Engineer # it will display as the sub-title
+tagline: Cloud & Software Engineer # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  The GitHub Pages landing site for Aljaz Kovac, a software developer and a DevOps engineer.
+  The GitHub Pages landing site for Aljaz Kovac, a Cloud & Software Engineer.
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
