@@ -1411,3 +1411,24 @@ Did the following:
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.1`
 
 ---
+
+#### Exercise 4.2: Health probes
+
+**Objective**: Configure health probes for the project
+
+Read more:
+
+- [Probes](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/)
+- [Configure probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
+
+Health probes:
+
+- startup probe = checks if the container has started (delays the liveness probe)
+- readiness probe = checks if the container can start receiving traffic
+- liveness probe = if it failes the container will be restarted
+
+If a startup probe is defined, readiness and liveness probes do not start until is has succeeded. If it isn't defined, readiness and liveness probes can be delayed with the `initialDelaySeconds` parameter.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.2`
+
+---
