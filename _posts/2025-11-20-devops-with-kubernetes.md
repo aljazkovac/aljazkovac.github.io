@@ -1385,8 +1385,29 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 Ran the command: `gcloud container clusters update dwk-cluster --zone europe-north1-b --logging=SYSTEM,WORKLOAD --monitoring=SYSTEM`
 
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/3.12`
+
 ---
 
 ## Chapter 5 - GitOps and Friends
 
 ### Update Strategies and Prometheus
+
+---
+
+#### Exercise 4.1: Readiness probe
+
+**Objective**: Turn on readiness probes
+
+Did the following:
+
+- Created the cluster again
+- Added healthz endpoints
+- Rebuilt and pushed images: `docker buildx build --platform linux/amd64 -t your-repo/your-image:tag . --push`
+- Applied all the manifests except for the pingpong statefulset database
+- Watched the pods get to the desired state
+- Applied the statefulset and watched everything start to work
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.1`
+
+---
