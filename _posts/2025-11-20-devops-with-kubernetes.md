@@ -1432,3 +1432,24 @@ If a startup probe is defined, readiness and liveness probes do not start until 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.2`
 
 ---
+
+Interesting reading on various types of deployments:
+
+- [Canary releases](https://martinfowler.com/bliki/CanaryRelease.html)
+- [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) = a Kubernetes controller and a set of CRDs that provide advanced deployment capabilities such as [blue-green](https://martinfowler.com/bliki/BlueGreenDeployment.html), canary, canary analysis, experimentation and progressive delivery.
+- [Argo rollout](https://argoproj.github.io/argo-rollouts/migrating/)
+- [Anaylsis Template](https://argoproj.github.io/argo-rollouts/architecture/#analysistemplate-and-analysisrun)
+
+---
+
+#### Exercise 4.3: Prometheus
+
+- `kubectl create namespace prometheus`
+- `helm install prometheus-community/kube-prometheus-stack --generate-name --namespace prometheus`
+- `kubectl -n prometheus get pods`
+- `kubectl -n prometheus port-forward <prometheus-kube-stack-node> 9090:9090`
+- `sum(kube_pod_info{namespace="prometheus", created_by_kind="StatefulSet"})`
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.3`
+
+---
