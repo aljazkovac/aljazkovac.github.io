@@ -1453,3 +1453,23 @@ Interesting reading on various types of deployments:
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.3`
 
 ---
+
+#### Exercise 4.4: Canary release
+
+[Blue-green deployment](https://martinfowler.com/bliki/BlueGreenDeployment.html) switches all users at once between two identical environments (Blue=old, Green=new) == instant rollback but higher resource cost => choose for fast, safe cutovers with high resources.
+
+[Canary release](https://martinfowler.com/bliki/CanaryRelease.html) gradually rolls out the new version to a small user subset first, allowing early feedback and lower risk with less infrastructure, but requires more complex traffic splitting and backward compatibility => choose for gradual testing, risk mitigation, and continuous monitoring with lower resources.
+
+Kubernetes does not provide canary release out of this book. We use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for this instead.
+
+- `kubectl create namespace argo-rollouts`
+- `kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml`
+- prepare `rollout.yaml` (replaces `deployment.yaml` which we delete)
+- prepare `analysis-template.yaml`
+- `kubectl apply -f cluster-admin`
+- `kubectl apply -f pingpong/manifests/`
+- rebuild pingpong app with a different tag: `docker buildx build --platform linux/amd64 -t aljazkovac/pingpong:v44 . --push`
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.4`
+
+---
