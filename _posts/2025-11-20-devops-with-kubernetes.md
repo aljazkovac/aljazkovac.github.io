@@ -1473,3 +1473,9 @@ Kubernetes does not provide canary release out of this book. We use [Argo Rollou
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.4`
 
 ---
+
+#### Exercise 4.5: TODOS Mark as Done
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.5`
+
+---
