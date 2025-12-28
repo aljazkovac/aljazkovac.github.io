@@ -883,7 +883,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 #### Namespaces
 
-We can use namespaces to organize a cluster and keep resources separated. With namespaces you can split a cluster into several virtual clusters. Most commonly namespaces would be used to separated environments, e.g., into development, staging and production. "DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called cat-pictures is in a namespace ns-test, it could be found from other namespaces via http://cat-pictures.ns-test(opens in a new tab)."
+We can use namespaces to organize a cluster and keep resources separated. With namespaces you can split a cluster into several virtual clusters. Most commonly namespaces would be used to separated environments, e.g., into development, staging and production. "DNS entry for services includes the namespace so you can still have projects communicate with each other if needed through service.namespace address. e.g. if a service called cat-pictures is in a namespace ns-test, it could be found from other namespaces via <http://cat-pictures.ns-test(opens> in a new tab)."
 
 **Useful Commands:**
 
@@ -1477,5 +1477,96 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 #### Exercise 4.5: TODOS Mark as Done
 
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.5`
+
+---
+
+### Messaging Systems
+
+Message queues are a method for communication between services. One such messaging system is [NATS](https://docs.nats.io/).
+
+To set up NATS we performed the following steps:
+
+- `helm repo add nats <https://nats-io.github.io/k8s/helm/charts/>`
+- `helm repo update`
+- `helm install my-nats nats/nats`
+- Was experiencing issues with the [Prometheus exporter](https://github.com/nats-io/prometheus-nats-exporter). Ran `helm show values nats/nats` to see the flags and parameters one can use. Created a nats-values.yaml file to set appropriate flags and resource limits.
+- Ran `helm uninstall my-nats` and then reinstalled with `helm install my-nats nats/nats -f todo-project/helm/todo-project-nats-values.yaml`
+- `kubectl port-forward my-nats-0 7777:7777` => go to <http://localhost:7777/metrics> to see the metrics
+- `kubectl port-forward my-nats-0 8222:8222` to see the web service that provides monitoring
+- added to my nats-values: `podMonitor: enabled: true`
+- `helm upgrade my-nats nats/nats -f todo-project/helm/todo-project-nats-values.yaml`
+- `kubectl get podMonitor`
+- `kubectl get prometheus -n prometheus -o yaml | grep -A 10 "podMonitorSelector"` to get the label that Prometheus is looking for
+- Add this to the nats-values:
+
+  ```yaml
+  merge:
+    metadata:
+      labels:
+        release: kube-prometheus-stack-1766503182
+  ```
+
+  - upgrade helm again: `helm upgrade my-nats nats/nats -f todo-project/helm/todo-project-nats-values.yaml`
+  - `kubectl -n prometheus port-forward svc/kube-prometheus-stack-1766503182-prometheus 9090`
+  - set up Grafana: `kubectl -n prometheus port-forward svc/kube-prometheus-stack-1766503182-grafana 3000:80`
+  - There were metrics names mismatches in the dasbhoard. Had to manually change them all. Looked at localhost:9090 (Prometheus) to find the appropriate metrics names.
+
+#### NATS & Prometheus Setup
+
+This section describes the NATS message broker setup and its integration with Prometheus monitoring.
+
+**NATS Installation:**
+
+We use the **Official NATS Helm Chart** (not Bitnami) to ensure ARM64 compatibility and avoid licensing issues.
+
+- **Release Name:** `my-nats`
+- **Namespace:** `project`
+- **Chart:** `nats/nats`
+- **Configuration File:** `todo-project/helm/todo-project-nats-values.yaml`
+
+**Key Configuration:**
+
+The configuration is tuned for a resource-constrained development environment:
+
+- **Resources:** Low CPU requests (`10m`) to fit within the namespace `LimitRange`.
+- **Sidecars:** Includes `reloader` (for config updates) and `promExporter`.
+
+**Monitoring Architecture:**
+
+We use a sidecar pattern to expose NATS metrics to Prometheus.
+
+1. **NATS Server:** Runs on port `4222` (client) and `8222` (monitoring/JSON).
+2. **Prometheus Exporter (Sidecar):**
+   - Connects to NATS on `localhost:8222`.
+   - Translates JSON stats to Prometheus format.
+   - Exposes metrics on port **7777** (named `prom-metrics`).
+3. **PodMonitor:**
+   - A Kubernetes Custom Resource (CR) created by the Helm chart.
+   - Labeled with `release: kube-prometheus-stack-<ID>` to match our Prometheus Operator.
+   - Tells Prometheus to discover and scrape the `prom-metrics` port on all NATS pods.
+
+**Useful Commands:**
+
+```bash
+helm upgrade --install my-nats nats/nats -f todo-project/helm/todo-project-nats-values.yaml
+```
+
+```bash
+kubectl port-forward -n project my-nats-0 7777:7777
+# Open http://localhost:7777/metrics
+```
+
+```bash
+kubectl port-forward -n prometheus svc/kube-prometheus-stack-1766-prometheus 9090
+# Open http://localhost:9090/targets
+```
+
+---
+
+#### Exercise 4.6: Broadcaster service with NATS
+
+See the above instructions on setting up NATS, Prometheus and Grafana.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.6`
 
 ---
