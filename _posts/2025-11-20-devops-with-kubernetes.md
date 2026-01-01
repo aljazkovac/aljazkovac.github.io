@@ -1570,3 +1570,49 @@ See the above instructions on setting up NATS, Prometheus and Grafana.
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.6`
 
 ---
+
+#### Exercise 4.7: ArgoCD for the Log Output application
+
+Set up ArgoCD:
+
+- `kubectl create namespace argocd`
+- `kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+- Open access to ArgoCD: `kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'`
+- Get the IP: `kubectl get svc -n argocd`
+- Decrypt the default admin password: `kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo`
+- Fill in the ArgoCD form for a new application (use "default" for project and "https://kubernetes.default.svc" for Cluster URL)
+
+Here, we needed to also deploy the pingpong application because the log-output app's healthz endpoint depends on it:
+
+- Create a new app in ArgoCD. The sync failed because we didn't have the Argo Rollouts controller installed (we use a Rollout in pingpong)
+- Install Argo rollouts:
+  - `kubectl create namespace argo-rollouts`
+  - `kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml`
+  - Argo rollouts plugin for kubectl: `brew install argoproj/tap/kubectl-argo-rollouts`
+- Enable auto-sync on both apps. Test by scaling them up and down.
+- Add the GHA (follow instructions and adapt)
+- Give the necessary permissions to the Docker token and the Workflow permissions (the "add-and-commit" job pushes a new commit, updating the tag in `kustomization.yaml`)
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.7`
+
+---
+
+#### Exercise 4.8: ArgoCD for the TODO application
+
+Very similar solution to the previous exercise.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.8`
+
+---
+
+#### Exercise 4.9: Environments for the TODO project
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.9`
+
+---
+
+#### Exercise 4.10: TODO Project Full GitOps Setup
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.10`
+
+---
