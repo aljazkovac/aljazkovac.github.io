@@ -1616,3 +1616,58 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/4.10`
 
 ---
+
+## Chapter 6 - Under the Hood
+
+### Kubernetes Internals
+
+---
+
+#### Exercise 5.1: DIY CRD & Controller
+
+**Exercise title:** DIY CRD & Controller
+
+**Summary:**
+In this exercise, I extended the Kubernetes API by creating a Custom Resource Definition (CRD) called `DummySite` and implemented a custom controller in Node.js to manage it. The goal was to build a system where creating a `DummySite` resource with a `website_url` automatically clones that website's HTML and serves it within the cluster.
+
+**Implementation details:**
+
+1. **Custom Resource Definition (CRD):**
+   Defined `DummySite` (group: `stable.dwk`, version: `v1`) with a required `website_url` field in its spec. This allows users to declare their intent: "I want a copy of this website."
+
+2. **Controller Logic (Node.js):**
+   Built a controller using the `@kubernetes/client-node` library that:
+
+   - **Watches** for events (ADDED, MODIFIED) on `DummySite` resources.
+   - **Fetches** the HTML content from the specified `website_url` using `axios`.
+   - **Reconciles** the state by creating three child resources:
+     - **ConfigMap:** Stores the fetched HTML as `index.html`.
+     - **Deployment:** Runs an Nginx pod that mounts the ConfigMap to `/usr/share/nginx/html`.
+     - **Service:** Exposes the deployment internally.
+
+3. **Garbage Collection:**
+   Used `OwnerReferences` on the child resources (ConfigMap, Deployment, Service) pointing back to the parent `DummySite`. This ensures that when a `DummySite` is deleted, Kubernetes automatically garbage collects all associated resources, simplifying the controller's cleanup logic.
+
+4. **RBAC:**
+
+   Configured a `ServiceAccount`, `ClusterRole`, and `ClusterRoleBinding` to grant the controller permissions to manage `dummysites`, `deployments`, `services`, and `configmaps`.
+
+**Challenges & Troubleshooting:**
+
+1. **Image Pull Errors:**
+
+   Initially, the controller pod failed with `ErrImagePull` because the deployment used `imagePullPolicy: Always`. Since I was developing locally with `k3d`, the cluster tried to pull the image from Docker Hub where it didn't exist yet.
+
+   - **Solution:** I pushed the image to Docker Hub and updated the deployment manifest to point to the correct registry repository (`aljazkovac/dummy-site-controller:v54`).
+
+2. **API Client Version Mismatch:**
+
+   The controller crashed with `RequiredError: Required parameter namespace was null or undefined`. This was confusing because I was explicitly passing the namespace.
+
+   - **Diagnosis:** The issue was due to a change in the `@kubernetes/client-node` library version. Newer versions expect method arguments to be passed as a single object (e.g., `{ namespace: 'default', body: ... }`) rather than positional arguments.
+
+   - **Solution:** I refactored the controller code to use the object-based argument style supported by the installed client library version.
+
+**Link to the GitHub release for this exercise:** `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.1`
+
+---
