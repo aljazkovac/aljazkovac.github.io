@@ -1671,3 +1671,15 @@ In this exercise, I extended the Kubernetes API by creating a Custom Resource De
 **Link to the GitHub release for this exercise:** `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.1`
 
 ---
+
+#### Exercise 5.2: Getting started with Istio service mesh
+
+**Summary:**
+This exercise marks the introduction of the Istio service mesh into the cluster environment. By utilizing Istio's modern Ambient mode, we've implemented a zero-trust secure overlay (Layer 4) and advanced application-level traffic management (Layer 7) without the overhead of traditional sidecars. The focus was on setting up the mesh infrastructure and verifying connectivity using the standard Kubernetes Gateway API.
+
+**Implementation details:**
+The implementation involved deploying Istio with the `ambient` profile onto a k3d cluster specifically configured with Traefik disabled to prevent ingress conflicts. Key steps included the installation of the Kubernetes Gateway API CRDs to support the latest `Gateway` and `HTTPRoute` resources. The Bookinfo sample application was used as a testbed, where an Istio-managed Gateway was established to expose the `productpage` service. Connectivity was verified through high-volume traffic simulation, and the resulting configuration was exported into declarative manifests to ensure reproducibility.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.2`
+
+---
