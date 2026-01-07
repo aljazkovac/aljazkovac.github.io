@@ -1683,3 +1683,58 @@ The implementation involved deploying Istio with the `ambient` profile onto a k3
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.2`
 
 ---
+
+#### Exercise 5.3: Log app, the Service Mesh Edition
+
+**Summary:**
+
+In this exercise, I extended the `log-output` application by introducing a new microservice called `greeter`. I leveraged the Istio Service Mesh (Ambient mode) and the Kubernetes Gateway API to implement sophisticated traffic management without modifying the application code for routing. specifically, I implemented a canary release pattern where traffic is split between two different versions of the greeter service.
+
+**Implementation details:**
+
+- **Microservice Creation**: Developed a lightweight Node.js `greeter` service that responds with a configurable greeting message.
+- **Building Images**:
+
+  ```bash
+  # Build and push Greeter v1 and v2
+  docker build -t aljazkovac/greeter:v1 greeter
+  docker tag aljazkovac/greeter:v1 aljazkovac/greeter:v2
+  docker push aljazkovac/greeter:v1
+  docker push aljazkovac/greeter:v2
+
+  # Build and push updated Log Reader
+  docker build -t aljazkovac/log-reader:mesh log-output/log-reader
+  docker push aljazkovac/log-reader:mesh
+  ```
+
+- **Ambient Mesh Setup**: Enabled Istio's Ambient mode and deployed a Waypoint Proxy to handle Layer 7 routing.
+
+  ```bash
+  # Enable Ambient mode
+  kubectl label namespace exercises istio.io/dataplane-mode=ambient
+
+  # Deploy Waypoint Proxy (required for L7 traffic splitting)
+  ./istio-1.28.2/bin/istioctl waypoint apply -n exercises
+  kubectl label namespace exercises istio.io/use-waypoint=waypoint
+  ```
+
+- **Deployment**: Applied the standard manifests and the `HTTPRoute` for traffic splitting.
+
+  ```bash
+  kubectl apply -k log-output/kustomize/base
+  kubectl apply -f greeter/manifests/
+  ```
+
+- **Verification**: Verified the 75/25 traffic split using a curl loop.
+
+  ```bash
+  # Port-forward to access the service locally
+  kubectl port-forward -n exercises svc/log-output-svc 8080:2345 &
+
+  # Run 20 requests to verify distribution
+  for i in {1..20}; do curl -s http://localhost:8080/status | grep "greetings:"; echo ""; done
+  ```
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/exercise-5.3`
+
+---
