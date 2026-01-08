@@ -1738,3 +1738,21 @@ In this exercise, I extended the `log-output` application by introducing a new m
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/exercise-5.3`
 
 ---
+
+#### Exercise 5.4: Wikipedia with init and sidecar
+
+**Summary:**
+Implemented a multi-container Kubernetes deployment that serves a self-updating Wikipedia page. The application demonstrates the "Sidecar" and "Init Container" patterns by separating the concerns of content serving (Nginx) and content fetching (Curl) into distinct containers sharing a common volume.
+
+**Implementation details:**
+The solution consists of a `Deployment` and a `Service` in the `exercises` namespace:
+
+- **Shared Storage:** An `emptyDir` volume is used to share the HTML content between all containers in the Pod.
+- **Init Container:** Runs once at startup using `curlimages/curl` to fetch the "Kubernetes" Wikipedia page, ensuring the server has content immediately.
+- **Main Container:** An `nginx:alpine` container mounts the shared volume to `/usr/share/nginx/html` to serve the static content.
+- **Sidecar Container:** A separate container runs an infinite loop that sleeps for a random duration between 5 and 15 minutes (300-900 seconds) and then fetches a random Wikipedia page to update the content.
+- **Resources:** CPU and Memory requests/limits were defined for all containers to ensure cluster stability.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.4`
+
+---
