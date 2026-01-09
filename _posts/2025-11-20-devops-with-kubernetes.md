@@ -92,7 +92,7 @@ After starting, verify the cluster is running:
 - Agents should show `2/2`
 - `kubectl get nodes` should now work successfully
 
-#### kubectl and its role in k3d and k3s
+#### Kubectl and its role in k3d and k3s
 
 `kubectl` is the command-line tool used to interact with Kubernetes clusters. It works seamlessly with `k3d` and `k3s` as follows:
 
@@ -120,7 +120,7 @@ A useful command is `kubectl explain <resource>`, e.g., `kubectl explain pod`. A
 
 ---
 
-#### Ex. 1.1 - First Application Deploy
+#### Exercise. 1.1: First Application Deploy
 
 **Goal**: Create a simple application that outputs a timestamp and UUID every 5 seconds, containerize it, and deploy it to Kubernetes.
 
@@ -1757,7 +1757,7 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-#### Exercise: 5.5 Platform Comparison
+#### Exercise 5.5: Platform Comparison
 
 **Summary:**
 This exercise required a comparative analysis of two major Kubernetes service providers. I chose to evaluate **Rancher** versus **Red Hat OpenShift**. The goal was to understand the philosophical and architectural differences between a flexible, multi-cluster management plane (Rancher) and an opinionated, full-stack enterprise PaaS (OpenShift).
@@ -1772,3 +1772,7 @@ The submission for this exercise is a text-based analysis integrated directly in
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.5`
 
 ---
+
+TODO:
+Compare Azure Container Apps and Container Apps Environments with Kubernetes and Knative: are ISTIO and Kubernetes being run below?
+Compare NATS and Azure Service Bus.
