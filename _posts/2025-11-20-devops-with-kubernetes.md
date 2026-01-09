@@ -1756,3 +1756,19 @@ The solution consists of a `Deployment` and a `Service` in the `exercises` names
 Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.4`
 
 ---
+
+#### Exercise: 5.5 Platform Comparison
+
+**Summary:**
+This exercise required a comparative analysis of two major Kubernetes service providers. I chose to evaluate **Rancher** versus **Red Hat OpenShift**. The goal was to understand the philosophical and architectural differences between a flexible, multi-cluster management plane (Rancher) and an opinionated, full-stack enterprise PaaS (OpenShift).
+
+**Implementation details:**
+The submission for this exercise is a text-based analysis integrated directly into the project's documentation.
+
+- I researched the key differences between Rancher (infrastructure-agnostic management) and OpenShift (comprehensive PaaS ecosystem).
+- I formulated an argument favoring **Rancher** for its flexibility, lack of vendor lock-in, and ability to manage diverse Kubernetes distributions (EKS, GKE, K3s) under a "single pane of glass."
+- I documented this comparison in the `README.md` file under "Chapter 6: Under the Hood," ensuring the summary adhered to the strict 150-word limit required for the course submission while providing a detailed breakdown for reference.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.5`
+
+---
