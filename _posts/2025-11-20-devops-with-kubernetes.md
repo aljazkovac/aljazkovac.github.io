@@ -1792,6 +1792,22 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
+#### Exercise 5.7: Deploy to serverless
+
+**Summary:**
+Migrated the Ping-pong application to a serverless architecture using Knative Serving, enabling scale-to-zero efficiency while maintaining persistent database connectivity.
+
+**Implementation details:**
+
+- Created a `knative-service.yaml` to define the serverless workload.
+- Configured the application to connect to the PostgreSQL database running in the `exercises` namespace.
+- Removed the explicit `PORT` environment variable to allow Knative to automatically inject the listening port.
+- Verified deployment on macOS using `kubectl port-forward` to tunnel through the Kourier ingress gateway.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.7`
+
+---
+
 TODO:
 Compare Azure Container Apps and Container Apps Environments with Kubernetes and Knative: are ISTIO and Kubernetes being run below?
 Compare NATS and Azure Service Bus.
