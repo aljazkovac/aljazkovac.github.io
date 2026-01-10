@@ -1773,6 +1773,25 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
+#### Exercise 5.6: Serverless with Knative
+
+**Summary:**
+Explored serverless computing on Kubernetes by installing Knative Serving on a local k3d cluster. The exercise demonstrated core serverless concepts like "Scale-to-Zero" and traffic splitting (canary deployments) using the `helloworld-go` sample application.
+
+**Implementation details:**
+
+- **Environment:** Configured a custom `k3d` cluster with Traefik disabled and port 80 mapped to 8081 to accommodate the Knative ingress.
+- **Networking:** Installed Kourier as the lightweight ingress controller and configured Magic DNS (sslip.io) for local domain resolution.
+- **Deployment:** Deployed the `helloworld-go` app using the `kn` CLI and Knative Service manifests.
+- **Verification:**
+  - Verified **Scale-to-Zero** by observing pods terminate after inactivity and restart upon new requests (cold start).
+  - Implemented **Traffic Splitting** to distribute requests 50/50 between two different revisions of the application.
+  - Used `curl` with manual `Host` headers to simulate ingress traffic locally.
+
+Link to the GitHub release for this exercise: `https://github.com/aljazkovac/devops-with-kubernetes/tree/5.6`
+
+---
+
 TODO:
 Compare Azure Container Apps and Container Apps Environments with Kubernetes and Knative: are ISTIO and Kubernetes being run below?
 Compare NATS and Azure Service Bus.
