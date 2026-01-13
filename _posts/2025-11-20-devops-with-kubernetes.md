@@ -1808,6 +1808,9 @@ Link to the GitHub release for this exercise: `https://github.com/aljazkovac/dev
 
 ---
 
-TODO:
-Compare Azure Container Apps and Container Apps Environments with Kubernetes and Knative: are ISTIO and Kubernetes being run below?
-Compare NATS and Azure Service Bus.
+## Certificate of completion
+
+![DevOps with Kubernetes](/assets/images/devops-kubernetes/devops-kubernetes-certificate.png)
+_Certificate for completing the Docker with Kubernetes course_
+
+Validate the certificate at the [validation link](https://courses.mooc.fi/certificates/validate/e5ejzzzty47ea9n).
