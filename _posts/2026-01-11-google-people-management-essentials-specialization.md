@@ -62,6 +62,10 @@ Change your conversations:
 
 Interesting exercises and scenarios: consider adding some from Google Docs: <https://docs.google.com/document/d/1GtKoX3_mmxHDFwsJNRBIzd2ehb16Z71rzrCycFGYUFg/edit?tab=t.0>
 
+There were some scenarios we had to work through:
+
+
+
 ### Manage beyond the team
 
 ### Manage up and across your organization
@@ -97,7 +101,7 @@ To then build on that and put your network to that, here are some ideas:
 
 This wraps up this course. The jist of it is to maintain relationships across the organization, and to nurture them over time. Then you can use those relationships to create a culture of collaboration and learning, not blame. It is crucial to adapt a manager's mindset: the focus is on the team, not yourself.
 
-![Create a High-Performing Team](/assets/images/google-people-management-essentials/create-a-high-performing-team-certificate.pdf)
+![Create a High-Performing Team](/assets/images/google-people-management-essentials/create-a-high-performing-team-certificate.png)
 _Certificate for completing the Create a High-Performing Team course_
 
 Validate the certificate at the [validation link](https://coursera.org/verify/NPI6WPHPZIOM).
