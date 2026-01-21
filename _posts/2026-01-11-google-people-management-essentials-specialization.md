@@ -60,11 +60,14 @@ Change your conversations:
 - Don't settle for silence in team meetings by inviting everyone's opinions.
 - Reframe project failures from a search for blame to a quest for learning
 
-Interesting exercises and scenarios: consider adding some from Google Docs: <https://docs.google.com/document/d/1GtKoX3_mmxHDFwsJNRBIzd2ehb16Z71rzrCycFGYUFg/edit?tab=t.0>
+There were some scenarios we had to work through. The last scenario we had to come up with ourselves. I decided to work on this:
 
-There were some scenarios we had to work through:
-
-
+| Aspect        | Description                                                                                                                                                                                                                                                        |
+| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scenario**  | **A “difficult” team member**                                                                                                                                                                                                                                      |
+| **Goal**      | Improve the culture and relationship with a coworker who is technically very capable but can be very difficult and unpleasant to work with.                                                                                                                        |
+| **Approach**  | [**Radical Candor**](https://www.radicalcandor.com/frequently-asked-questions) (Kim Scott): Challenging directly while caring personally. I once addressed a colleague's behavior decisively, being honest about the impact while reaffirming my respect for them. |
+| **Rationale** | This approach aligns with my preference for direct communication and transparency. I value directness, even when it involves difficult feedback.                                                                                                                   |
 
 ### Manage beyond the team
 
