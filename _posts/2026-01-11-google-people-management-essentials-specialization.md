@@ -111,6 +111,92 @@ Validate the certificate at the [validation link](https://coursera.org/verify/NP
 
 ## Set and Achieve Team Goals
 
+The main learnings of this course:
+
+- Clear and compelling team roadmapping
+- Effective work allocation
+- How to combine high performance with genuine care and support goals for the team
+- How to transform your approach to management
+
+### Develop goals for the team
+
+It is important that an individual on a team can see the connection of their work to the broader organizational goals. Achieve this through ongoing and constant communication. Set goals and define what success looks like. Be the wind in people's back. You will not be able to hit all your goals: When you don't win, you learn.
+
+Key ingredients to help teams drive results:
+
+- Clarity == everyone on the team can confidently explain what their role is and what the expectations on them are (requires consistent effort and two-way conversation)
+- Meaning == your personal sense why you do this work. As a manager, you need to understand what motivates each team member.
+- Impact == seeing the results of your work is proof that your work has an impact and motivates you.
+
+How to set clear team goals:
+
+- Get clarity on the organization's priorities and challenges
+- Connect with the team on how to move the organization forward
+- Break down team goals into clear individual goals
+
+[SMART GOALS](https://www.atlassian.com/blog/productivity/how-to-write-smart-goals): An approach that helps translate vision into reality when it comes to great goal-building.
+
+- S: Specific
+- M: Measurable
+- A: Attainable
+- R: Relevant
+- T: Time-bound
+
+Important: Periodically reevaluate if the goal still makes sense and can be achieved.
+
+With these goals you are setting your team up for success because they know WHAT they are aiming for and WHY it matters.
+
+Activity: Practice goal setting. Consider including something from the finished template: <https://docs.google.com/document/d/1fh5CDsOb8l8cnkkUR95jCDGXlXfMCs8X-pBZx3tT8fI/edit?tab=t.0>
+
+Never set goals in a vacuum! Discuss them with your management and your team and collaborate to come up with a final version that everyone can collaborate on and feel proud to be doing.
+
+### Allocate work effectively
+
+Thoughtfully connect the right person to the right goal when allocating work.
+Consider:
+
+- Their skills
+- Their interests
+- Their current workload
+
+Ask yourself: where can I give someone a chance to grow and shine?
+
+When you talk to your team, go beyond status reports. Ask questions such as:
+
+- What part of this goal are you most excited about?
+- Where do you see the biggest opportunity?
+- What will be most challenging for you?
+- What new methods might you explore to reach the goal?
+
+Both sides of equation: people and the needs of the business. A three-legged stool: the current state of the individual; the interest or goals of the individual; the need of the business.
+
+The key to assigning work well is to look for opportunities in every task. Every project is a chance to build skills, engagement, and impact for team members. Great managers don't assign work, they design opportunities!
+
+Consider including a note from this exemplar: <https://docs.google.com/document/d/1C_NxxLC8kfZTXTVOokj94fUe-S63aYuKLD10vDsHrTg/template/preview>: it is important to balance "stretching" an employee with "utilizing their existing strengths" to ensure the project doesn't fail.
+
+### Support the team in achieving goals
+
+1. Know what everyone is working on and how they're doing: shared document, regular meetings, good project tracking.
+2. Support team member by asking: How can I help you be successful? How is your work going? What's in your way? **Listen actively and be understanding!** => Feeling heard can make a huge difference!
+3. Provide tangible support: training, connection with colleagues, help explore different points of view. Connect the team to the right resources and people.
+4. Supporting the team is an active, ongoing process.
+
+**How to lead an effective check-in:**
+
+- Prepare for the check-in: Create a dedicated, shared document for each team member to capture their goals, check-in notes, and career interests.
+- Start with a friendly connection
+- Create the agenda together
+- Use active listening
+- Discuss performance
+- Encourage decision-making
+- Establish career checkpoints
+- Provide clear takeaways and ensure alignment
+
+![Set and Achieve Team Goals](/assets/images/google-people-management-essentials/set-and-achieve-team-goals-certificate.png)
+_Certificate for completing the Set and Achieve Team Goals course_
+
+Validate the certificate at the [validation link](https://coursera.org/verify/WK0LZX6D5ERK).
+
 ## Support Individual Growth and Development
 
 ## Grow as a Manager
