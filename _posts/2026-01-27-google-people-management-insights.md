@@ -1,8 +1,8 @@
 ---
-title: "From Code to Coaching: Insights from Google's People Management Essentials"
-date: 2026-01-27 18:00:00 +0100
-categories: [Management, Leadership]
-tags: [google, leadership, engineering management, career growth]
+title: "Insights from Google's People Management Essentials Specialization"
+date: 2026-01-26 18:00:00 +0100
+categories: [management, leadership]
+tags: [leadership, engineering management]
 mermaid: true
 description: Key takeaways and visualizations from the Google People Management Essentials Specialization on Coursera.
 ---
