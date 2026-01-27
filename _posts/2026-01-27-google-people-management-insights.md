@@ -1,6 +1,6 @@
 ---
 title: "From Code to Coaching: Insights from Google's People Management Essentials"
-date: 2026-01-27 19:00:00 +0200
+date: 2026-01-27 18:00:00 +0100
 categories: [Management, Leadership]
 tags: [google, leadership, engineering management, career growth]
 mermaid: true
