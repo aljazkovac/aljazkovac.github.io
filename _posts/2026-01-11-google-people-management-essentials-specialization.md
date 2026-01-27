@@ -170,9 +170,7 @@ When you talk to your team, go beyond status reports. Ask questions such as:
 
 Both sides of equation: people and the needs of the business. A three-legged stool: the current state of the individual; the interest or goals of the individual; the need of the business.
 
-The key to assigning work well is to look for opportunities in every task. Every project is a chance to build skills, engagement, and impact for team members. Great managers don't assign work, they design opportunities!
-
-Consider including a note from this exemplar: <https://docs.google.com/document/d/1C_NxxLC8kfZTXTVOokj94fUe-S63aYuKLD10vDsHrTg/template/preview>: it is important to balance "stretching" an employee with "utilizing their existing strengths" to ensure the project doesn't fail.
+The key to assigning work well is to look for opportunities in every task. Every project is a chance to build skills, engagement, and impact for team members. Great managers don't assign work, they design opportunities! It is important to balance "stretching" an employee with "utilizing their existing strengths" to ensure the project doesn't fail.
 
 ### Support the team in achieving goals
 
