@@ -1,6 +1,6 @@
 ---
 title: DevOps with Kubernetes
-date: 2025-11-20 06:00:00 +0200
+date: 2025-11-20 06:00:00 +0100
 categories: [devops, kubernetes] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [devops, kubernetes, prometheus, grafana, google, cloud] # TAG names should always be lowercase.
 description: University of Helsinki course on Kubernetes

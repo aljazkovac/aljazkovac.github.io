@@ -1,6 +1,6 @@
 ---
 title: DevOps with Docker
-date: 2025-03-28 09:30:00 +0200
+date: 2025-03-28 09:30:00 +0100
 categories: [devops, docker] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [devops, docker, containers] # TAG names should always be lowercase.
 description: A comprehensive course on Docker offered by University of Helsinki

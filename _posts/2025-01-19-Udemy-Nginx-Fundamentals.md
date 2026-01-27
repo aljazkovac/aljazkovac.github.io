@@ -1,6 +1,6 @@
 ---
 title: "Nginx Fundamentals: High performance servers from scratch"
-date: 2025-01-19 14:38:23 +0200
+date: 2025-01-19 14:38:23 +0100
 categories: [devops, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [devops, courses, certificates] # TAG names should always be lowercase.
 description: An Udemy course on Nginx fundamentals.

@@ -1,6 +1,6 @@
 ---
 title: Google People Management Essentials Specialization
-date: 2026-01-11 08:00:00 +0200
+date: 2026-01-11 08:00:00 +0100
 categories: [leadership, management] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
 tags: [leadership, management, high-performing teams] # TAG names should always be lowercase.
 description: Google People Management Essentials Specialization - Coursera
