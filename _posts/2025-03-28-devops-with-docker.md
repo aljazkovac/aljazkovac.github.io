@@ -1,36 +1,36 @@
 ---
 title: DevOps with Docker
 date: 2025-03-28 09:30:00 +0100
-categories: [devops, docker] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+categories: [notes, docker]
 tags: [devops, docker, containers] # TAG names should always be lowercase.
 description: A comprehensive course on Docker offered by University of Helsinki
 ---
 
-Since I started working with DevOps at my current job at [Caspeco](https://caspeco.com/) (I started there in September 2022, and transitioned into a 
+Since I started working with DevOps at my current job at [Caspeco](https://caspeco.com/) (I started there in September 2022, and transitioned into a
 more of a DevOps role in late 2023), I have been working a lot with containers. We started moving towards a microservices
 architecture, so a lot of my work has revolved around creating smaller services that we deploy as container apps in Azure.
 The reason for taking [this course](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker) has therefore been to complement the knowledge and skills I learned at my work, with whatever
 this course could teach me. I have good experience with University of Helsinki
-courses (took their [Full Stack Open](https://aljazkovac.github.io/posts/Full-Stack-Open-Deep-Dive-Into-Modern-Web-Development/) course a while ago), 
+courses (took their [Full Stack Open](https://aljazkovac.github.io/posts/Full-Stack-Open-Deep-Dive-Into-Modern-Web-Development/) course a while ago),
 so I look forward to this one!
 
 ## Chapter 1: Getting started
 
-This chapter is just about some general course information and setting up Docker, etc. But what I really loved was 
-the [preamble on LLMs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-1) and their role in software development, and how a programmer should approach working with them. I really recommend reading it. 
+This chapter is just about some general course information and setting up Docker, etc. But what I really loved was
+the [preamble on LLMs](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-1) and their role in software development, and how a programmer should approach working with them. I really recommend reading it.
 Here is just a little taste to whet your appetite:
 
-> The rapid development of language models puts the student in a challenging position: is it worth and is it even necessary 
+> The rapid development of language models puts the student in a challenging position: is it worth and is it even necessary
 > to learn things at a detailed level, when you can get almost everything ready-made from language models?
-At this point, it is worth remembering the old wisdom of Brian Kerningham, co-author of The C Programming Language:
-> 
-> __"Everyone knows that debugging is twice as hard as writing a program in the first place. So if you're as clever as you can be
-when you write it, how will you ever debug it?"__
-> 
+> At this point, it is worth remembering the old wisdom of Brian Kerningham, co-author of The C Programming Language:
+>
+> **"Everyone knows that debugging is twice as hard as writing a program in the first place. So if you're as clever as you can be
+> when you write it, how will you ever debug it?"**
+>
 > In other words, since debugging is twice as difficult as programming, it is not worth programming such code that you can only barely understand. How can debugging be even possible in a situation where programming is outsourced to a language model and the software developer does not understand the debugged code at all? The exact same thing applies to configuring Docker and might actually be even more severe, if you do not understand the fundamentals, debugging hard Docker related issues is just impossible.
 
 I couldn't agree more! I think the need to learn the basics well is greater now than ever. Recent research shows that GitHub Copilot
-has negatively affected code quality since its widespread adoption. I personally don't use any code completion when I code anymore. 
+has negatively affected code quality since its widespread adoption. I personally don't use any code completion when I code anymore.
 It's like somebody constantly trying to finish your sentences. It is impossible to get any quality work done. I do, however,
 use LLMs extensively when researching something or trying to learn the basics of something completely new. I do think they can be a great tool, if used correctly.
 
@@ -42,9 +42,9 @@ use LLMs extensively when researching something or trying to learn the basics of
 
 DevOps (Dev == development, Ops == operations) simply means that the release, configuring and monitoring of software is in the hands of the people who develop it.
 
-> Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages 
+> Docker is a set of platform as a service (PaaS) products that use OS-level virtualization to deliver software in packages
 > called containers.
-> — ([Wikipedia](https://en.wikipedia.org/wiki/Docker_(software)))
+> — ([Wikipedia](<https://en.wikipedia.org/wiki/Docker_(software)>))
 
 Some of the benefits of containers:
 
@@ -53,17 +53,17 @@ Some of the benefits of containers:
 3. Development: no need to install a bunch of services on your local machine, just spin them up inside a container!
 4. Scaling: easy to spin up multiple containers at once and load balance traffic between them
 
-The difference between Virtual Machines (VMs) and containers is that VMs run on a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor), 
-which virtualizes the physical hardware. 
+The difference between Virtual Machines (VMs) and containers is that VMs run on a [hypervisor](https://en.wikipedia.org/wiki/Hypervisor),
+which virtualizes the physical hardware.
 
-> Each VM includes a full operating system (OS) along with the necessary binaries and libraries, making them heavier and more 
-> resource-intensive. Containers, on the other hand, share the host OS kernel and only package the application and its dependencies, 
+> Each VM includes a full operating system (OS) along with the necessary binaries and libraries, making them heavier and more
+> resource-intensive. Containers, on the other hand, share the host OS kernel and only package the application and its dependencies,
 > resulting in a more lightweight and efficient solution.
 > — ([Devops with Docker](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts))
 
 Containers therefore offer faster startup times and less overhead, but less isolation than VMs (the isolation level of containers is at the process level, not the OS level).
 
-__Side note:__ Docker can run natively only on Linux! Docker for Mac actually uses a VM that runs a Linux instance under the hood!
+**Side note:** Docker can run natively only on Linux! Docker for Mac actually uses a VM that runs a Linux instance under the hood!
 
 #### Images and containers
 
@@ -73,18 +73,19 @@ Image == recipe + ingredients
 
 Container == finished meal
 
-To run a container you need an image and a container runtime (Docker engine). The image provides the instructions (recipe) 
+To run a container you need an image and a container runtime (Docker engine). The image provides the instructions (recipe)
 and dependencies (ingredients) for the container to run.
 
 ---
 
-__Image__
+**Image**
 
 An image is a file and cannot be changed. An image has a base layer and then additional layers. Images are created from
 an instructional file called a `Dockerfile` that is parsed when running `docker image build`. A Dockerfile is therefore
 a recipe for creating an image! (Just as an image is a recipe for creating a container)
 
-_Important commands_: 
+_Important commands_:
+
 - `docker image ls`
 - `docker image build`
 
@@ -92,16 +93,17 @@ _Important commands_:
 
 ---
 
-__Container__
+**Container**
 
 Containers are created from images.
 
-> Containers only contain what is required to execute an application; and you can start, stop and interact with them. 
-> They are isolated environments in the host machine with the ability to interact with each other and the host machine itself 
+> Containers only contain what is required to execute an application; and you can start, stop and interact with them.
+> They are isolated environments in the host machine with the ability to interact with each other and the host machine itself
 > via defined methods (TCP/UDP).
 > — ([Devops with Docker](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts))
 
 _Important commands_:
+
 - `docker container ls (-a)` or the shorter `docker ps`
 
 ---
@@ -115,18 +117,18 @@ of:
 - a REST API
 - Docker daemon
 
-Here is the workflow: 
+Here is the workflow:
 
 ```
 run command -> CLI sends request through the REST API to Docker daemon -> Docker daemon handles the request.
 ```
 
-To remove an image, you need to first remove the referencing container. 
+To remove an image, you need to first remove the referencing container.
 
 _Important commands_:
 
 | Command                             | Explain                                 | Shorthand       |
-|-------------------------------------|-----------------------------------------|-----------------|
+| ----------------------------------- | --------------------------------------- | --------------- |
 | `docker image ls`                   | Lists all images                        | `docker images` |
 | `docker image rm <image>`           | Removes an image                        | `docker rmi`    |
 | `docker image pull <image>`         | Pulls image from a docker registry      | `docker pull`   |
@@ -135,74 +137,74 @@ _Important commands_:
 | `docker container rm <container>`   | Removes a container                     | `docker rm`     |
 | `docker container stop <container>` | Stops a container                       | `docker stop`   |
 | `docker container exec <container>` | Executes a command inside the container | `docker exec`   |
-| `docker container prune`            | Removes all stopped containers          |                 | 
-| `docker image prune`                | Removes all dangling images             |                 | 
+| `docker container prune`            | Removes all stopped containers          |                 |
+| `docker image prune`                | Removes all dangling images             |                 |
 
 #### Exercises
 
 ---
 
-[__Ex. 1.1.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#e61047a7-6306-4222-80c3-3b89c7b995ce)
+[**Ex. 1.1.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#e61047a7-6306-4222-80c3-3b89c7b995ce)
 
 ```bash
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps 
-CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES 
-9caf673c6322   nginx     "/docker-entrypoint.…"   3 seconds ago   Up 2 seconds   80/tcp    magical_napier 
-500c35b530e2   nginx     "/docker-entrypoint.…"   5 seconds ago   Up 4 seconds   80/tcp    wonderful_elbakyan 
-a3f9a37b6036   nginx     "/docker-entrypoint.…"   9 seconds ago   Up 7 seconds   80/tcp    funny_hoover 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container stop magical_napier 
-magical_napier 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container stop wonderful_elbakyan 
-wonderful_elbakyan 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps -a 
-CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS                      PORTS     NAMES 
-9caf673c6322   nginx     "/docker-entrypoint.…"   43 seconds ago   Exited (0) 19 seconds ago             magical_napier 
-500c35b530e2   nginx     "/docker-entrypoint.…"   45 seconds ago   Exited (0) 12 seconds ago             wonderful_elbakyan 
-a3f9a37b6036   nginx     "/docker-entrypoint.…"   49 seconds ago   Up 48 seconds               80/tcp    funny_hoover 
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container run -d nginx
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES
+9caf673c6322   nginx     "/docker-entrypoint.…"   3 seconds ago   Up 2 seconds   80/tcp    magical_napier
+500c35b530e2   nginx     "/docker-entrypoint.…"   5 seconds ago   Up 4 seconds   80/tcp    wonderful_elbakyan
+a3f9a37b6036   nginx     "/docker-entrypoint.…"   9 seconds ago   Up 7 seconds   80/tcp    funny_hoover
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container stop magical_napier
+magical_napier
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container stop wonderful_elbakyan
+wonderful_elbakyan
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS                      PORTS     NAMES
+9caf673c6322   nginx     "/docker-entrypoint.…"   43 seconds ago   Exited (0) 19 seconds ago             magical_napier
+500c35b530e2   nginx     "/docker-entrypoint.…"   45 seconds ago   Exited (0) 12 seconds ago             wonderful_elbakyan
+a3f9a37b6036   nginx     "/docker-entrypoint.…"   49 seconds ago   Up 48 seconds               80/tcp    funny_hoover
 ```
 
 ---
 
 ---
 
-[__Ex. 1.2.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#69973c71-ef3e-444b-8944-5f427ef0cffb)
+[**Ex. 1.2.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/definitions-and-basic-concepts#69973c71-ef3e-444b-8944-5f427ef0cffb)
 
 ```bash
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps 
-CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES 
-a3f9a37b6036   nginx     "/docker-entrypoint.…"   6 minutes ago   Up 6 minutes   80/tcp    funny_hoover 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker stop funny_hoover 
-funny_hoover 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker image ls 
-REPOSITORY   TAG       IMAGE ID       CREATED       SIZE 
-nginx        latest    678546cdd20c   4 weeks ago   197MB 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker rm funny_hoover 
-funny_hoover 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container prune 
-WARNING! This will remove all stopped containers. 
-Are you sure you want to continue? [y/N] y 
-Deleted Containers: 
-9caf673c63227c18914ce027dbb144f541888f8042fd2a88b89525aa5c318808 
-500c35b530e28f0021b84d8edc038c8504a4f8fad3e32cf016518b8b22e1aa3a 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker rmi nginx 
-Untagged: nginx:latest 
-Untagged: nginx@sha256:9d6b58feebd2dbd3c56ab5853333d627cc6e281011cfd6050fa4bcf2072c9496 
-Deleted: sha256:678546cdd20cd5baaea6f534dbb7482fc9f2f8d24c1f3c53c0e747b699b849da 
-Deleted: sha256:cab207776f194b355b5c3a18b7e53be9627cb73dc39d2912e231ef99953dc41c 
-Deleted: sha256:c336c8c4c4288abf4eae3c08633fac049917cfb366fad891c4ed74c94b7b0017 
-Deleted: sha256:8eaa3047f3c86725e6711ea52d2a96b3e3a36a930d521f0c7cc049128ef1dda0 
-Deleted: sha256:6ca5a3876c2d60859bdacfad260ef2efa4c03f505c686367aaa211cca7996ce5 
-Deleted: sha256:e48be8c89956855bb905f19f3efb3d591623a1ee0a7f484b016267a16983c225 
-Deleted: sha256:666d17913d2acdfad20fdd2b47b5564ea1660c410cde43e6326bc76598dc2194 
-Deleted: sha256:52d51720ba2d06cecaed7505a36dbdf74d33d70a2e064ed714f88fe08fd403de 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker image ls 
-REPOSITORY   TAG       IMAGE ID   CREATED   SIZE 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps -a     
-CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES 
-(base) aljazkovac@Aljazs-MacBook-Pro ~ %  
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS         PORTS     NAMES
+a3f9a37b6036   nginx     "/docker-entrypoint.…"   6 minutes ago   Up 6 minutes   80/tcp    funny_hoover
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker stop funny_hoover
+funny_hoover
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker image ls
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        latest    678546cdd20c   4 weeks ago   197MB
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker rm funny_hoover
+funny_hoover
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker container prune
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+9caf673c63227c18914ce027dbb144f541888f8042fd2a88b89525aa5c318808
+500c35b530e28f0021b84d8edc038c8504a4f8fad3e32cf016518b8b22e1aa3a
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker rmi nginx
+Untagged: nginx:latest
+Untagged: nginx@sha256:9d6b58feebd2dbd3c56ab5853333d627cc6e281011cfd6050fa4bcf2072c9496
+Deleted: sha256:678546cdd20cd5baaea6f534dbb7482fc9f2f8d24c1f3c53c0e747b699b849da
+Deleted: sha256:cab207776f194b355b5c3a18b7e53be9627cb73dc39d2912e231ef99953dc41c
+Deleted: sha256:c336c8c4c4288abf4eae3c08633fac049917cfb366fad891c4ed74c94b7b0017
+Deleted: sha256:8eaa3047f3c86725e6711ea52d2a96b3e3a36a930d521f0c7cc049128ef1dda0
+Deleted: sha256:6ca5a3876c2d60859bdacfad260ef2efa4c03f505c686367aaa211cca7996ce5
+Deleted: sha256:e48be8c89956855bb905f19f3efb3d591623a1ee0a7f484b016267a16983c225
+Deleted: sha256:666d17913d2acdfad20fdd2b47b5564ea1660c410cde43e6326bc76598dc2194
+Deleted: sha256:52d51720ba2d06cecaed7505a36dbdf74d33d70a2e064ed714f88fe08fd403de
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker image ls
+REPOSITORY   TAG       IMAGE ID   CREATED   SIZE
+(base) aljazkovac@Aljazs-MacBook-Pro ~ % docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+(base) aljazkovac@Aljazs-MacBook-Pro ~ %
 ```
 
 ---
@@ -212,7 +214,7 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 Run `docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1; done'`
 
 - `-d` == detached
-- `-it` == interactive and [tty](https://en.wikipedia.org/wiki/Tty_(Unix))
+- `-it` == interactive and [tty](<https://en.wikipedia.org/wiki/Tty_(Unix)>)
 - `sh -c` = shell command
 
 ---
@@ -220,25 +222,25 @@ Run `docker run -d -it --name looper ubuntu sh -c 'while true; do date; sleep 1;
 _Important commands_:
 
 | Command                                | Explain                           | Shorthand       |
-|----------------------------------------|-----------------------------------|-----------------|
+| -------------------------------------- | --------------------------------- | --------------- |
 | `docker container logs (-f)`           | Lists (or follows) the logs       | `docker logs`   |
-| `docker container pause`               | Pauses the container              |                 | 
-| `docker container unpause`             | Unpauses the container            |                 | 
-| `docker container attach (--no-stdin)` | Attaches to the container         | `docker attach` | 
-| `docker exec`                          | Executes command inside container |                 | 
+| `docker container pause`               | Pauses the container              |                 |
+| `docker container unpause`             | Unpauses the container            |                 |
+| `docker container attach (--no-stdin)` | Attaches to the container         | `docker attach` |
+| `docker exec`                          | Executes command inside container |                 |
 
 ---
 
-If we attach to a container without the `no-stdin` flag and exit with `CTRL + c` then we will stop the container. 
+If we attach to a container without the `no-stdin` flag and exit with `CTRL + c` then we will stop the container.
 
-To execute commands within the container, use `docker exec <container>`. For example, to run bash you could do 
+To execute commands within the container, use `docker exec <container>`. For example, to run bash you could do
 `docker exec -it <container> bash`
 
 Here is a more complicated command:
 `$ docker run -d --rm -it --name looper-it ubuntu sh -c 'while true; do date; sleep 1; done'`
 
 The `--rm` flag removes the container after it has stopped. If we attach to the container with `docker attach looper-it`
-and then press the escape sequence `CTRL+P, CTRL+Q` we will exit the container without killing it. If we exit with `CTRL+C` 
+and then press the escape sequence `CTRL+P, CTRL+Q` we will exit the container without killing it. If we exit with `CTRL+C`
 then we kill the container, which also removes it (due to the `--rm` flag).
 
 We install new tools inside a container, e.g., Vim, by running:
@@ -251,7 +253,7 @@ But the installation done in this way will not be permanent!
 
 #### Exercises
 
-[__Ex. 1.3.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#4b132769-24bb-4523-b620-1f355fb69a18)
+[**Ex. 1.3.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#4b132769-24bb-4523-b620-1f355fb69a18)
 
 ```bash
 1. docker run -d --rm -it --name secret-msg devopsdockeruh/simple-web-service:ubuntu
@@ -259,7 +261,7 @@ But the installation done in this way will not be permanent!
 3. tail -f ./text.log
 ```
 
-[__Ex. 1.4.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#33cdf131-c5f8-4b22-85ef-7ba47e0f1bdc)
+[**Ex. 1.4.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/running-and-stopping-containers#33cdf131-c5f8-4b22-85ef-7ba47e0f1bdc)
 
 ```bash
 docker run -it --name curl ubuntu sh -c 'while true; do echo "Input website:"; read website; echo "Searching.."; sleep 1; curl http://$website; done' - this results in 'curl not found'
@@ -293,7 +295,7 @@ Input website:
 #### Where do the images come from?
 
 When we want to find an image to pull we can use the `docker search` command to look for images. The official images are
-marked as such. We can pull a certain tag of an image like so: `docker pull <image>:<tag>`. 
+marked as such. We can pull a certain tag of an image like so: `docker pull <image>:<tag>`.
 
 ### A detailed look into an image
 
@@ -321,7 +323,7 @@ ubuntu       24.04          c3d1a3432580   6 weeks ago   101MB
 ubuntu       noble_numbat   c3d1a3432580   6 weeks ago   101MB
 ```
 
-An image name therefore consists of three parts and a tag: `registry/organisation/image:tag`. 
+An image name therefore consists of three parts and a tag: `registry/organisation/image:tag`.
 If it's just a short name, like `ubuntu` then we have these defaults:
 
 ```
@@ -330,13 +332,13 @@ organisation = library
 tag = latest
 ```
 
-If you have the same image with several tags, then you need to specify the image and the tag to untag it, e.g. 
-`docker rmi fav_distro:noble_numbat`. Otherwise, you will get the error 
+If you have the same image with several tags, then you need to specify the image and the tag to untag it, e.g.
+`docker rmi fav_distro:noble_numbat`. Otherwise, you will get the error
 `unable to delete c3d1a3432580 (must be forced) - image is referenced in multiple repositories`.
 
 #### Building images
 
-To build an image, we use a [Dockerfile](https://docs.docker.com/reference/dockerfile/), which is simply 
+To build an image, we use a [Dockerfile](https://docs.docker.com/reference/dockerfile/), which is simply
 a set of instructions for an image.
 
 Let us generate this script:
@@ -381,6 +383,7 @@ docker build . -t hello-docker
 ```
 
 This command:
+
 - `.` tells Docker to look for the Dockerfile in the current directory
 - `-t hello-docker` tags the image with the name "hello-docker"
 
@@ -388,16 +391,16 @@ The build output shows three steps, which correspond to three layers that consti
 
 ```bash
  => [1/3] FROM docker.io/library/alpine:3.21@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88
- => [internal] load build context                                                                                  
- => => transferring context: 66B                                                                                   
- => CACHED [2/3] WORKDIR /usr/src/app                                                                              
- => CACHED [3/3] COPY hello.sh .                                                                                   
+ => [internal] load build context
+ => => transferring context: 66B
+ => CACHED [2/3] WORKDIR /usr/src/app
+ => CACHED [3/3] COPY hello.sh .
 ```
 
-Layers can act as cache, which means that if we just change the last lines of our Dockerfile, the first two layers of the image can 
+Layers can act as cache, which means that if we just change the last lines of our Dockerfile, the first two layers of the image can
 remain unchanged. This can help us build faster pipelines!
 
-Then we can simply run a container from the image with `docker run hello-docker`. 
+Then we can simply run a container from the image with `docker run hello-docker`.
 
 Let us manually create new layers on top of an image.
 
@@ -421,27 +424,27 @@ A /usr/src/app/additional.txt
 
 We can then commit the changes with the command `docker commit <container> <new-image-name>`.
 
-However, it is much better to simply change the Dockerfile and add the new text file there. We add this 
+However, it is much better to simply change the Dockerfile and add the new text file there. We add this
 to the Dockerfile:
 
 ```dockerfile
 RUN touch additional.txt
 ```
 
-We can build a new image with `docker build . -t hello-docker:v2`. Then we can run `docker run hello-docker:v2 ls` 
+We can build a new image with `docker build . -t hello-docker:v2`. Then we can run `docker run hello-docker:v2 ls`
 and see that the file has been added.
 
 ---
 
 _Important commands_:
 
-| Command          | Explain                            | Shorthand |
-|------------------|----------------------------------- |-----------|
-| `docker search`  | Searches for images on Docker hub  |           |
-| `docker diff`    | Lists file changes in a container  |           |
-| `docker commit`  | Commits a container's file changes |           |
+| Command         | Explain                            | Shorthand |
+| --------------- | ---------------------------------- | --------- |
+| `docker search` | Searches for images on Docker hub  |           |
+| `docker diff`   | Lists file changes in a container  |           |
+| `docker commit` | Commits a container's file changes |           |
 
-__Note__: All commands in a Dockerfile except `CMD` and TODO: FILL HERE! are executed during build time. 
+**Note**: All commands in a Dockerfile except `CMD` and TODO: FILL HERE! are executed during build time.
 CMD and FILL HERE is executed at runtime.
 
 ---
@@ -450,7 +453,7 @@ CMD and FILL HERE is executed at runtime.
 
 ---
 
-[__Ex. 1.7.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#912843d1-249b-465e-8af2-eb02f1461c05)
+[**Ex. 1.7.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#912843d1-249b-465e-8af2-eb02f1461c05)
 
 ```dockerfile
 # Start from the ubuntu image
@@ -477,7 +480,7 @@ CMD ./script.sh
 
 ---
 
-[__Ex. 1.8.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#fa341527-2be4-46e5-8fb7-4b530eba67d5)
+[**Ex. 1.8.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/in-depth-dive-into-images#fa341527-2be4-46e5-8fb7-4b530eba67d5)
 
 ```dockerfile
 # Start from the ubuntu image
@@ -491,15 +494,15 @@ CMD server
 
 ### Defining start conditions for the container
 
-Instead of simply adding stuff to the Dockerfile, without really knowing if it's going to work, 
+Instead of simply adding stuff to the Dockerfile, without really knowing if it's going to work,
 let's try another approach: test stuff first before committing it to our Dockerfile.
 
-Once we know what we need, we add it to the Dockerfile. __Important__: Add the stuff that is most prone
+Once we know what we need, we add it to the Dockerfile. **Important**: Add the stuff that is most prone
 to change at the bottom. This way we can save our cached layers.
 
 ---
 
-__CMD vs Entrypoint__
+**CMD vs Entrypoint**
 
 The difference between CMD and ENTRYPOINT:
 
@@ -530,14 +533,16 @@ ENTRYPOINT ["/usr/local/bin/yt-dlp"]
 CMD ["https://www.youtube.com/watch?v=Aa55RKWZxxI"]
 ```
 
-__Shell vs Exec form__
+**Shell vs Exec form**
 
 _Shell form_ (`ENTRYPOINT command param1 param2`):
+
 - Runs command in a shell (`/bin/sh -c`)
 - Can use shell features (environment variables, pipes, etc.)
 - Example: `ENTRYPOINT echo "Hello $NAME"`
 
 _Exec form_ (`ENTRYPOINT ["command", "param1", "param2"]`):
+
 - Runs command directly without shell
 - More efficient (no shell overhead)
 - Cannot use shell features directly
@@ -550,20 +555,24 @@ _Example_:
 ENTRYPOINT mkdir -p /data/$FOLDER && echo "Created folder" && ls /data
 ```
 
-If we run 
+If we run
+
 ```bash
 docker run -e FOLDER=logs myimage
 # Creates /data/logs, prints "Created folder", and lists contents
 ```
+
 then this would work.
 
 Exec form would not work:
+
 ```dockerfile
 # Exec form - cannot use && or $FOLDER
 ENTRYPOINT ["mkdir", "-p", "/data/$FOLDER", "&&", "echo", "Created folder", "&&", "ls", "/data"]
 ```
 
 This would fail because:
+
 1. $FOLDER won't be evaluated
 2. && isn't valid as a command argument
 
@@ -573,45 +582,49 @@ To use environment variables with exec form, you'd need to define the shell expl
 ENTRYPOINT ["/bin/sh", "-c", "mkdir -p /data/$FOLDER && echo 'Created folder' && ls /data"]
 ```
 
-__Best practice__: Use exec form unless shell features are needed, and keep the same form for both ENTRYPOINT and CMD.
+**Best practice**: Use exec form unless shell features are needed, and keep the same form for both ENTRYPOINT and CMD.
 
 ---
 
 _Important commands_:
 
-| Command                                        | Explain                                                                 | Shorthand |
-|------------------------------------------------|-------------------------------------------------------------------------|-----------|
-| `docker inspect <container/image>`             | Shows detailed information about a container or image in JSON format    |           |
-| `docker cp <container>:<src-path> <dest-path>` | Copies files/folders between a container and local filesystem           |           |
+| Command                                        | Explain                                                              | Shorthand |
+| ---------------------------------------------- | -------------------------------------------------------------------- | --------- |
+| `docker inspect <container/image>`             | Shows detailed information about a container or image in JSON format |           |
+| `docker cp <container>:<src-path> <dest-path>` | Copies files/folders between a container and local filesystem        |           |
 
 ### Interacting with the container via volumes and ports
 
-Instead of using the `docker cp` command to copy files from a container to local disk, we can use 
+Instead of using the `docker cp` command to copy files from a container to local disk, we can use
 [Docker volumes](https://docs.docker.com/engine/storage/volumes/) and [bind mounts](https://docs.docker.com/engine/storage/bind-mounts/):
 
---- 
+---
 
-__Docker Storage: Volumes vs Bind Mounts__
+**Docker Storage: Volumes vs Bind Mounts**
 
 _Volumes_
+
 - Managed by Docker (`/var/lib/docker/volumes/`)
 - Portable and easier to backup
 - Independent of host machine directory structure
 - Ideal for production use
 
 Use _Volumes_ for:
+
 - Persisting application data
 - Sharing data between containers
 - Production environments
 - Data backups and migrations
 
 _Bind Mounts_
+
 - Direct mapping to host machine paths
 - Files accessible directly on host system
 - Perfect for development environments
 - Host machine directory structure dependent
 
 Use _Bind Mounts_ for:
+
 - Development environments
 - Quick code changes
 - Configuration files
@@ -629,7 +642,6 @@ We have mounted our current folder as `/mydir`in the container, so that the vide
 local machine instead of the `/mydir`folder in the container. We could also mount just a specific file,
 e.g., `-v "$(pwd)/material.md:/mydir/material.md"`.
 
-
 #### Allowing external connections into containers
 
 Programs can send messages to URL addresses, and they can be assigned to listen to any available port.
@@ -641,7 +653,7 @@ To open a connection to a Docker container we do the following:
 1. _Expose port_ (add `EXPOSE <port>` to the Dockerfile)
 2. _Publish port_ (run the container with `-p <host-port>:<container-port>`)
 
-__CAREFUL__: this short snytax, `-p <host-port>:<container-port>` basically results in 
+**CAREFUL**: this short snytax, `-p <host-port>:<container-port>` basically results in
 `-p 0.0.0.0:<host-port>:<container-port>`, which opens the port to anyone!
 
 You can also limit connections to a certain protocol, e.g., `EXPORT <port>/UDP` and `p <host-port>:<container-port>/udp`.
@@ -650,9 +662,9 @@ You can also limit connections to a certain protocol, e.g., `EXPORT <port>/UDP` 
 
 ---
 
-[__Ex. 1.9.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#ddf44c72-27d6-4459-8bb4-b72fe5d104e5)
+[**Ex. 1.9.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#ddf44c72-27d6-4459-8bb4-b72fe5d104e5)
 
-I created the `logs.log` file first with `touch logs.log`, otherwise the `-v flag` command would create a directory. 
+I created the `logs.log` file first with `touch logs.log`, otherwise the `-v flag` command would create a directory.
 
 Then I ran:
 
@@ -662,7 +674,7 @@ Then I ran:
 
 ---
 
-[__Ex. 1.10.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#deecce60-502d-4479-bf66-7035aadf93ea)
+[**Ex. 1.10.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/interacting-with-the-container-via-volumes-and-ports#deecce60-502d-4479-bf66-7035aadf93ea)
 
 ```bash
 docker run -p 127.0.0.1:8080:8080 web-server
@@ -708,15 +720,13 @@ CMD ["rails", "s", "-e", "production"]
 
 If you pay attention you will see it closely follows the [README file](https://github.com/docker-hy/material-applications/blob/main/rails-example-project/README.md) in the project.
 
-
-#### Exercises 
+#### Exercises
 
 ---
 
-[__Ex. 1.11.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#f9b9fd5f-6eb3-41cc-b30a-d2375530f404)
+[**Ex. 1.11.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#f9b9fd5f-6eb3-41cc-b30a-d2375530f404)
 
 The goal of this exercise is to containerize an old [Java Spring project](https://github.com/docker-hy/material-applications/tree/main/spring-example-project).
-
 
 ```dockerfile
 FROM amazoncorretto:8
@@ -744,7 +754,7 @@ docker build . -t java-project && docker run -p 127.0.0.1:8080:8080 java-project
 
 ---
 
-[__Ex. 1.12.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#0679c676-3257-4c41-86e1-aa0db93b6977)
+[**Ex. 1.12.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#0679c676-3257-4c41-86e1-aa0db93b6977)
 
 ```dockerfile
 
@@ -778,7 +788,7 @@ docker build . -t project-frontend && docker run -p 127.0.0.1:3000:3000 project-
 
 ---
 
-[__Ex. 1.13.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#d4c1e0bc-4796-4f0b-9eaa-c58084afb94f)
+[**Ex. 1.13.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#d4c1e0bc-4796-4f0b-9eaa-c58084afb94f)
 
 ```dockerfile
 FROM golang:1.16-bullseye
@@ -796,7 +806,7 @@ RUN go test ./...
 CMD [ "./server" ]
 ```
 
-Then run this: 
+Then run this:
 
 ```bash
 docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.0.1:8080:8080 project-backend
@@ -806,7 +816,7 @@ docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.
 
 ---
 
-[__Ex. 1.14.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#9227044c-5b55-4b89-b568-fc5071166025)
+[**Ex. 1.14.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#9227044c-5b55-4b89-b568-fc5071166025)
 
 Dockerfile for the frontend:
 
@@ -851,7 +861,7 @@ RUN go test ./...
 CMD [ "./server" ]
 ```
 
-Command to build and run the frontend: 
+Command to build and run the frontend:
 
 ```bash
 docker build . -t project-frontend && docker run -p 127.0.0.1:3000:3000 project-frontend
@@ -865,7 +875,7 @@ docker build --platform linux/amd64 -t project-backend . && docker run -p 127.0.
 
 ---
 
-[__Ex. 1.15.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#3a23e02b-eebf-4fbf-aaf7-623c16722e27)
+[**Ex. 1.15.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#3a23e02b-eebf-4fbf-aaf7-623c16722e27)
 
 I had an LLM build a simple Razor .NET web app where one can post messages in a simple GUI. Then I
 containerized it and published it to [Docker Hub](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general)
@@ -896,9 +906,9 @@ CMD [ "dotnet", "SimpleMessageBoard.dll" ]
 
 ---
 
-[__Ex. 1.16.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#191c75dc-7b7e-489d-a0b0-976646dcd735)
+[**Ex. 1.16.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-2/utilizing-tools-from-the-registry#191c75dc-7b7e-489d-a0b0-976646dcd735)
 
-I have deployed the app from the previous ex. (1.15) to DigitalOcean. 
+I have deployed the app from the previous ex. (1.15) to DigitalOcean.
 I built the image and ran it locally like this:
 
 ```bash
@@ -907,8 +917,8 @@ docker build --platform linux/amd64 -t project-homework . && docker run -p 127.0
 
 Then I created a repository on Docker hub called [aljazkovac/project-homework](https://hub.docker.com/repository/docker/aljazkovac/project-homework/general) and pushed the image there.
 
-On [DigitalOcean](https://www.digitalocean.com/) I then created a webapp and simply connected it to the image 
-I pushed to Docker Hub. Then it was easy to deploy via the GUI there, and you can access the running app 
+On [DigitalOcean](https://www.digitalocean.com/) I then created a webapp and simply connected it to the image
+I pushed to Docker Hub. Then it was easy to deploy via the GUI there, and you can access the running app
 [here](https://messages-app-homework-n7x9w.ondigitalocean.app/)(if it no longer works then it's because
 the exercise has been graded and I destroyed the resource to not have to pay for it). But you can always
 pull the image locally from Docker Hub and run it there!
@@ -919,7 +929,7 @@ pull the image locally from Docker Hub and run it there!
 
 In this chapter we learned the basics of containers and images. We learned how to write simple Dockerfiles,
 and how to use their caching mechanism to our advantage. We have also learned how to push images to Docker Hub,
-where they can be pulled by other users. 
+where they can be pulled by other users.
 
 ### Certificate of completion
 
@@ -934,18 +944,18 @@ Validate the certificate at the [validation link](https://courses.mooc.fi/certif
 
 We will be using [Docker Compose](https://docs.docker.com/compose/) to define and run multi-container applications.
 
-| Command               | Explain                           |
-|-----------------------|-----------------------------------|
+| Command               | Explain                                                       |
+| --------------------- | ------------------------------------------------------------- |
 | `docker compose up`   | Starts the services defined in the `docker-compose.yaml` file |
-| `docker compose down` | Stops and removes the running services |
-| `docker compose logs` | Shows the logs of the services |
-| `docker compose ps`   | Lists all the services and their current status |
+| `docker compose down` | Stops and removes the running services                        |
+| `docker compose logs` | Shows the logs of the services                                |
+| `docker compose ps`   | Lists all the services and their current status               |
 
 Find the full list of commands [here](https://docs.docker.com/reference/cli/docker/compose/).
 
 ---
 
-[__Ex. 2.1.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#209609c5-4fd4-4174-a34d-084e1263aa3e)
+[**Ex. 2.1.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#209609c5-4fd4-4174-a34d-084e1263aa3e)
 
 ```yaml
 services:
@@ -958,12 +968,12 @@ services:
 
 ---
 
-Read [here](https://docs.docker.com/reference/compose-file/services/#command) about how to add a command to docker compose. 
+Read [here](https://docs.docker.com/reference/compose-file/services/#command) about how to add a command to docker compose.
 Also, read [here](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/) about how to add environment variables.
 
 ---
 
-[__Ex. 2.2.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#f26c4aba-0f15-48ab-8cbb-ad69e3347d01)
+[**Ex. 2.2.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#f26c4aba-0f15-48ab-8cbb-ad69e3347d01)
 
 ```yaml
 services:
@@ -979,7 +989,7 @@ services:
 
 ---
 
-[__Ex. 2.3.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#3474eea7-0921-46e3-8100-77533f073127)
+[**Ex. 2.3.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/migrating-to-docker-compose#3474eea7-0921-46e3-8100-77533f073127)
 
 I have decided to use the already built local images:
 
@@ -1001,11 +1011,11 @@ services:
 
 ### Docker networking
 
-Docker compose starts and automatically joins the defined services into a [network with a DNS](https://docs.docker.com/engine/network/). The containers can then simply reference each other with their service names. 
+Docker compose starts and automatically joins the defined services into a [network with a DNS](https://docs.docker.com/engine/network/). The containers can then simply reference each other with their service names.
 
 ---
 
-[__Ex. 2.4.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#6ecbbdea-a420-4429-a2ac-9a88eed8c9db)
+[**Ex. 2.4.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#6ecbbdea-a420-4429-a2ac-9a88eed8c9db)
 
 ```yaml
 services:
@@ -1032,7 +1042,7 @@ services:
 #### Manual network definition
 
 It is possible to define a network manually in a `docker compose` file, and to establish a connection
-to an external network (a network defined in another `docker compose` file). 
+to an external network (a network defined in another `docker compose` file).
 
 ```yaml
 services:
@@ -1075,7 +1085,7 @@ services:
 
 Then we can run this: `docker compose up --scale whoami=3` to spin up three containers of the same service.
 We can run `docker compose port --index 1 whoami 8000` (change index for the other two) to see what ports
-the containers are running on. 
+the containers are running on.
 
 For this type of a scaled up service, one would often use a load balancer, e.g., [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy):
 
@@ -1084,7 +1094,7 @@ services:
   whoami:
     image: jwilder/whoami
     environment:
-        # Nginx-proxy needs to know where to route!
+      # Nginx-proxy needs to know where to route!
       - VIRTUAL_HOST=whoami.colasloth.com
   proxy:
     image: jwilder/nginx-proxy
@@ -1096,17 +1106,18 @@ services:
       - 80:80
 ```
 
-Also read about [colasloth.com](https://colasloth.github.io/) if you're interested. It is a clever developer tool 
+Also read about [colasloth.com](https://colasloth.github.io/) if you're interested. It is a clever developer tool
 that saves developers from editing their local `/etc/hosts file`. Instead, `colasloth.com` always points to localhost!
 Another interesting thing to learn about is `docker.sock`: [here](https://lobster1234.github.io/2019/04/05/docker-socket-file-for-ipc/) is a good resource!
 
 ---
 
-__Understanding colasloth.com and /etc/hosts__
+**Understanding colasloth.com and /etc/hosts**
 
 When developing locally with multiple services, you often need different domain names pointing to your local machine. Traditionally, this is done by editing the `/etc/hosts` file, which is a local system file that maps hostnames to IP addresses. It acts as a local DNS lookup table that your operating system checks before making DNS queries to external DNS servers.
 
 A typical `/etc/hosts` file might look like this:
+
 ```bash
 # Local development environments
 127.0.0.1    localhost
@@ -1116,6 +1127,7 @@ A typical `/etc/hosts` file might look like this:
 ```
 
 However, editing this file:
+
 - Requires admin/root privileges
 - Needs to be done on each developer's machine
 - Can become messy with many entries
@@ -1123,6 +1135,7 @@ However, editing this file:
 This is where [colasloth.com](https://colasloth.github.io/) comes in - it's a clever developer tool that automatically resolves all its subdomains to `127.0.0.1` (localhost). This means you can use any subdomain like `myapp.colasloth.com` or `api.colasloth.com` and it will point to your local machine, without any `/etc/hosts` file modifications!
 
 Example usage in docker-compose:
+
 ```yaml
 services:
   frontend:
@@ -1139,17 +1152,18 @@ This makes local development much easier, especially when working with multiple 
 
 ---
 
-__Understanding docker.sock__
+**Understanding docker.sock**
 
 The `docker.sock` file is a Unix socket that serves as the primary entry point for the Docker API. It allows processes to communicate with the Docker daemon, which manages containers, images, networks, and volumes on your system.
 
 When you mount docker.sock into a container like this:
+
 ```yaml
 services:
   proxy:
     image: nginx-proxy
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro  # ro = read-only
+      - /var/run/docker.sock:/tmp/docker.sock:ro # ro = read-only
 ```
 
 You're essentially giving that container access to the Docker daemon's API. This is particularly useful for:
@@ -1159,6 +1173,7 @@ You're essentially giving that container access to the Docker daemon's API. This
 3. **Monitoring**: Tools can collect metrics about running containers
 
 **Security Note**: Mounting docker.sock gives significant power to the container - it can control the Docker daemon and other containers. Always:
+
 - Use read-only mode (`ro`) when possible
 - Only mount it to trusted containers
 - Be cautious with permissions
@@ -1169,29 +1184,29 @@ A common use case is with reverse proxies that need to automatically detect and 
 
 ---
 
-[__Ex. 2.5.__](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#c3918908-8f8e-4210-ac23-495374347ae4)
+[**Ex. 2.5.**](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-3/docker-networking#c3918908-8f8e-4210-ac23-495374347ae4)
 
 We have the following `docker compose`:
 
 ```yaml
 services:
   calculator:
-      image: devopsdockeruh/scaling-exercise-calculator
-      ports:
-        - 3000:3000
-      container_name: calculator
+    image: devopsdockeruh/scaling-exercise-calculator
+    ports:
+      - 3000:3000
+    container_name: calculator
   compute:
-      image: devopsdockeruh/scaling-exercise-compute
-      environment:
-        - VIRTUAL_HOST=compute.localtest.me
+    image: devopsdockeruh/scaling-exercise-compute
+    environment:
+      - VIRTUAL_HOST=compute.localtest.me
   load-balancer:
-      build: ./load-balancer
-      image: load-balancer
-      volumes: 
-        - /var/run/docker.sock:/tmp/docker.sock:ro
-      ports:
-        - 80:80
-      container_name: load-balancer
+    build: ./load-balancer
+    image: load-balancer
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    ports:
+      - 80:80
+    container_name: load-balancer
 ```
 
 I scaled the `compute`service to two container instances and got it to pass the test:
@@ -1207,23 +1222,22 @@ docker compose up --scale compute=2
 We have the following `docker compose` file:
 
 ```yaml
-services:                                   # Start of services definition
-  db:                                       # Name of the service
-    image: postgres                         # Use official PostgreSQL image
-    restart: unless-stopped                 # Restart container unless manually stopped
-    environment:                            # Environment variables section
-      POSTGRES_PASSWORD: example            # Set PostgreSQL root password
-    container_name: db_redmine              # Explicitly name the container
-    volumes:                                # Container's volume mappings
-      - database:/var/lib/postgresql/data   # Map named volume 'database' to PostgreSQL data directory
+services: # Start of services definition
+  db: # Name of the service
+    image: postgres # Use official PostgreSQL image
+    restart: unless-stopped # Restart container unless manually stopped
+    environment: # Environment variables section
+      POSTGRES_PASSWORD: example # Set PostgreSQL root password
+    container_name: db_redmine # Explicitly name the container
+    volumes: # Container's volume mappings
+      - database:/var/lib/postgresql/data # Map named volume 'database' to PostgreSQL data directory
 
-volumes:                                    # Docker volumes declaration
-  database:                                 # Declare a volume named 'database'
+volumes: # Docker volumes declaration
+  database: # Declare a volume named 'database'
   # We could specify further options here, e.g., driver, driver_opts, etc.
 ```
 
 If we used the Postgres image without a `volume` configuration, an anonymous volume would still be created because the image's Dockerfile has a [`VOLUME` instruction](https://github.com/docker-library/postgres/blob/master/Dockerfile-alpine.template), but ["wouldn't persist when the container is deleted and re-created."](https://github.com/docker-library/docs/blob/master/postgres/README.md#where-to-store-data)
-
 
 We can now add Redmine and Adminer like so:
 
@@ -1297,8 +1311,8 @@ services:
       - POSTGRES_DB=postgres-db
 ```
 
-We didn't define a named volume for the postgres service, but Docker has nevertheless created one for us, 
-which we can see if we run `docker inspect` on the container: 
+We didn't define a named volume for the postgres service, but Docker has nevertheless created one for us,
+which we can see if we run `docker inspect` on the container:
 
 ```bash
 "Mounts": [
@@ -1323,7 +1337,7 @@ which we can see if we run `docker inspect` on the container:
 
 Here is a very easy-to-understand difference between a named Docker volume and a bind mount.
 
-__Named Docker volume__
+**Named Docker volume**
 
 ```yaml
 services:
@@ -1373,7 +1387,7 @@ local     unpublished_posts_database
 This will create a named Docker volume, and it will work fine, but you won't be able to inspect the volume
 locally on your machine. Instead, the files are stored in Docker's internal volume management.
 
-__Bind mount__
+**Bind mount**
 
 However, if we do this:
 
@@ -1413,10 +1427,10 @@ services:
 
 Then we are using a bind mount. After running `docker compose up` a folder called `database` will be
 created where the `docker compose` file is located, and you will be able to inspect those files directly
-on your host machine. 
+on your host machine.
 
-P.S. The benefit of a bind mount is that you know where the data is located and it is therefore 
-easier to create backups. 
+P.S. The benefit of a bind mount is that you know where the data is located and it is therefore
+easier to create backups.
 
 ---
 
@@ -1484,7 +1498,7 @@ http {
       proxy_set_header Host $host;
       # Huge difference if you set this without the trailing slash: in that case, nginx keeps the entire
       # matched location and appends it to the proxy URL => request to /api/ping -> http://backend:8080/api/ping
-      # With the trailing slash: nginx removes the matched location before proxying => 
+      # With the trailing slash: nginx removes the matched location before proxying =>
       # request to /api/ping -> http://backend:8080/ping
       proxy_pass http://backend:8080/;
     }
@@ -1495,11 +1509,11 @@ http {
 There is a crucial difference between `proxy_pass http://backend:8080`and `proxy pass http://backend:8080/`:
 
 1. proxy_pass `http://backend:8080` (no trailing slash) keeps the entire matched location and appends it:
-    - Nginx keeps the entire matched location and appends it to the proxy URL
-    - Request to `/api/ping` → `http://backend:8080/api/ping`
+   - Nginx keeps the entire matched location and appends it to the proxy URL
+   - Request to `/api/ping` → `http://backend:8080/api/ping`
 2. proxy_pass `http://backend:8080/` (with trailing slash) removes the matched location prefix before proxying:
-    - Nginx removes the matched location prefix before proxying
-    - Request to `/api/ping` → `http://backend:8080/ping`
+   - Nginx removes the matched location prefix before proxying
+   - Request to `/api/ping` → `http://backend:8080/ping`
 
 ---
 
@@ -1567,27 +1581,27 @@ and runtime variables.
 Here's how to identify build-time vs runtime variables:
 
 1. Build-time variables are needed during the image build process:
-    - Variables used in RUN commands
-    - Variables that affect the build output
-    - React's REACT_APP_* variables (they get embedded into the built JavaScript)
-    - Variables needed for compilation/building steps
-    - Example: `npm run build` needs REACT_APP_* variables because they're bundled into the static files
+   - Variables used in RUN commands
+   - Variables that affect the build output
+   - React's REACT*APP*\* variables (they get embedded into the built JavaScript)
+   - Variables needed for compilation/building steps
+   - Example: `npm run build` needs REACT*APP*\* variables because they're bundled into the static files
 
 2. Runtime variables are needed when the container runs:
-    - Variables used in CMD or ENTRYPOINT
-    - Configuration for running services (ports, hosts, passwords)
-    - Backend service configurations
-    - Database connections
-    - Example: `REQUEST_ORIGIN` in the backend because it's checked during request handling
+   - Variables used in CMD or ENTRYPOINT
+   - Configuration for running services (ports, hosts, passwords)
+   - Backend service configurations
+   - Database connections
+   - Example: `REQUEST_ORIGIN` in the backend because it's checked during request handling
 
-__Quick way to tell__:
+**Quick way to tell**:
 
     - If the variable is used before/during a build step (RUN npm run build) → Build-time
     - If the variable is used by the running application → Runtime
 
-That is why I was able to overwrite the `REQUEST_ORIGIN` variable in the docker-compose previosly, 
-although it is set in the backend Dockerfile, but I was not able to do the same with the `REACT_APP_BACKEND_URL` variable which is being set in the frontend Dockerfile. The solution was to 
-change it in the Dockerfile and then rebuild the image. 
+That is why I was able to overwrite the `REQUEST_ORIGIN` variable in the docker-compose previosly,
+although it is set in the backend Dockerfile, but I was not able to do the same with the `REACT_APP_BACKEND_URL` variable which is being set in the frontend Dockerfile. The solution was to
+change it in the Dockerfile and then rebuild the image.
 
 The resulting frontend Dockerfile:
 
@@ -1668,32 +1682,32 @@ PORT    STATE    SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 1.41 seconds
 ```
 
-We see that the backend and frontend ports are now not published, and only the nginx port 
+We see that the backend and frontend ports are now not published, and only the nginx port
 (and the [rpcbind service port](https://en.wikipedia.org/wiki/Portmap)) are open.
 
 ---
 
 ### Containers in development
 
-Like I mentioned at the beginning, at my current job we are moving to a microservices architecture, 
-and deploying most of our services as container apps in Azure. However, we still do quite a bit of our 
+Like I mentioned at the beginning, at my current job we are moving to a microservices architecture,
+and deploying most of our services as container apps in Azure. However, we still do quite a bit of our
 development the old-fashioned way, meaning we don't use development containers. One of the reasons for
 me taking this course is I would like to set up development containers for my team at least, so that one
 could spin up the backend and frontend with the help of a `docker-compose`. There will be some challenges
 along the way, I am sure, like deciding how to deal with Azure key vault, service bus, etc. However, I do
-think it would benefit our team greatly, and it would certainly solve the "it works on my computer" problem. 
-Feel free to have a look at this [interesting study on containerized development environments](https://helda.helsinki.fi/items/9f681533-f488-406d-b2d8-a2f8b225f283). 
+think it would benefit our team greatly, and it would certainly solve the "it works on my computer" problem.
+Feel free to have a look at this [interesting study on containerized development environments](https://helda.helsinki.fi/items/9f681533-f488-406d-b2d8-a2f8b225f283).
 
 ### Summary
 
 In this chapter we did the following:
-docker-compose, networking, scaling and load-balancing (learned about colasloth.com and docker.sock), volumes (bind mounts vs. docker volumes), how to setup nginx reverse proxy (and difference between build-time and runtime variables). 
+docker-compose, networking, scaling and load-balancing (learned about colasloth.com and docker.sock), volumes (bind mounts vs. docker volumes), how to setup nginx reverse proxy (and difference between build-time and runtime variables).
+
 1. The basics of `docker-compose`
 2. The basics of docker networking
 3. How to scale and load-balance containers (aldo learned about `colasloth.com` and `docker.sock`)
 4. Volumes: bind mounts vs. named Docker volumes
 5. How to setup nginx reverse proxy (and the difference between build-time and runtime variables)
-
 
 ### Certificate of completion
 
@@ -1745,19 +1759,19 @@ Then the `docker image history` command will show this:
 <missing>      12 days ago     COPY . . # buildkit                             707kB     buildkit.dockerfile.v0
 <missing>      12 days ago     EXPOSE map[3000/tcp:{}]                         0B        buildkit.dockerfile.v0
 <missing>      12 days ago     WORKDIR /usr/src/app                            0B        buildkit.dockerfile.v0
-<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["node"]                 0B        
-<missing>      19 months ago   /bin/sh -c #(nop)  ENTRYPOINT ["docker-entry…   0B        
-<missing>      19 months ago   /bin/sh -c #(nop) COPY file:4d192565a7220e13…   388B      
-<missing>      19 months ago   /bin/sh -c set -ex   && savedAptMark="$(apt-…   9.49MB    
-<missing>      19 months ago   /bin/sh -c #(nop)  ENV YARN_VERSION=1.22.19     0B        
-<missing>      19 months ago   /bin/sh -c ARCH= && dpkgArch="$(dpkg --print…   100MB     
-<missing>      19 months ago   /bin/sh -c #(nop)  ENV NODE_VERSION=16.20.2     0B        
-<missing>      19 months ago   /bin/sh -c groupadd --gid 1000 node   && use…   337kB     
-<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B        
-<missing>      19 months ago   /bin/sh -c #(nop) ADD file:abd1ad48ae3ebec7a…   74.4MB    
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["node"]                 0B
+<missing>      19 months ago   /bin/sh -c #(nop)  ENTRYPOINT ["docker-entry…   0B
+<missing>      19 months ago   /bin/sh -c #(nop) COPY file:4d192565a7220e13…   388B
+<missing>      19 months ago   /bin/sh -c set -ex   && savedAptMark="$(apt-…   9.49MB
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV YARN_VERSION=1.22.19     0B
+<missing>      19 months ago   /bin/sh -c ARCH= && dpkgArch="$(dpkg --print…   100MB
+<missing>      19 months ago   /bin/sh -c #(nop)  ENV NODE_VERSION=16.20.2     0B
+<missing>      19 months ago   /bin/sh -c groupadd --gid 1000 node   && use…   337kB
+<missing>      19 months ago   /bin/sh -c #(nop)  CMD ["bash"]                 0B
+<missing>      19 months ago   /bin/sh -c #(nop) ADD file:abd1ad48ae3ebec7a…   74.4MB
 ```
 
-We can see my own image layers (created 5-12 days ago), and the base image layers (created 19 months ago). 
+We can see my own image layers (created 5-12 days ago), and the base image layers (created 19 months ago).
 
 ### Deployment pipelines
 
@@ -1782,29 +1796,29 @@ on:
       - main
 
 jobs:
-  build:  # name of the job
+  build: # name of the job
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
-      with:
-        context: .
-        push: true
-        platforms: linux/amd64,linux/arm64
-        tags: ${{ secrets.DOCKER_USERNAME }}/nodeapp:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ secrets.DOCKER_USERNAME }}/nodeapp:latest
 ```
 
 And I added this line in the Dockerfile for the project I was containerizing:
@@ -1817,7 +1831,7 @@ Then I created the following `docker-compose`:
 
 ```yaml
 services:
-  app: 
+  app:
     image: aljazkovac/nodeapp:latest
     ports:
       - "127.0.0.1:8080:8080"
@@ -1826,7 +1840,7 @@ services:
   watchtower:
     image: containrrr/watchtower
     environment:
-      -  WATCHTOWER_POLL_INTERVAL=60 <em># Poll every 60 seconds</em>
+      - WATCHTOWER_POLL_INTERVAL=60 <em># Poll every 60 seconds</em>
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     container_name: watchtower
@@ -1853,36 +1867,36 @@ on:
       - main
 
 jobs:
-  build:  # name of the job
+  build: # name of the job
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
-      id: push
-      uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
-      with:
-        context: .
-        push: true
-        platforms: linux/amd64,linux/arm64
-        tags: ${{ secrets.DOCKER_USERNAME }}/project-homework:latest
-  
-    - name: Deploy the app
-      uses: digitalocean/app_action/deploy@v2
-      env:
-        SAMPLE_DIGEST: ${{ steps.push.outputs.digest }}
-      with:
+      - name: Build and push Docker image
+        id: push
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ secrets.DOCKER_USERNAME }}/project-homework:latest
+
+      - name: Deploy the app
+        uses: digitalocean/app_action/deploy@v2
+        env:
+          SAMPLE_DIGEST: ${{ steps.push.outputs.digest }}
+        with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 ```
 
@@ -1890,29 +1904,29 @@ To get this to work, I had to add an [app spec](https://docs.digitalocean.com/gl
 
 ```yaml
 alerts:
-- rule: DEPLOYMENT_FAILED
-- rule: DOMAIN_FAILED
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
 features:
-- buildpack-stack=ubuntu-22
+  - buildpack-stack=ubuntu-22
 ingress:
   rules:
-  - component:
-      name: aljazkovac-project-homework
-    match:
-      path:
-        prefix: /
+    - component:
+        name: aljazkovac-project-homework
+      match:
+        path:
+          prefix: /
 name: lionfish-app
 region: ams
 services:
-- http_port: 8080
-  image:
-    registry: aljazkovac
-    registry_type: DOCKER_HUB
-    repository: project-homework
-    digest: ${SAMPLE_DIGEST}
-  instance_count: 1
-  instance_size_slug: apps-s-1vcpu-0.5gb
-  name: aljazkovac-project-homework
+  - http_port: 8080
+    image:
+      registry: aljazkovac
+      registry_type: DOCKER_HUB
+      repository: project-homework
+      digest: ${SAMPLE_DIGEST}
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    name: aljazkovac-project-homework
 ```
 
 Then I tested by making some obvious code changes and checking if they come into effect after pushing
@@ -2001,7 +2015,7 @@ rm -rf repo_dir
 echo "Done!"
 ```
 
-Build the image first: 
+Build the image first:
 
 ```sh
 docker build -t scriptbuilder .
@@ -2018,13 +2032,13 @@ docker run -e DOCKER_USER=your_username \
   script-builder aljazkovac/simplemessageboard aljazkovac/simplemessageboardscriptimage
 ```
 
-I then also verified that the image works by pulling it from Docker Hub and running it locally. 
+I then also verified that the image works by pulling it from Docker Hub and running it locally.
 
 ---
 
 ### Using a non-root user
 
-Running containers as root can pose security risks because if an attacker were to gain access to the container, they would have root privileges which could allow modification of system files and installation of malicious software. We should follow the __Principle of Least Privilege__, meaning that applications should run with the permissions they need to function and nothing more. 
+Running containers as root can pose security risks because if an attacker were to gain access to the container, they would have root privileges which could allow modification of system files and installation of malicious software. We should follow the **Principle of Least Privilege**, meaning that applications should run with the permissions they need to function and nothing more.
 
 ---
 
@@ -2103,7 +2117,7 @@ We can reduce the size of our images like this:
 Builder pattern: with compiled languages remove the tools that are needed to compile the code from the final container:
 
 1. Build the code in the first container
-2. Build artifacts (binaries, static files, bundles, transpiled code) are packaged into the runtime container 
+2. Build artifacts (binaries, static files, bundles, transpiled code) are packaged into the runtime container
 3. The runtime container contains no tools that are needed to compile the code
 
 ---
@@ -2238,7 +2252,7 @@ FROM node:16.20.2-bullseye-slim AS builder
 WORKDIR /usr/src/app
 # Helps with caching independencies
 COPY package*.json ./
-RUN npm install 
+RUN npm install
 COPY . .
 ENV REACT_APP_BACKEND_URL=http://localhost/api
 RUN npm run build
@@ -2270,7 +2284,7 @@ frontend-nonroot          latest     e9e65a4d959c   41 hours ago        746MB
 
 We have been able to decrease the image size from 746 MB to 176 MB. We could have minimized it even
 further by using nginx to serve the static files but then we would need to also change the `CMD` and
-the port configuration (nginx serves the files on port 80 by default). 
+the port configuration (nginx serves the files on port 80 by default).
 
 Now let us optimize the backend image. The original image size was:
 
@@ -2305,7 +2319,7 @@ USER backenduser
 CMD [ "./server" ]
 ```
 
-We have already learned from the frontend that we would benefit from a multi-stage build, so let us 
+We have already learned from the frontend that we would benefit from a multi-stage build, so let us
 attempt to do that directly here:
 
 ```dockerfile
@@ -2346,7 +2360,7 @@ And, most importantly, if we run containers from the optimized images, they work
 #### Image with preinstalled environment
 
 If we use an Alpine-based image (much smaller than the Ubuntu-based image, for example), then we will
-probably sooner or later find ourselves lacking some tools. Instead of installing the tools ourselves, 
+probably sooner or later find ourselves lacking some tools. Instead of installing the tools ourselves,
 it is a good idea to look for images that have preinstalled environments that cover our needs, e.g., [Python image](https://hub.docker.com/_/python) (if Python is what we need).
 
 ---
@@ -2397,7 +2411,7 @@ FROM node:16.20.2-alpine AS builder
 WORKDIR /usr/src/app
 # Helps with caching independencies
 COPY package*.json ./
-RUN npm install 
+RUN npm install
 COPY . .
 ENV REACT_APP_BACKEND_URL=http://localhost/api
 RUN npm run build
@@ -2440,7 +2454,7 @@ FROM node:16.20.2-alpine AS builder
 WORKDIR /usr/src/app
 # Helps with caching independencies
 COPY package*.json ./
-RUN npm install 
+RUN npm install
 COPY . .
 ENV REACT_APP_BACKEND_URL=http://localhost/api
 RUN npm run build
@@ -2461,7 +2475,7 @@ RUN adduser -D frontenduser && \
     chown -R frontenduser:frontenduser /var/run/nginx.pid && \
     # Set permissions for content
     chown -R frontenduser:frontenduser /usr/share/nginx/html && \
-    # Create nginx config 
+    # Create nginx config
     echo 'server { \
     listen 3000; \
     location / { \
@@ -2543,7 +2557,7 @@ backend-optimized-2     latest    9ebf470e0a65   3 hours ago         43MB
 [_Ex. 3.10_](https://courses.mooc.fi/org/uh-cs/courses/devops-with-docker/chapter-4/optimizing-the-image-size#bb0f2fd6-df4a-4887-87c0-9fc97df08a23)
 
 I have decided to optimize the SimpleMessageBoard project, which I have used before in this course.
-The original image size is: 
+The original image size is:
 
 ```bash
 REPOSITORY                 TAG       IMAGE ID       CREATED          SIZE
@@ -2603,16 +2617,16 @@ simplemessageboard-orig            latest     83ae82efc8c7   40 minutes ago   25
 
 ### Multi-host environments
 
-Kubernetes runs a workload (application) by placing containers into pods (a set of running containers) and pods into nodes (either a virtual or a physical machine). Each node is managed by the control plane (the container orchestration 
-layer that exposes the API and interfaces to define, deploy and manage the lifecycle of containers) and 
-contains the services necessary to run pods. 
+Kubernetes runs a workload (application) by placing containers into pods (a set of running containers) and pods into nodes (either a virtual or a physical machine). Each node is managed by the control plane (the container orchestration
+layer that exposes the API and interfaces to define, deploy and manage the lifecycle of containers) and
+contains the services necessary to run pods.
 
 Here are some cool resources:
 
 1. [Kind](https://kind.sigs.k8s.io/): to run Kubernetes locally
-2. [k3s](https://k3s.io/) and [k3d](https://github.com/k3d-io/k3d): to run Kubernetes inside containers 
-(k3d creates containerized k3s clusters). This way you can spin up a multi-node k3s cluster on a single 
-machine using docker.
+2. [k3s](https://k3s.io/) and [k3d](https://github.com/k3d-io/k3d): to run Kubernetes inside containers
+   (k3d creates containerized k3s clusters). This way you can spin up a multi-node k3s cluster on a single
+   machine using docker.
 
 ---
 
@@ -2639,13 +2653,13 @@ Validate the certificate at the [validation link](https://courses.mooc.fi/certif
 
 ## Closing thoughts
 
-This was such a great and fun course, and I can warmly recommend it. I already had some experience with 
-Docker, but this course made my basics stronger, and taught me a lot more than I thought I needed to know. 
-I learned some new Docker commands and got a lot more comfortable working with images and containers. 
+This was such a great and fun course, and I can warmly recommend it. I already had some experience with
+Docker, but this course made my basics stronger, and taught me a lot more than I thought I needed to know.
+I learned some new Docker commands and got a lot more comfortable working with images and containers.
 
 Here are some highlights:
 
-1. [```CMD``` vs ```ENTRYPOINT``` and exec vs. shell form in ```ENTRYPOINT```](https://aljazkovac.github.io/posts/devops-with-docker/#defining-start-conditions-for-the-container)
+1. [`CMD` vs `ENTRYPOINT` and exec vs. shell form in `ENTRYPOINT`](https://aljazkovac.github.io/posts/devops-with-docker/#defining-start-conditions-for-the-container)
 2. [Bind mounts vs. Docker volumes](https://aljazkovac.github.io/posts/devops-with-docker/#volumes-in-action)
 3. [docker.sock](https://aljazkovac.github.io/posts/devops-with-docker/#scaling)
 4. [The importance of distinguishing between runtime and build-time variables in a Dockerfile](https://aljazkovac.github.io/posts/devops-with-docker/#volumes-in-action)

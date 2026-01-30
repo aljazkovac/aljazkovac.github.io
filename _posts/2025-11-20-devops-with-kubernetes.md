@@ -1,7 +1,7 @@
 ---
 title: DevOps with Kubernetes
 date: 2025-11-20 06:00:00 +0100
-categories: [devops, kubernetes] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
+categories: [notes, kubernetes]
 tags: [devops, kubernetes, prometheus, grafana, google, cloud] # TAG names should always be lowercase.
 description: University of Helsinki course on Kubernetes
 ---
@@ -1637,7 +1637,6 @@ In this exercise, I extended the Kubernetes API by creating a Custom Resource De
 
 2. **Controller Logic (Node.js):**
    Built a controller using the `@kubernetes/client-node` library that:
-
    - **Watches** for events (ADDED, MODIFIED) on `DummySite` resources.
    - **Fetches** the HTML content from the specified `website_url` using `axios`.
    - **Reconciles** the state by creating three child resources:
@@ -1657,13 +1656,11 @@ In this exercise, I extended the Kubernetes API by creating a Custom Resource De
 1. **Image Pull Errors:**
 
    Initially, the controller pod failed with `ErrImagePull` because the deployment used `imagePullPolicy: Always`. Since I was developing locally with `k3d`, the cluster tried to pull the image from Docker Hub where it didn't exist yet.
-
    - **Solution:** I pushed the image to Docker Hub and updated the deployment manifest to point to the correct registry repository (`aljazkovac/dummy-site-controller:v54`).
 
 2. **API Client Version Mismatch:**
 
    The controller crashed with `RequiredError: Required parameter namespace was null or undefined`. This was confusing because I was explicitly passing the namespace.
-
    - **Diagnosis:** The issue was due to a change in the `@kubernetes/client-node` library version. Newer versions expect method arguments to be passed as a single object (e.g., `{ namespace: 'default', body: ... }`) rather than positional arguments.
 
    - **Solution:** I refactored the controller code to use the object-based argument style supported by the installed client library version.

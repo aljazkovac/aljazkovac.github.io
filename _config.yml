@@ -14,12 +14,12 @@ timezone: Europe/Stockholm
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Aljaz Kovac # the main title
+title: Aljaž Kovač # the main title
 
-tagline: Cloud & Software Engineer # it will display as the sub-title
+tagline: Platform Engineering & AI Leadership # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
-  The GitHub Pages landing site for Aljaz Kovac, a Cloud & Software Engineer.
+  The professional site of Aljaz Kovac: Team Leader, AI Initiative Lead, and Engineering Strategist. Exploring the intersection of Platform Engineering, AI, and Leadership.
 
 # Fill in the protocol & hostname for your site.
 # e.g. 'https://username.github.io', note that it does not end with a '/'.
@@ -34,7 +34,7 @@ github:
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
-  name: Aljaz Kovac
+  name: Aljaž Kovač
   email: aljazkovac.kovacaljaz@gmail.com # change to your email address
   links:
     # The first element serves as the copyright owner's link

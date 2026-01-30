@@ -1,8 +1,8 @@
 ---
 title: Full Stack Open - Deep Dive Into Modern Web Development
 date: 2024-07-28 10:48:23 +0200
-categories: [software, courses] # TOP_CATEGORY, SUB_CATEGORY, MAX 2.
-tags: [software, full stack, courses, certificates]     # TAG names should always be lowercase.
+categories: [notes, fullstack]
+tags: [software, full stack, courses, certificates] # TAG names should always be lowercase.
 description: A course on modern full stack web development.
 ---
 
@@ -19,7 +19,7 @@ on the weekends. With that little free time it took me almost two years to finis
 Please check out my [main repo for the course](https://github.com/aljazkovac/fullstackopen-part0-to-part9-react-graphql-ts).
 
 Unfortunately, I don't have the time to condense my rather extensive notes on the course into a blog post.
-I started this blog after I was already done with the course. 
+I started this blog after I was already done with the course.
 
 ## Certificates
 

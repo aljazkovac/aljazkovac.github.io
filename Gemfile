@@ -3,6 +3,12 @@
 source "https://rubygems.org"
 
 gem "jekyll-theme-chirpy", "~> 7.0", ">= 7.0.1"
+gem "logger"
+gem "csv"
+gem "webrick"
+gem "base64"
+gem "bigdecimal"
+gem "mutex_m"
 
 group :test do
   gem "html-proofer", "~> 5.0"
