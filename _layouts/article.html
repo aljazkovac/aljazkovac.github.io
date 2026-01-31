@@ -1,0 +1,105 @@
+---
+layout: default
+tail_includes:
+  - related-posts
+  - post-nav
+script_includes:
+  - comment
+---
+
+{% include lang.html %}
+
+<!-- Custom Style for Articles -->
+<style>
+  /* Force the main content to take up all remaining space */
+  @media (min-width: 1200px) {
+    /* Hide the right sidebar completely */
+    #panel-wrapper {
+      display: none !important;
+    }
+
+    /* Force MAIN element to take full width */
+    .row.flex-grow-1 > main {
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+      padding-right: 0 !important;
+    }
+
+    /* Also align the footer/tail wrapper */
+    #tail-wrapper {
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+    }
+  }
+
+  /* Typography improvements for reading */
+  .content {
+    font-size: 1.15rem; /* Slightly larger text */
+    line-height: 1.8;
+    font-family:
+      "Merriweather", "Georgia", serif; /* Optional: Serif for reading? */
+  }
+
+  /* Hide the topbar (breadcrumbs and search) to reduce clutter */
+  #topbar-wrapper {
+      display: none !important;
+  }
+  
+  /* Center the article text container */
+  article.px-1 {
+      max-width: 800px;
+      margin: 0 auto;
+  }
+  </style><article class="px-1">
+  <header>
+    <h1 class="text-center display-5 fw-bold mb-4">{{ page.title }}</h1>
+    {% if page.description %}
+    <p class="post-desc fw-light mb-4 text-center">{{ page.description }}</p>
+    {% endif %}
+
+    <div class="post-meta text-muted text-center mb-5">
+      <!-- published date -->
+      <span>
+        {{ site.data.locales[lang].post.posted }} {% include datetime.html
+        date=page.date tooltip=true lang=lang %}
+      </span>
+
+      <!-- lastmod date -->
+      {% if page.last_modified_at and page.last_modified_at != page.date %}
+      <span>
+        {{ site.data.locales[lang].post.updated }} {% include datetime.html
+        date=page.last_modified_at tooltip=true lang=lang %}
+      </span>
+      {% endif %}
+
+      <div class="d-flex justify-content-center mt-2">
+        <!-- read time -->
+        {% include read-time.html content=content prompt=true lang=lang %}
+      </div>
+    </div>
+  </header>
+
+  <div class="content">{{ content }}</div>
+
+  <div class="post-tail-wrapper text-muted mt-5">
+    <hr />
+
+    <div
+      class="post-tail-bottom d-flex justify-content-between align-items-center mt-5 pb-2"
+    >
+      <div class="license-wrapper">
+        {% if site.data.locales[lang].copyright.license.template %} {% capture
+        _replacement %}
+        <a href="{{ site.data.locales[lang].copyright.license.link }}">
+          {{ site.data.locales[lang].copyright.license.name }}
+        </a>
+        {% endcapture %} {{ site.data.locales[lang].copyright.license.template |
+        replace: ':LICENSE_NAME', _replacement }} {% endif %}
+      </div>
+
+      {% include post-sharing.html lang=lang %}
+    </div>
+    <!-- .post-tail-bottom -->
+  </div>
+  <!-- div.post-tail-wrapper -->
+</article>

@@ -1,4 +1,5 @@
 ---
+layout: article
 title: Google People Management Essentials Specialization
 date: 2026-01-11 08:00:00 +0100
 categories: [articles, leadership] # MAX 2 categories, TOP and SUB.
