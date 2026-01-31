@@ -17,7 +17,7 @@ My career began in journalism and education. For several years, I was a voice on
 
 Later, I moved abroad, living in Germany, England, and Sweden. During this time, I remained active in journalism while transitioning into education. I taught English and German and served as a researcher at the Department of Education at Stockholm University.
 
-This background in communication and education became my superpower when I transitioned into tech. I realized that the hardest engineering problems are often human ones: alignment, clarity, and culture. Today, I combine these **communication strengths** with a strong **technical foundation in cloud-native systems** to build high-performing teams and scalable architecture.
+This background in communication and education became my superpower when I transitioned into tech. I realized that the hardest engineering problems are often human ones: alignment, clarity, and culture. Today, I combine these communication strengths with a strong technical foundation in cloud-native systems to build high-performing teams and scalable architecture.
 
 ---
 
@@ -25,9 +25,11 @@ This background in communication and education became my superpower when I trans
 
 ### **Engineering** | _2022 – Present_
 
-I joined Caspeco as a **Software Engineer** focused on backend optimization, but my interest in infrastructure quickly led me to the **Cloud & DevOps** team. There, I spearheaded our migration to Azure Container Apps and modernized our observability stack using YARP and centralized logging.
+I joined Caspeco as a **Software Engineer** focused on backend optimization, but my interest in infrastructure quickly led me to the **Cloud & DevOps** team. There, I spearheaded our migration to Azure Container Apps, implemented a custom reverse proxy using YARP, and led the modernization of our observability stack using OpenTelemetry and self-hosted Grafana.
 
-Today, as **Team Leader**, I focus on enabling other developers. I lead the **Platform Engineering** team to build robust self-service tools, secure cloud infrastructure, and modern CI/CD pipelines. Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define and execute the company’s pragmatic AI strategy, running workshops and integrating LLM tooling into our workflows.
+Today, as **Team Leader**, I drive a **data-centric engineering culture**, implementing infrastructure to measure DORA metrics and engineering efficiency. I lead the **Platform Engineering** team to build robust self-service tools, secure cloud infrastructure, and modern CI/CD pipelines.
+
+Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define the company’s AI strategy. Beyond adoption, I focus on **quantifiable impact**—building observability pipelines to measure the ROI of tools like GitHub Copilot and Claude Code through both metrics and developer feedback.
 
 ---
 
