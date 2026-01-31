@@ -7,7 +7,7 @@ order: 4
 
 > I am the **Team Leader** for **Platform Engineering** and the **AI Initiative Lead** at [Caspeco](https://caspeco.com/), where I bridge the gap between technical infrastructure and organizational strategy.
 >
-> With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive real business value.
+> With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive measurable engineering impact.
 
 ## <i class="fas fa-book-open text-muted me-2"></i> The Narrative
 
@@ -29,7 +29,7 @@ I joined Caspeco as a **Software Engineer** focused on backend optimization, but
 
 Today, as **Team Leader**, I drive a **data-centric engineering culture**, implementing infrastructure to measure DORA metrics and engineering efficiency. I lead the **Platform Engineering** team to build robust self-service tools, secure cloud infrastructure, and modern CI/CD pipelines.
 
-Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define the company’s AI strategy. Beyond adoption, I focus on **quantifiable impact**—building observability pipelines to measure the ROI of tools like GitHub Copilot and Claude Code through both metrics and developer feedback.
+Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define the company’s AI strategy. Beyond adoption, I focus on **adoption and quantifiable impact**—driving workforce upskilling through internal workshops and building observability pipelines to measure the ROI of tools like GitHub Copilot and Claude Code through both metrics and developer feedback.
 
 ---
 
