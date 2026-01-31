@@ -5,77 +5,65 @@ icon: fas fa-user
 order: 4
 ---
 
-I am the **Team Leader** for Platform Engineering and the **AI Initiative Lead** at [Caspeco](https://caspeco.com/), where I bridge the gap between technical infrastructure and organizational strategy.
+> I am the **Team Leader** for **Platform Engineering** and the **AI Initiative Lead** at [Caspeco](https://caspeco.com/), where I bridge the gap between technical infrastructure and organizational strategy.
+>
+> With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive real business value.
 
-With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive real business value.
+## <i class="fas fa-book-open text-muted me-2"></i> The Narrative
 
-## The Professional Narrative
+### Journalism and Education
 
-My career path has been defined by a transition from communication to technology. 
+My career began in journalism and education. For several years, I was a voice on Slovenia's national radio, hosting [**Menuet za besedo**](https://ars.rtvslo.si/podkast/menuet-za-besedo/57660840), a show exploring the connections between music and literature. I also served as the editor-in-chief of a prominent Slovenian digital magazine, [**Airbeletrina**](https://airbeletrina.si/), where I oversaw a redesign of the website and led our communication strategy.
 
-I started in journalism and education—fields that prioritize clarity, empathy, and the ability to synthesize complex information. These skills are now the foundation of my leadership style. In the tech world, I have found that the most challenging engineering problems are often human ones. My goal is to ensure that our technical architecture always serves our strategic objectives.
+Later, I moved abroad, living in Germany, England, and Sweden. During this time, I remained active in journalism while transitioning into education. I taught English and German and served as a researcher at the Department of Education at Stockholm University.
 
----
-
-## Experience
-
-### **Caspeco** | *Uppsala, Sweden*
-*Sep 2022 – Present*
-
-**AI Initiative Lead** *(Nov 2025 – Present)*
-*Leading the company-wide engineering AI strategy.*
-*   Spearheading AI adoption strategy, reporting directly to the CTO and Board.
-*   Designing workshops to upskill teams on LLMs, prompt engineering, and AI-assisted workflows.
-
-**Team Leader, Platform Engineering** *(Nov 2025 – Present)*
-*Building a modern development platform for scale.*
-*   Leading a distributed team of engineers (Sweden & Poland) with a focus on DevEx and stability.
-*   Translating architectural goals from Staff Engineers into actionable roadmaps.
-*   Fostering a culture of "Radical Candor" and psychological safety.
-
-**Member of the Company Integration Council** *(Jun 2025 – Present)*
-*   Championing organizational integration following the acquisition of Trivec, including the "Integration Pulse Survey" and a centralized intranet hub.
-
-**Cloud & DevOps Engineer** *(Nov 2023 – Jan 2026)*
-*   **Containerization:** Migrated services to Azure Container Apps; integrated with Azure Front Door.
-*   **Observability:** implemented centralized logging, metrics, and cost alerts.
-*   **Reverse Proxy:** Rewrote legacy proxy from ProxyKit to YARP for modern architecture support.
-
-**Software Engineer** *(Sep 2022 – Nov 2023)*
-*   **Article Register:** Created a robust backend API for managing article categories and menus, ensuring scalable solutions for organizing content.
-*   **Visibility Optimization:** Designed and implemented an algorithm to calculate "minimally-needed visibility" data for station trees, significantly reducing storage requirements and enhancing performance.
+This background in communication and education became my superpower when I transitioned into tech. I realized that the hardest engineering problems are often human ones: alignment, clarity, and culture. Today, I combine these **communication strengths** with a strong **technical foundation in cloud-native systems** to build high-performing teams and scalable architecture.
 
 ---
 
-## Education
+## <i class="fas fa-briefcase text-muted me-2"></i> Experience
+
+### **Engineering** | _2022 – Present_
+
+I joined Caspeco as a **Software Engineer** focused on backend optimization, but my interest in infrastructure quickly led me to the **Cloud & DevOps** team. There, I spearheaded our migration to Azure Container Apps and modernized our observability stack using YARP and centralized logging.
+
+Today, as **Team Leader**, I focus on enabling other developers. I lead the **Platform Engineering** team to build robust self-service tools, secure cloud infrastructure, and modern CI/CD pipelines. Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define and execute the company’s pragmatic AI strategy, running workshops and integrating LLM tooling into our workflows.
+
+---
+
+## <i class="fas fa-graduation-cap text-muted me-2"></i> Education
 
 **B.Sc. Computer Science**
-*Uppsala University, Sweden (2022)*
-*   **Thesis:** "Sentence Embeddings and Automatic Classification of Menu Items" (Machine Learning).
+_Uppsala University, Sweden (2022)_
+
+- **Thesis:** "Sentence Embeddings and Automatic Classification of Menu Items" (Machine Learning).
 
 **M.A. International and Comparative Education**
-*Stockholm University, Sweden (2016)*
+_Stockholm University, Sweden (2016)_
 
 **M.A. English Language and Comparative Literature**
-*University of Ljubljana, Slovenia (2012)*
+_University of Ljubljana, Slovenia (2012)_
 
 ---
 
-## Certifications
+## <i class="fas fa-certificate text-muted me-2"></i> Certifications
 
 ### Leadership
-*   **Google People Management Essentials** (2026) – *High-Performing Teams, Goal Setting*
+
+- **Google People Management Essentials** (2026) – _[High-Performing Teams](https://www.coursera.org/account/accomplishments/verify/NPI6WPHPZIOM)_, _[Goal Setting](https://www.coursera.org/account/accomplishments/verify/WK0LZX6D5ERK)_
 
 ### Technical
-*   **DevOps with Kubernetes** (University of Helsinki, 2026)
-*   **NGINX Fundamentals** (Udemy, 2025)
-*   **DevOps with Docker** (University of Helsinki, 2025)
-*   **Full Stack Open** (University of Helsinki, 2024) – *CI/CD, Containers, SQL, React Native, GraphQL*
-*   **Nand2Tetris** (Hebrew University of Jerusalem, 2024)
+
+- **[DevOps with Kubernetes](https://courses.mooc.fi/certificates/validate/e5ejzzzty47ea9n)** (University of Helsinki, 2026)
+- **[NGINX Fundamentals](https://www.udemy.com/certificate/UC-2f371ef2-fb52-45a1-add6-0c9001f6621d/)** (Udemy, 2025)
+- **DevOps with Docker** (University of Helsinki, 2025) – _[Basics](https://courses.mooc.fi/certificates/validate/7sb5eqwntiyyxcg)_, _[Compose](https://courses.mooc.fi/certificates/validate/8c978jnqck2k83x)_, _[Security](https://courses.mooc.fi/certificates/validate/sbvgjqy9inmwt7x)_
+- **Full Stack Open** (University of Helsinki, 2024) – _[React](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/ead362aab105f5a2259b8b61d757bb33)_, _[GraphQL](https://studies.cs.helsinki.fi/stats/api/certificate/fs-graphql/en/62eb02b924ff99a6e3056e502ef6f318)_, _[TypeScript](https://studies.cs.helsinki.fi/stats/api/certificate/fs-typescript/en/ef6d26f5a190222fb9350ab6fabc69dd)_, _[React Native](https://studies.cs.helsinki.fi/stats/api/certificate/fs-react-native-2020/en/84ab9a8eceb542f889f82a034f78921a)_, _[CI/CD](https://studies.cs.helsinki.fi/stats/api/certificate/fs-cicd/en/a4a01a679261ce20cef7ab17eca0f7e5)_, _[Containers](https://studies.cs.helsinki.fi/stats/api/certificate/fs-containers/en/a3a4bc32b5dc199423c631937d4ae57e)_, _[SQL](https://studies.cs.helsinki.fi/stats/api/certificate/fs-psql/en/0d4fa228fd259e3c7544dd4951d194cf)_
+- **Nand2Tetris** (Hebrew University of Jerusalem, 2024) – _[Computer Architecture](https://coursera.org/verify/07VIZ68LMXFI)_
 
 ---
 
-### Connect
+### <i class="fas fa-paper-plane text-muted me-2"></i> Connect
+
 I am always open to discussing platform engineering, AI strategy, or the challenges of leadership.
 
 [Connect with me on LinkedIn](https://www.linkedin.com/in/aljazkovac) or explore my [writing](/categories/) to see what I'm thinking or learning about today.
