@@ -1,7 +1,7 @@
 ---
 title: DevOps with Docker
 date: 2025-03-28 09:30:00 +0100
-categories: [notes, docker]
+categories: [notes, docker] # MAX 2 categories, TOP and SUB.
 tags: [devops, docker, containers] # TAG names should always be lowercase.
 description: A comprehensive course on Docker offered by University of Helsinki
 ---

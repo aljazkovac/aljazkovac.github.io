@@ -1,15 +1,15 @@
 ---
 title: "Nginx Fundamentals: High performance servers from scratch"
 date: 2025-01-19 14:38:23 +0100
-categories: [notes, nginx]
-tags: [devops, courses, certificates] # TAG names should always be lowercase.
+categories: [notes, nginx] # MAX 2 categories, TOP and SUB.
+tags: [devops, nginx] # TAG names should always be lowercase.
 description: An Udemy course on Nginx fundamentals.
 ---
 
 ## Introduction
 
-I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been rewriting a 
-custom reverse proxy at my current job at [Caspeco](https://caspeco.com/), and I wanted to see if we could perhaps 
+I have decided to take [this Udemy course](https://www.udemy.com/course/nginx-fundamentals/) because I have been rewriting a
+custom reverse proxy at my current job at [Caspeco](https://caspeco.com/), and I wanted to see if we could perhaps
 replace it with Nginx in the future. Nginx is a reverse proxy at its core, so I wanted to learn more about its capabilities, to see
 if it could cover all our needs.
 
@@ -19,11 +19,11 @@ Let's dive into the course, and I hope you will enjoy my notes and thoughts on i
 
 The course covers the following topics:
 
-* Learn to customise the NGINX installation
-* Configure NGINX
-* Learn to tweak NGINX for optimal performance
-* Secure NGINX with some security best practises
-* Learn about NGINX load balancing and reverse proxying
+- Learn to customise the NGINX installation
+- Configure NGINX
+- Learn to tweak NGINX for optimal performance
+- Secure NGINX with some security best practises
+- Learn about NGINX load balancing and reverse proxying
 
 ### About Nginx
 
@@ -33,13 +33,13 @@ and acting as a reverse proxy to forward client requests to backend servers. Ngi
 concurrent connections, making it ideal for high-traffic websites and applications. Additionally, it supports features like
 caching, SSL termination, and URL rewriting, which enhance performance, security, and flexibility in modern web architectures.
 
-Nginx was built in 2004 by [Igor Sysoev](https://en.wikipedia.org/wiki/Igor_Sysoev) as he was looking for an alternative to Apache, 
+Nginx was built in 2004 by [Igor Sysoev](https://en.wikipedia.org/wiki/Igor_Sysoev) as he was looking for an alternative to Apache,
 and wanted to build a replacement capable of handling [10000 concurrent connections](https://en.wikipedia.org/wiki/C10k_problem),
 with a focus on:
 
-  * High performance
-  * High concurrency
-  * Low memory usage
+- High performance
+- High concurrency
+- Low memory usage
 
 Today, Nginx serves the [majority of the world's websites](https://w3techs.com/technologies/details/ws-nginx), not only because of its performance but also because of its relative ease of use.
 At its core, Nginx is a reverse proxy server.
@@ -50,7 +50,7 @@ There are some key differences between Nginx and Apache:
 
 1. Nginx can serve static resources much faster
 2. Nginx can handle a much larger amount of concurrent requests
-3. In Nginx requests are interpreted as URI locations first whereas Apache defaults to and favours file-system locations 
+3. In Nginx requests are interpreted as URI locations first whereas Apache defaults to and favours file-system locations
    => Nginx can easily function as not only a web server but anything from a load balancer to a mail server
 
 Apache spawns a certain number of processes, each of which can serve a single request at a time. Nginx deals with requests
@@ -69,10 +69,10 @@ In terms of performance, Nginx can do the following better than Apache:
 
 I have set up a [Digital Ocean](https://www.digitalocean.com/) droplet with the following specs:
 
-  * 512 MB RAM
-  * 1 vCPU
-  * 10 GB SSD
-  * Ubuntu 24.04 (LTS) x64
+- 512 MB RAM
+- 1 vCPU
+- 10 GB SSD
+- Ubuntu 24.04 (LTS) x64
 
 I have also set up SSH key-based authentication by following [this guide on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server).
 To summarize, I followed these steps:
@@ -80,7 +80,7 @@ To summarize, I followed these steps:
 1. Generate a new SSH key pair with `ssh-keygen`
 2. Access the server via the console in the Digital Ocean dashboard
 3. Disable password authentication by editing the `/etc/ssh/sshd_config` file and setting `PasswordAuthentication no`
-4. Copy the public key to the server manually (copy to the `~/.ssh/authorized_keys` file) 
+4. Copy the public key to the server manually (copy to the `~/.ssh/authorized_keys` file)
 5. For a smoother login experience, I added an entry in the `~/.ssh/config` file:
 
 ```bash
@@ -100,51 +100,51 @@ I followed these steps:
 
 1. Update the package list with `apt-get update`
 2. Install with `apt-get install nginx`
-3. Run `ps aux | grep nginx` to get the list of nginx processes 
-    (the command `ps` lists the processes, `aux` lists all processes
-    (`a` = show processes for all users,
-    `u` = display the process's user/owner,
-    `x` = also show processes not attached to a terminal), and `grep` filters the output):
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~# ps aux | grep nginx
-    root       49899  0.0  0.3  11156  1716 ?        Ss   12:50   0:00 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
-    www-data   49900  0.0  0.9  12880  4404 ?        S    12:50   0:00 nginx: worker process
-    root       49962  0.0  0.4   7076  2048 pts/0    S+   12:53   0:00 grep --color=auto nginx
-    ```
+3. Run `ps aux | grep nginx` to get the list of nginx processes
+   (the command `ps` lists the processes, `aux` lists all processes
+   (`a` = show processes for all users,
+   `u` = display the process's user/owner,
+   `x` = also show processes not attached to a terminal), and `grep` filters the output):
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~# ps aux | grep nginx
+   root       49899  0.0  0.3  11156  1716 ?        Ss   12:50   0:00 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+   www-data   49900  0.0  0.9  12880  4404 ?        S    12:50   0:00 nginx: worker process
+   root       49962  0.0  0.4   7076  2048 pts/0    S+   12:53   0:00 grep --color=auto nginx
+   ```
 4. Run `ifconfig` to see the network interfaces on your system. Grab the IP address from there and go to it.
    (needed to install the command with `apt-get install net-tools` first, and then the IP address I found under `inet` in the `eth0` section)
 5. Open a browser and navigate to the IP address. There I could see the default Nginx page.
 
-The downside of installing with a package manager is that we cannot install any additional modules. 
+The downside of installing with a package manager is that we cannot install any additional modules.
 Therefore, I installed Nginx from source in the next section.
 
 ### Building Nginx from source & adding modules
 
-Building Nginx from source allows us to customise the installation and add additional modules. Before starting, I rebuilt 
+Building Nginx from source allows us to customise the installation and add additional modules. Before starting, I rebuilt
 the droplet to start from scratch. Then I followed these steps:
 
 1. Update the package list with `apt-get update`
 2. Download the source code with `wget https://nginx.org/download/nginx-1.27.3.tar.gz`
 3. Extract the source code with `tar -zxvf nginx-1.27.3.tar.gz`
 4. Try and run `./configure` to see if there are any missing dependencies => get the error:
-    ```bash
-    checking for OS
-      + Linux 6.8.0-51-generic x86_64
-    checking for C compiler ... not found
-    ./configure: error: C compiler cc is not found
-    ```
+   ```bash
+   checking for OS
+     + Linux 6.8.0-51-generic x86_64
+   checking for C compiler ... not found
+   ./configure: error: C compiler cc is not found
+   ```
 5. Install the build-essential package with `apt-get install build-essential`
 6. Run `./configure` again => get the error:
-    ```bash
-    ./configure: error: the HTTP rewrite module requires the PCRE library.
-    You can either disable the module by using --without-http_rewrite_module
-    option, or install the PCRE library into the system, or build the PCRE library
-    statically from the source with nginx by using --with-pcre=<path> option.
-    ```
+   ```bash
+   ./configure: error: the HTTP rewrite module requires the PCRE library.
+   You can either disable the module by using --without-http_rewrite_module
+   option, or install the PCRE library into the system, or build the PCRE library
+   statically from the source with nginx by using --with-pcre=<path> option.
+   ```
 7. Install the PCRE, the zlib and the libssl libraries with `apt-get install libpcre3 libpcre3-dev zlib1g zlib1g-dev libssl-dev`
 8. Running ´./configure´now works, but we also want to add custom configuration flags. To see all possible flags, run `./configure --help`
 9. Navigate to [Building Nginx from source](https://nginx.org/en/docs/configure.html) to see more information about the available configuration flags
-10. Set a few common flags and the http_ssl module with: 
+10. Set a few common flags and the http_ssl module with:
     `./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module`
 11. Compile the source code with `make`
 12. Install the compiled code with `make install`
@@ -169,23 +169,25 @@ I followed these steps:
 1. Run `nginx -h` to see the available commands
 2. Run `nginx -s stop` to stop the Nginx process
 3. Create a new file in `/lib/systemd/system/nginx.service` with the following content:
-    ```nginx
-    [Unit]
-    Description=The NGINX HTTP and reverse proxy server
-    After=syslog.target network.target remote-fs.target nss-lookup.target
 
-    [Service]
-    Type=forking
-    PIDFile=/var/run/nginx.pid
-    ExecStartPre=/usr/bin/nginx -t
-    ExecStart=/usr/bin/nginx
-    ExecReload=/bin/kill -s HUP $MAINPID
-    ExecStop=/bin/kill -s QUIT $MAINPID
-    PrivateTmp=true
+   ```nginx
+   [Unit]
+   Description=The NGINX HTTP and reverse proxy server
+   After=syslog.target network.target remote-fs.target nss-lookup.target
 
-    [Install]
-    WantedBy=multi-user.target
-    ``` 
+   [Service]
+   Type=forking
+   PIDFile=/var/run/nginx.pid
+   ExecStartPre=/usr/bin/nginx -t
+   ExecStart=/usr/bin/nginx
+   ExecReload=/bin/kill -s HUP $MAINPID
+   ExecStop=/bin/kill -s QUIT $MAINPID
+   PrivateTmp=true
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
 4. Run `systemctl start nginx` to start Nginx and check that it is running with `systemctl status nginx`
 5. Stop Nginx with `systemctl stop nginx` and check that it is stopped with `systemctl status nginx`
 6. Enable Nginx to start on boot with `systemctl enable nginx`
@@ -196,9 +198,9 @@ I followed these steps:
 Nginx was originally designed for Unix-based systems, but it is also available for Windows. However, the Windows version
 has some limitations compared to the Unix version, such as:
 
-  * Poor performance 
-  * Single worker process
-  * Unsupported modules
+- Poor performance
+- Single worker process
+- Unsupported modules
 
 I wasn't interested in installing Nginx on Windows, so I skipped this section.
 
@@ -208,8 +210,8 @@ I wasn't interested in installing Nginx on Windows, so I skipped this section.
 
 There are two main configuration terms in Nginx:
 
-1. **Context**: A block of configuration directives (sections within a configuration) that apply to a specific part of the server. 
-   For example, the `http` context contains directives that apply to the entire server, while the `server` context contains 
+1. **Context**: A block of configuration directives (sections within a configuration) that apply to a specific part of the server.
+   For example, the `http` context contains directives that apply to the entire server, while the `server` context contains
    directives that apply to a specific server block. Contexts are enclosed in curly braces `{}`, and can be nested within each other.
    Nested contexts inherit directives from their parent contexts. The top-most context is the configuration file itself (the main context),
    which is where we define the global directives that apply to the master process. Other important contexts include `events`, `http`,
@@ -227,25 +229,27 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
 3. Created a new directory with `mkdir sites` and then `cd sites` and `mkdir demo`.
 4. Copied the files `index.html`and `style.css` from ChatGTP to the `demo` directory manually.
 5. Copied the image `image.png` to the `demo` directory with this command: `scp /Users/aljazkovac/Desktop/courses/nginx-fundamentals/image.png digitalocean:/sites/demo/`
-   (the [SCP command](https://go.lightnode.com/tech/scp-linux?ref=b7022283&id=58&gad_source=1&gclid=Cj0KCQiA19e8BhCVARIsALpFMgFWgB53pwnAgSFmIOTh_rxr4hYy4J7fW1XxKsTVOLkK6koCZAQxRWgaAlwkEALw_wcB) 
-    copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file).
+   (the [SCP command](https://go.lightnode.com/tech/scp-linux?ref=b7022283&id=58&gad_source=1&gclid=Cj0KCQiA19e8BhCVARIsALpFMgFWgB53pwnAgSFmIOTh_rxr4hYy4J7fW1XxKsTVOLkK6koCZAQxRWgaAlwkEALw_wcB)
+   copies files between hosts on a network, and the syntax is `scp <source> <destination>`, `digitalocean` is the alias I set up in the `~/.ssh/config` file).
 6. Edit the file `/etc/nginx/nginx.conf` and add the following configuration:
-    ```nginx
-    events {
-    }
 
-    http {
-        server {
-          listen 80;
-          server_name <IP>;
-          root /sites/demo;
-        }
-    }
-    ```
+   ```nginx
+   events {
+   }
+
+   http {
+       server {
+         listen 80;
+         server_name <IP>;
+         root /sites/demo;
+       }
+   }
+   ```
+
 7. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`.
 8. Open a browser and navigate to the IP address. There I could see the simple webpage but without the CSS styling.
-9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types) 
-    for the CSS file. You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`).
+9. In the browser's developer tools, I could see that the CSS file was being loaded. However, Nginx was sending the wrong [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/MIME_types)
+   for the CSS file. You can check the MIME type with `curl -i http://<IP>/<file>` and see the `Content-Type` header (I got `text/plain` instead of `text/css`).
 10. To fix this, one can add a `types` block to the `http` context in the configuration file:
     ```nginx
     http {
@@ -253,7 +257,7 @@ We will create a virtual host to serve a simple HTML page. To do this, I followe
             text/css css;
         }
     ```
-    However, this is not the best solution because it requires manually adding MIME types for each file type. A better solution 
+    However, this is not the best solution because it requires manually adding MIME types for each file type. A better solution
     is to use the `include` directive to include the `mime.types` file:
     ```nginx
     http {
@@ -271,7 +275,7 @@ There are different types of location blocks (listed in order of priority):
 
 1. **Exact match (= <uri>)** : The URI must match the location exactly.
 2. **Preferential prefix match (^~ <uri>)** : The URI must start with the specified prefix, and no other location block can match the URI.
-3. **Regular expression match (~ <uri> => case-sensitive)** or **(~* <uri> => case-insensitive)** : The URI must match the specified regular expression.
+3. **Regular expression match (~ <uri> => case-sensitive)** or **(~\* <uri> => case-insensitive)** : The URI must match the specified regular expression.
 4. **Prefix match (<uri>)** : The URI must start with the specified prefix.
 
 Here are some examples of location blocks:
@@ -412,32 +416,36 @@ http {
 There are two rewrite directives in Nginx:
 
 1. The **rewrite** directive: `rewrite pattern URI`
-    ```nginx
-    events {}
 
-    http {
+   ```nginx
+   events {}
 
-            include mime.types;
+   http {
 
-            server {
+           include mime.types;
 
-                    listen 80;
-                    server_name 206.189.100.37;
+           server {
 
-                    root /sites/demo;
+                   listen 80;
+                   server_name 206.189.100.37;
 
-                    # Starting with user and more than one-word character
-                    rewrite ^/user/\w+ /greet;
+                   root /sites/demo;
 
-                    location /greet{
-                            return 200 "Hello User";
-                    }
-            }
-    }
-    ```
+                   # Starting with user and more than one-word character
+                   rewrite ^/user/\w+ /greet;
+
+                   location /greet{
+                           return 200 "Hello User";
+                   }
+           }
+   }
+   ```
+
    The URI here does not change in the browser, although the request is rewritten to the `/greet` location.
-2. The **return** directive: `return status URI` => if the status is a 3xx, the return directive behaviour becomes 
+
+2. The **return** directive: `return status URI` => if the status is a 3xx, the return directive behaviour becomes
    a redirect, and it accepts a URI as the second argument:
+
    ```nginx
     events {}
     http {
@@ -450,14 +458,15 @@ There are two rewrite directives in Nginx:
                     server_name 206.189.100.37;
 
                     root /sites/demo;
-                    
+
                     location /logo {
                             return 307 /image.png;
                     }
             }
     }
-    ```
-    The URI changes in the browser with the redirect, and points to the `/image.png` location.
+   ```
+
+   The URI changes in the browser with the redirect, and points to the `/image.png` location.
 
 **NOTE**: With the redirect, the URI changes in the browser, while with the rewrite, the URI stays the same.
 
@@ -465,13 +474,13 @@ There are two rewrite directives in Nginx:
 
 **Rewrites vs. redirects**
 
-The rewrite directive is used to rewrite the URI before it is processed by Nginx. 
-When a URI is rewritten, it gets reevaluated. The return directive, on the other hand, does not reevaluate the URI but instead 
-sends a redirect to the client. *Therefore, a rewrite directive is more resource-intensive than a return directive.*
+The rewrite directive is used to rewrite the URI before it is processed by Nginx.
+When a URI is rewritten, it gets reevaluated. The return directive, on the other hand, does not reevaluate the URI but instead
+sends a redirect to the client. _Therefore, a rewrite directive is more resource-intensive than a return directive._
 
-With rewrites, we can capture parts of the original URI. For example, if we have a URI `/user/john`, 
+With rewrites, we can capture parts of the original URI. For example, if we have a URI `/user/john`,
 we can capture the username `john` with a regex pattern and rewrite it to `/greet`:
-  
+
 ```nginx
 events {}
 
@@ -509,14 +518,14 @@ What happens here is the following:
 
 ---
 
-**OPTIONAL FLAGS** 
+**OPTIONAL FLAGS**
 
 The rewrite directive can take optional flags, such as `last`, `break`, `redirect`, and `permanent`.
-The `last` flag makes sure that the location cannot be rewritten again after the current rewrite and reevaluation. 
+The `last` flag makes sure that the location cannot be rewritten again after the current rewrite and reevaluation.
 In the example below, without the `last` flag, the URI would be reevaluated after the rewrite, and would then be rewritten again to `/image.png`.
-With the `last` flag set, the URI is rewritten to `/greet/john`, reevaluated, and is then not rewritten again, which 
+With the `last` flag set, the URI is rewritten to `/greet/john`, reevaluated, and is then not rewritten again, which
 means that we get the response "Hello John" instead of the image.
-  
+
 ```nginx
 events {}
 
@@ -549,7 +558,7 @@ http {
 
 ### Try files & named locations
 
-The `try_files` directive can be used within a server context, or inside a location block. 
+The `try_files` directive can be used within a server context, or inside a location block.
 It is used to try different files or URIs in a specific order until one is found.
 
 `try_files path1 path2 ... final`
@@ -692,14 +701,14 @@ I will get the response "Sorry, that file could not be found." A named location 
 
 Nginx provides two types of logs:
 
-1. **Access logs**: Log all requests made to the server, including the client's IP address, the request method, the requested URI, 
+1. **Access logs**: Log all requests made to the server, including the client's IP address, the request method, the requested URI,
    the response status code, and the size of the response.
 2. **Error logs**: Record anything that failed or didn't work as expected, such as a 404 error or a misconfigured directive.
 
 Logging is enabled by default, but understanding how to configure and customise logs is essential for troubleshooting and monitoring.
 We might also want to disable logging for certain requests to improve performance, or create resource-specific logs to track specific requests.
 
-Run `nginx -V` to see what log paths you set during the installation of Nginx. 
+Run `nginx -V` to see what log paths you set during the installation of Nginx.
 
 ```bash
 root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# nginx -V
@@ -713,19 +722,19 @@ configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.con
 To observe and learn about the logging process, I followed these steps:
 
 1. Clear both logs by running:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > access.log
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > error.log
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > access.log
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# echo '' > error.log
+   ```
 2. Go to the browser and request `<IP>/image.png`
 3. Check the access log with `cat access.log` and the error log with `cat error.log`
 4. The access log will show the request, the response code, and the size of the response:
-    ```bash
+   ```bash
    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# cat access.log
-   176.10.144.208 - - [19/Jan/2025:14:40:23 +0000] "GET /image.png HTTP/1.1" 200 1438718 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) 
+   176.10.144.208 - - [19/Jan/2025:14:40:23 +0000] "GET /image.png HTTP/1.1" 200 1438718 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
    AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-    ```
-5. A common misconception is that 404s get logged in the error log. However, properly handled 404s are not errors. If they 
+   ```
+5. A common misconception is that 404s get logged in the error log. However, properly handled 404s are not errors. If they
    are not properly handled, then they get logged to `error.log`.
 
 To customise or disable logging for a given context, we can use the `access_log` and `error_log` directives:
@@ -755,14 +764,14 @@ http {
 ```
 
 As soon as we reload the above configuration, a custom log file will be created in the `/var/log/nginx` directory:
-  
-  ```bash
-  root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# ls -l
-  total 8
-  -rw-r--r-- 1 root root 1253 Jan 19 14:50 access.log
-  -rw-r--r-- 1 root root  895 Jan 19 14:54 error.log
-  -rw-r--r-- 1 root root    0 Jan 19 14:55 secure.access.log
-  ```
+
+```bash
+root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/var/log/nginx# ls -l
+total 8
+-rw-r--r-- 1 root root 1253 Jan 19 14:50 access.log
+-rw-r--r-- 1 root root  895 Jan 19 14:54 error.log
+-rw-r--r-- 1 root root    0 Jan 19 14:55 secure.access.log
+```
 
 To disable logging for a specific context, we can set the `access_log off` directive:
 
@@ -850,7 +859,7 @@ http {
 ### PHP processing
 
 Up to now we have configured Nginx to serve static files, leaving the rendering of that file to be handled by the client,
-based on its content type or MIME type. However, a critical part of a web server is to be able to serve dynamic content, 
+based on its content type or MIME type. However, a critical part of a web server is to be able to serve dynamic content,
 that has been generated on the server side (by a server-side language such as PHP). Nginx does not have the capability to
 embed PHP or other languages directly into the server like Apache can. Instead, all requests for dynamic content are dealt with
 by a separate process, such as [PHP-FPM](https://www.php.net/manual/en/install.fpm.php), and then reverse proxied back to the client via Nginx.
@@ -863,49 +872,51 @@ I followed these steps to set up PHP processing:
 3. Check that the service exists with `systemctl list-units | grep php` => my version is `php8.3-fpm`
 4. Check the status of the service with `systemctl status php8.3-fpm`
 5. Create the following nginx configuration:
-    ```nginx
-    events {}
 
-    http {
+   ```nginx
+   events {}
 
-            include mime.types;
+   http {
 
-            server {
+           include mime.types;
 
-                    listen 80;
-                    server_name 206.189.100.37;
+           server {
 
-                    root /sites/demo;
+                   listen 80;
+                   server_name 206.189.100.37;
 
-                    # Load index.php first if it exists
-                    index index.php index.html;
+                   root /sites/demo;
 
-                    # Take care of any request with static content
-                    location / {
-                            try_files $uri $uri/ =404;
-                    }
+                   # Load index.php first if it exists
+                   index index.php index.html;
 
-                    location ~\.php$ {
-                            # Pass php-requests to the php-fpm service (fastcgi)
-                            include fastcgi.conf;
-                            # Pass to a UNIX socket which we can find like this:
-                            # find / -name *fpm.sock
-                            fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-                    }
-            }
-    }
-    ```
+                   # Take care of any request with static content
+                   location / {
+                           try_files $uri $uri/ =404;
+                   }
+
+                   location ~\.php$ {
+                           # Pass php-requests to the php-fpm service (fastcgi)
+                           include fastcgi.conf;
+                           # Pass to a UNIX socket which we can find like this:
+                           # find / -name *fpm.sock
+                           fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+                   }
+           }
+   }
+   ```
+
 6. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
 7. Create a new file `index.php` in the `/sites/demo` directory like this:
-    ```bash
-    echo '<?php phpinfo(); ?>' > /sites/demo/info.php
-    ```
+   ```bash
+   echo '<?php phpinfo(); ?>' > /sites/demo/info.php
+   ```
 8. Open a browser and navigate to the IP address followed by `/info.php`. There I got a `502 Bad Gateway error`.
 9. Check the last entry of the error log:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# tail -n 1 /var/log/nginx/error.log
-    2025/01/19 19:58:16 [crit] 94182#0: *1547 connect() to unix:/run/php/php8.3-fpm.sock failed (13: Permission denied) while connecting to upstream, client: 176.10.144.208, server: 206.189.100.37, request: "GET /index.php HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.3-fpm.sock:", host: "206.189.100.37"
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# tail -n 1 /var/log/nginx/error.log
+   2025/01/19 19:58:16 [crit] 94182#0: *1547 connect() to unix:/run/php/php8.3-fpm.sock failed (13: Permission denied) while connecting to upstream, client: 176.10.144.208, server: 206.189.100.37, request: "GET /index.php HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.3-fpm.sock:", host: "206.189.100.37"
+   ```
 10. The error message indicates that the Nginx process does not have permission to access the PHP-FPM socket => check the user
     that Nginx is running as:
     ```bash
@@ -928,7 +939,7 @@ I followed these steps to set up PHP processing:
 14. Check the configuration with `nginx -t` and reload the configuration with `systemctl reload nginx`
 15. Open a browser and navigate to the IP address followed by `/info.php`. There I could see the PHP info page.
     What happened is the following: Nginx received the request, matched it on the location block with the PHP extension,
-    and passed it to the PHP-FPM service. PHP-FPM processed the request and returned the response to Nginx, which then 
+    and passed it to the PHP-FPM service. PHP-FPM processed the request and returned the response to Nginx, which then
     served it to the client.
 16. Now let's create an `index.php` file that will display the current date and time:
     ```bash
@@ -986,14 +997,15 @@ events {
 }
 ```
 
-The maximum number of concurrent requests our server should be able to accept is calculated as 
+The maximum number of concurrent requests our server should be able to accept is calculated as
 `max_nr_concurrent requests = worker_processes * worker_connections`.
 
 ---
+
 **A note on the PID directive**
 
 Recall that we set the PID path in the `nginx.conf` file during the installation of Nginx:
-  
+
 ```bash
 root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# nginx -V
 nginx version: nginx/1.27.3
@@ -1004,17 +1016,18 @@ configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.con
 ```
 
 We can reconfigure the process ID location by changing the `pid` directive in the `nginx.conf` file.
-At the moment, our PID file is located at `/var/run/nginx.pid`. If we want to change the location without rebuilding Nginx, 
+At the moment, our PID file is located at `/var/run/nginx.pid`. If we want to change the location without rebuilding Nginx,
 we can do so like this:
-  
+
 ```nginx
 pid /var/run/new_nginx.pid;
 ```
+
 ---
 
 ### Buffers & timeouts
 
-We can optimize performance by configuring buffers and timeouts. 
+We can optimize performance by configuring buffers and timeouts.
 
 A buffer is when a process reads data into memory or RAM before writing it to its next destination. If the buffer is too small,
 the process will write some of the data to disk.
@@ -1092,20 +1105,20 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
 
 1. Go to the directory where the Nginx source code is located. In my case, it is `/root/nginx-1.27.3`
 2. Make sure we don't change the existing configuration, so let's run `nginx -V` to see the current configuration:
-    ```bash
-    nginx version: nginx/1.27.3
-    built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
-    built with OpenSSL 3.0.13 30 Jan 2024
-    TLS SNI support enabled
-    configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log 
-                         --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~/nginx-1.27.3#
-    ```
+   ```bash
+   nginx version: nginx/1.27.3
+   built by gcc 13.3.0 (Ubuntu 13.3.0-6ubuntu2~24.04)
+   built with OpenSSL 3.0.13 30 Jan 2024
+   TLS SNI support enabled
+   configure arguments: --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log
+                        --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:~/nginx-1.27.3#
+   ```
 3. See the list of available dynamic modules with `./configure --help | grep dynamic`
 4. Use the same configure arguments as before and add the chosen dynamic module:
    ```bash
-   ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log 
-               --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module 
+   ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log
+               --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module
                --with-http_image_filter_module=dynamic --modules-path=/etc/nginx/modules # Add the modules path in the same directory as the configuration files
    ```
 5. We get the following error:
@@ -1121,6 +1134,7 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
 11. Reload the Nginx service with `systemctl reload nginx`
 12. Check the Nginx status with `systemctl status nginx`
 13. Use the new dynamic module in the Nginx configuration:
+
     ```nginx
     user www-data;
 
@@ -1179,25 +1193,26 @@ In order to add dynamic modules to Nginx, we need to recompile Nginx from source
           }
 
           location = /image.png {
-            image_filter_buffer 2M; 
+            image_filter_buffer 2M;
             image_filter rotate 180;
           }
       }
     }
     ```
+
 14. Reload the Nginx service with `systemctl reload nginx`
 15. Check the browser to see if the image is rotated by 180 degrees
 
-**PROBLEM ALERT**: Instead of a rotated image I got a `415 (Unsupported Media Type)` error. 
+**PROBLEM ALERT**: Instead of a rotated image I got a `415 (Unsupported Media Type)` error.
 I checked the error log with `tail -n 1 /var/log/nginx/error.log` and saw the following:
-  
+
 ```bash
-2025/01/25 19:50:28 [error] 200345#0: *3719 image filter: too big response: 1438718 while sending response to client, 
+2025/01/25 19:50:28 [error] 200345#0: *3719 image filter: too big response: 1438718 while sending response to client,
 client: 176.10.144.208, server: 206.189.100.37, request: "GET /image.png HTTP/1.1", host: "206.189.100.37"
 ```
 
-I asked [DeepSeek](https://www.deepseek.com/) - a really cool alternative to [ChatGPT](https://chatgpt.com/) - for help. 
-It said that the error message indicates that the `image_filter` module is rejecting the image because it exceeds the default size limit 
+I asked [DeepSeek](https://www.deepseek.com/) - a really cool alternative to [ChatGPT](https://chatgpt.com/) - for help.
+It said that the error message indicates that the `image_filter` module is rejecting the image because it exceeds the default size limit
 for image processing. By default, the `image_filter` module has a size limit for the images it processes (according to [the documentation](https://nginx.org/en/docs/http/ngx_http_image_filter_module.html#image_filter_buffer),
 the default is 1M), and my `image.png` file (1.4 MB) is too large for the default settings. I therefore increased the buffer size to 2M.
 
@@ -1207,7 +1222,7 @@ the default is 1M), and my `image.png` file (1.4 MB) is too large for the defaul
 
 Let's look at some useful modules and directives outside the fundamental Nginx configuration that can help improve performance.
 
-A good starting point is configuring [`expires` headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Expires). 
+A good starting point is configuring [`expires` headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Expires).
 These headers contain the date/time after which the response is considered expired in the client's cache.
 
 ```nginx
@@ -1371,70 +1386,70 @@ We can compress a response on the server, typically using `gzip`, which greatly 
 Following are the steps to enable gzip compression:
 
 1. Add `gzip on;` to the `http` context in the Nginx configuration file.
-2. Add `gzip_comp_level` to set the compression level (lower number means larger files but requiring less resources) => *3 or 4 is a good value*.
+2. Add `gzip_comp_level` to set the compression level (lower number means larger files but requiring less resources) => _3 or 4 is a good value_.
 3. Add `gzip_types` to specify the MIME types that should be compressed.
 4. Add header `Vary Accept-Encoding` to the location block to indicate that the response [varies based on the `Accept-Encoding` header](https://stackoverflow.com/questions/7848796/what-does-varyaccept-encoding-mean).
 5. Reload the Nginx service and check the headers with `curl -I http://206.189.100.37/style.css`.
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/style.css
-    HTTP/1.1 200 OK
-    Server: nginx/1.27.3
-    Date: Mon, 27 Jan 2025 20:12:54 GMT
-    Content-Type: text/css
-    Content-Length: 519
-    Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
-    Connection: keep-alive
-    ETag: "6785ec2a-207"
-    Expires: Wed, 26 Feb 2025 20:12:54 GMT
-    Cache-Control: max-age=2592000
-    Cache-Control: public
-    Pragma: public
-    Vary: Accept-Encoding
-    Accept-Ranges: bytes
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/style.css
+   HTTP/1.1 200 OK
+   Server: nginx/1.27.3
+   Date: Mon, 27 Jan 2025 20:12:54 GMT
+   Content-Type: text/css
+   Content-Length: 519
+   Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
+   Connection: keep-alive
+   ETag: "6785ec2a-207"
+   Expires: Wed, 26 Feb 2025 20:12:54 GMT
+   Cache-Control: max-age=2592000
+   Cache-Control: public
+   Pragma: public
+   Vary: Accept-Encoding
+   Accept-Ranges: bytes
+   ```
 6. Now set the header `Accept-Encoding` to `gzip` and curl again:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
-    HTTP/1.1 200 OK
-    Server: nginx/1.27.3
-    Date: Mon, 27 Jan 2025 20:14:14 GMT
-    Content-Type: text/css
-    Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
-    Connection: keep-alive
-    ETag: W/"6785ec2a-207"
-    Expires: Wed, 26 Feb 2025 20:14:14 GMT
-    Cache-Control: max-age=2592000
-    Cache-Control: public
-    Pragma: public
-    Vary: Accept-Encoding
-    Content-Encoding: gzip
-    ```
-    We see that the response is now compressed with gzip.
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
+   HTTP/1.1 200 OK
+   Server: nginx/1.27.3
+   Date: Mon, 27 Jan 2025 20:14:14 GMT
+   Content-Type: text/css
+   Last-Modified: Tue, 14 Jan 2025 04:46:34 GMT
+   Connection: keep-alive
+   ETag: W/"6785ec2a-207"
+   Expires: Wed, 26 Feb 2025 20:14:14 GMT
+   Cache-Control: max-age=2592000
+   Cache-Control: public
+   Pragma: public
+   Vary: Accept-Encoding
+   Content-Encoding: gzip
+   ```
+   We see that the response is now compressed with gzip.
 7. We can see the difference if we download the file with `curl http://206.189.100.37/style.css` =>
    we get the stylesheet in plain text. If we download the file with `curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css`
    then we get this:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
-    Warning: Binary output can mess up your terminal. Use "--output -" to tell
-    Warning: curl to output it to your terminal anyway, or consider "--output
-    Warning: <FILE>" to save to a file.
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css
+   Warning: Binary output can mess up your terminal. Use "--output -" to tell
+   Warning: curl to output it to your terminal anyway, or consider "--output
+   Warning: <FILE>" to save to a file.
+   ```
 8. Compare how much data we saved:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl http://206.189.100.37/style.css > style.css
-    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-    Dload  Upload   Total   Spent    Left  Speed
-    100   519  100   519    0     0   516k      0 --:--:-- --:--:-- --:--:--  506k
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css > style.min.css
-    % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-    Dload  Upload   Total   Spent    Left  Speed
-    100   273    0   273    0     0   224k      0 --:--:-- --:--:-- --:--:--  266k
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl http://206.189.100.37/style.css > style.css
+   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+   Dload  Upload   Total   Spent    Left  Speed
+   100   519  100   519    0     0   516k      0 --:--:-- --:--:-- --:--:--  506k
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -H "Accept-Encoding: gzip" http://206.189.100.37/style.css > style.min.css
+   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+   Dload  Upload   Total   Spent    Left  Speed
+   100   273    0   273    0     0   224k      0 --:--:-- --:--:-- --:--:--  266k
+   ```
    **We compressed the file to approximately half its size.**
 
 ### FastCGI_cache
 
-An Nginx micro cache is a small cache that stores responses for a short period of time. It is useful for caching dynamic content. 
+An Nginx micro cache is a small cache that stores responses for a short period of time. It is useful for caching dynamic content.
 This cache can provide great performance benefits for websites that rely heavily on server side languages and database access.
 
 To set up a micro cache, we need to set a few directives, something like this:
@@ -1488,217 +1503,227 @@ Let's compare the performance with and without the cache:
 
 1. Install [Apache Benchmark](https://httpd.apache.org/docs/2.4/programs/ab.html) with `apt-get install apache2-utils`
 2. Let's create 100 requests in 10 concurrent connections with `ab -n 100 -c 10 http://206.189.100.37/`:
-    ```bash
-    Benchmarking 206.189.100.37 (be patient).....done
-    Server Software:        nginx/1.27.3
-    Server Hostname:        206.189.100.37
-    Server Port:            80
 
-    Document Path:          /
-    Document Length:        35 bytes
+   ```bash
+   Benchmarking 206.189.100.37 (be patient).....done
+   Server Software:        nginx/1.27.3
+   Server Hostname:        206.189.100.37
+   Server Port:            80
 
-    Concurrency Level:      10
-    Time taken for tests:   0.054 seconds
-    Complete requests:      100
-    Failed requests:        0
-    Total transferred:      17200 bytes
-    HTML transferred:       3500 bytes
-    Requests per second:    1842.43 [#/sec] (mean)
-    Time per request:       5.428 [ms] (mean)
-    Time per request:       0.543 [ms] (mean, across all concurrent requests)
-    Transfer rate:          309.47 [Kbytes/sec] received
+   Document Path:          /
+   Document Length:        35 bytes
 
-    Connection Times (ms)
-    min  mean[+/-sd] median   max
-    Connect:        0    0   0.1      0       0
-    Processing:     2    4   1.1      4      14
-    Waiting:        2    4   1.0      4      12
-    Total:          3    4   1.1      4      14
+   Concurrency Level:      10
+   Time taken for tests:   0.054 seconds
+   Complete requests:      100
+   Failed requests:        0
+   Total transferred:      17200 bytes
+   HTML transferred:       3500 bytes
+   Requests per second:    1842.43 [#/sec] (mean)
+   Time per request:       5.428 [ms] (mean)
+   Time per request:       0.543 [ms] (mean, across all concurrent requests)
+   Transfer rate:          309.47 [Kbytes/sec] received
 
-    Percentage of the requests served within a certain time (ms)
-    50%      4
-    66%      4
-    75%      4
-    80%      4
-    90%      5
-    95%      5
-    98%      6
-    99%     14
-    100%     14 (longest request)
-    ```
+   Connection Times (ms)
+   min  mean[+/-sd] median   max
+   Connect:        0    0   0.1      0       0
+   Processing:     2    4   1.1      4      14
+   Waiting:        2    4   1.0      4      12
+   Total:          3    4   1.1      4      14
+
+   Percentage of the requests served within a certain time (ms)
+   50%      4
+   66%      4
+   75%      4
+   80%      4
+   90%      5
+   95%      5
+   98%      6
+   99%     14
+   100%     14 (longest request)
+   ```
+
    The two most important metrics are `Requests per second` and `Time per request`.
+
 3. Let us simulate a longer response time with `sleep(1)` in the PHP file:
-    ```bash
-    echo '<?php sleep(1); ?>' > /sites/demo/index.php
-    ```
+   ```bash
+   echo '<?php sleep(1); ?>' > /sites/demo/index.php
+   ```
    This simulates a slow response time from the server, such as a database query or a slow API call.
 4. Run the test again, and now the results are very much different:
-    ```bash
-    Benchmarking 206.189.100.37 (be patient)... ..done
-    Server Software:        nginx/1.27.3
-    Server Hostname:        206.189.100.37
-    Server Port:            80
 
-    Document Path:          /
-    Document Length:        35 bytes
+   ```bash
+   Benchmarking 206.189.100.37 (be patient)... ..done
+   Server Software:        nginx/1.27.3
+   Server Hostname:        206.189.100.37
+   Server Port:            80
 
-    Concurrency Level:      10
-    Time taken for tests:   22.022 seconds
-    Complete requests:      100
-    Failed requests:        0
-    Total transferred:      17200 bytes
-    HTML transferred:       3500 bytes
-    Requests per second:    4.54 [#/sec] (mean)
-    Time per request:       2202.179 [ms] (mean)
-    Time per request:       220.218 [ms] (mean, across all concurrent requests)
-    Transfer rate:          0.76 [Kbytes/sec] received
+   Document Path:          /
+   Document Length:        35 bytes
 
-    Connection Times (ms)
-    min  mean[+/-sd] median   max
-    Connect:        0    0   0.3      0       1
-    Processing:  1001 2017 283.4   2002    3235
-    Waiting:     1001 2016 283.4   2001    3235
-    Total:       1002 2017 283.4   2002    3236
+   Concurrency Level:      10
+   Time taken for tests:   22.022 seconds
+   Complete requests:      100
+   Failed requests:        0
+   Total transferred:      17200 bytes
+   HTML transferred:       3500 bytes
+   Requests per second:    4.54 [#/sec] (mean)
+   Time per request:       2202.179 [ms] (mean)
+   Time per request:       220.218 [ms] (mean, across all concurrent requests)
+   Transfer rate:          0.76 [Kbytes/sec] received
 
-    Percentage of the requests served within a certain time (ms)
-    50%   2002
-    66%   2002
-    75%   2002
-    80%   2003
-    90%   2019
-    95%   2251
-    98%   3004
-    99%   3236
-    100%   3236 (longest request)
-    ```
-5. Now let's enable the cache and run the test again:
-    ```bash
-    Benchmarking 206.189.100.37 (be patient).....done
-    Server Software:        nginx/1.27.3
-    Server Hostname:        206.189.100.37
-    Server Port:            80
+   Connection Times (ms)
+   min  mean[+/-sd] median   max
+   Connect:        0    0   0.3      0       1
+   Processing:  1001 2017 283.4   2002    3235
+   Waiting:     1001 2016 283.4   2001    3235
+   Total:       1002 2017 283.4   2002    3236
 
-    Document Path:          /
-    Document Length:        35 bytes
-
-    Concurrency Level:      10
-    Time taken for tests:   0.014 seconds
-    Complete requests:      100
-    Failed requests:        0
-    Total transferred:      17200 bytes
-    HTML transferred:       3500 bytes
-    Requests per second:    7048.21 [#/sec] (mean)
-    Time per request:       1.419 [ms] (mean)
-    Time per request:       0.142 [ms] (mean, across all concurrent requests)
-    Transfer rate:          1183.88 [Kbytes/sec] received
-
-    Connection Times (ms)
-    min  mean[+/-sd] median   max
-    Connect:        0    0   0.2      0       1
-    Processing:     0    1   0.3      1       2
-    Waiting:        0    1   0.3      1       2
-    Total:          1    1   0.3      1       3
-
-    Percentage of the requests served within a certain time (ms)
-    50%      1
-    66%      2
-    75%      2
-    80%      2
-    90%      2
-    95%      2
-    98%      2
-    99%      3
-    100%      3 (longest request)
+   Percentage of the requests served within a certain time (ms)
+   50%   2002
+   66%   2002
+   75%   2002
+   80%   2003
+   90%   2019
+   95%   2251
+   98%   3004
+   99%   3236
+   100%   3236 (longest request)
    ```
-    The performance is much better now. Requests per second increased from 4.54 to 7048, and the time per request decreased from 2202.179 ms to 1.419 ms.
+
+5. Now let's enable the cache and run the test again:
+
+   ```bash
+   Benchmarking 206.189.100.37 (be patient).....done
+   Server Software:        nginx/1.27.3
+   Server Hostname:        206.189.100.37
+   Server Port:            80
+
+   Document Path:          /
+   Document Length:        35 bytes
+
+   Concurrency Level:      10
+   Time taken for tests:   0.014 seconds
+   Complete requests:      100
+   Failed requests:        0
+   Total transferred:      17200 bytes
+   HTML transferred:       3500 bytes
+   Requests per second:    7048.21 [#/sec] (mean)
+   Time per request:       1.419 [ms] (mean)
+   Time per request:       0.142 [ms] (mean, across all concurrent requests)
+   Transfer rate:          1183.88 [Kbytes/sec] received
+
+   Connection Times (ms)
+   min  mean[+/-sd] median   max
+   Connect:        0    0   0.2      0       1
+   Processing:     0    1   0.3      1       2
+   Waiting:        0    1   0.3      1       2
+   Total:          1    1   0.3      1       3
+
+   Percentage of the requests served within a certain time (ms)
+   50%      1
+   66%      2
+   75%      2
+   80%      2
+   90%      2
+   95%      2
+   98%      2
+   99%      3
+   100%      3 (longest request)
+   ```
+
+   The performance is much better now. Requests per second increased from 4.54 to 7048, and the time per request decreased from 2202.179 ms to 1.419 ms.
+
 6. But how to know if a response was served from the cache? We can add the following header:
-    ```nginx
-    # Configure microcache (fastcgi)
-    # This configures the depth of directories to split the cache entries into
-    fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
-    # Adding the scheme will create one entry for https, and another for http
-    fastcgi_cache_key "$scheme$request_method$host$request_uri";
-    # Add a header to indicate if the response was served from the cache
-    add_header X-Cache $upstream_cache_status;
-    ```
+   ```nginx
+   # Configure microcache (fastcgi)
+   # This configures the depth of directories to split the cache entries into
+   fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
+   # Adding the scheme will create one entry for https, and another for http
+   fastcgi_cache_key "$scheme$request_method$host$request_uri";
+   # Add a header to indicate if the response was served from the cache
+   add_header X-Cache $upstream_cache_status;
+   ```
 7. Test with curl:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/
-    HTTP/1.1 200 OK
-    Server: nginx/1.27.3
-    Date: Fri, 31 Jan 2025 19:38:06 GMT
-    Content-Type: text/html; charset=UTF-8
-    Connection: keep-alive
-    X-Cache: HIT
-    ```
-8. Since we included the `request_uri` in the cache key, the cache will be unique for each request URI. 
-    Therefore, to see a cache miss we can curl with a different URI:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/index.php
-    HTTP/1.1 200 OK
-    Server: nginx/1.27.3
-    Date: Fri, 31 Jan 2025 19:39:10 GMT
-    Content-Type: text/html; charset=UTF-8
-    Connection: keep-alive
-    X-Cache: MISS
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/
+   HTTP/1.1 200 OK
+   Server: nginx/1.27.3
+   Date: Fri, 31 Jan 2025 19:38:06 GMT
+   Content-Type: text/html; charset=UTF-8
+   Connection: keep-alive
+   X-Cache: HIT
+   ```
+8. Since we included the `request_uri` in the cache key, the cache will be unique for each request URI.
+   Therefore, to see a cache miss we can curl with a different URI:
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/index.php
+   HTTP/1.1 200 OK
+   Server: nginx/1.27.3
+   Date: Fri, 31 Jan 2025 19:39:10 GMT
+   Content-Type: text/html; charset=UTF-8
+   Connection: keep-alive
+   X-Cache: MISS
+   ```
 9. To add cache exceptions, set up something like this:
-    ```nginx
-    user www-data;
 
-    worker_processes auto;
+   ```nginx
+   user www-data;
 
-    events {
-    worker_connections 1024;
-    }
+   worker_processes auto;
 
-    http {
+   events {
+   worker_connections 1024;
+   }
 
-    include mime.types;
+   http {
 
-    # Configure microcache (fastcgi)
-    # This configures the depth of directories to split the cache entries into
-    fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
-    # Adding the scheme will create one entry for https, and another for http
-    fastcgi_cache_key "$scheme$request_method$host$request_uri";
-    add_header X-Cache $upstream_cache_status;
+   include mime.types;
 
-      server {
+   # Configure microcache (fastcgi)
+   # This configures the depth of directories to split the cache entries into
+   fastcgi_cache_path /tmp/nginx_cache levels=1:2 keys_zone=MYCACHE:100m inactive=60m; # 100 MB, 60 minutes
+   # Adding the scheme will create one entry for https, and another for http
+   fastcgi_cache_key "$scheme$request_method$host$request_uri";
+   add_header X-Cache $upstream_cache_status;
 
-            listen 80;
-            server_name 206.189.100.37;
+     server {
 
-            root /sites/demo;
+           listen 80;
+           server_name 206.189.100.37;
 
-            index index.php index.html;
+           root /sites/demo;
 
-            # Cache by default
-            set $no_cache 0;
+           index index.php index.html;
 
-            # Check for cache bypass
-            if ($arg_skipcache = 1) {
-              set $no_cache 1;
-            }
+           # Cache by default
+           set $no_cache 0;
 
-            location / {
-              try_files $uri $uri/ =404;
-            }
+           # Check for cache bypass
+           if ($arg_skipcache = 1) {
+             set $no_cache 1;
+           }
 
-            location ~\.php$ {
-              # Pass php requests to the php-fpm service (fastcgi)
-              include fastcgi.conf;
-              fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-        # If no_cache is 1, bypass serving from the cache, and don't write the response to the cache either.
-        fastcgi_cache_bypass $no_cache;
-        fastcgi_no_cache $no_cache;
-            }
+           location / {
+             try_files $uri $uri/ =404;
+           }
 
-            # Enable cache
-            fastcgi_cache MYCACHE;
-            fastcgi_cache_valid 200 60m;
-      }
-    }
-    ```
+           location ~\.php$ {
+             # Pass php requests to the php-fpm service (fastcgi)
+             include fastcgi.conf;
+             fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+       # If no_cache is 1, bypass serving from the cache, and don't write the response to the cache either.
+       fastcgi_cache_bypass $no_cache;
+       fastcgi_no_cache $no_cache;
+           }
+
+           # Enable cache
+           fastcgi_cache MYCACHE;
+           fastcgi_cache_valid 200 60m;
+     }
+   }
+   ```
+
 10. Now we can curl like this:
     ```bash
     root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -I http://206.189.100.37/?skipcache=1
@@ -1715,7 +1740,7 @@ Let's compare the performance with and without the cache:
 HTTP/2 is a major revision of the HTTP network protocol used by the World Wide Web. It is based on the [SPDY](https://en.wikipedia.org/wiki/SPDY) protocol developed by Google.
 
 | HTTP2 vs HTTP1.1 | Advantages of HTTP2                                                  |
-|------------------|----------------------------------------------------------------------|
+| ---------------- | -------------------------------------------------------------------- |
 | Binary protocol  | HTTP1 is a text-based protocol                                       |
 | Compression      | Compression of headers                                               |
 | Persistent       | Persistent connections                                               |
@@ -1733,67 +1758,71 @@ To add the HTTP2 module, we need to recompile Nginx from source:
 3. Run `make` and `make install`.
 4. Restart Nginx and check its status.
 5. Add a self-signed SSL certificate and private key:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# openssl req -x509 -days 30 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/self.key -out /etc/nginx/ssl/self.crt
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# openssl req -x509 -days 30 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/self.key -out /etc/nginx/ssl/self.crt
+   ```
 6. Add the SSL configuration to the server block:
-    ```nginx
-    user www-data;
-    worker_processes auto;
-    events {
-    worker_connections 1024;
-    }
 
-    http {
+   ```nginx
+   user www-data;
+   worker_processes auto;
+   events {
+   worker_connections 1024;
+   }
 
-    include mime.types;
+   http {
 
-      server {
+   include mime.types;
 
-            listen 443 ssl; # This is the standard SSL port.
-            server_name 206.189.100.37;
+     server {
 
-            root /sites/demo;
+           listen 443 ssl; # This is the standard SSL port.
+           server_name 206.189.100.37;
 
-            index index.php index.html;
+           root /sites/demo;
 
-            ssl_certificate /etc/nginx/ssl/self.crt;
-            ssl_certificate_key /etc/nginx/ssl/self.key;
+           index index.php index.html;
 
-            location / {
-              try_files $uri $uri/ =404;
-            }
+           ssl_certificate /etc/nginx/ssl/self.crt;
+           ssl_certificate_key /etc/nginx/ssl/self.key;
 
-            location ~\.php$ {
-              # Pass php requests to the php-fpm service (fastcgi)
-              include fastcgi.conf;
-              fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-            }
-      }
-    }
-    ```
+           location / {
+             try_files $uri $uri/ =404;
+           }
+
+           location ~\.php$ {
+             # Pass php requests to the php-fpm service (fastcgi)
+             include fastcgi.conf;
+             fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+           }
+     }
+   }
+   ```
+
 7. In the browser, change to `https://...` and check the SSL certificate.
 8. Enable HTTP2 in the server block:
-    ```nginx
-      server {
 
-            listen 443 ssl http2; # Enable HTTP2
-            server_name <IP_ADDRESS>;
-            ...
-     }
+   ```nginx
+     server {
+
+           listen 443 ssl http2; # Enable HTTP2
+           server_name <IP_ADDRESS>;
+           ...
+    }
    ```
+
 9. Reload Nginx and curl:
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/index.html
-    HTTP/2 200
-    server: nginx/1.27.3
-    date: Fri, 31 Jan 2025 20:52:55 GMT
-    content-type: text/html
-    content-length: 571
-    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
-    etag: "6785f3fc-23b"
-    accept-ranges: bytes
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/index.html
+   HTTP/2 200
+   server: nginx/1.27.3
+   date: Fri, 31 Jan 2025 20:52:55 GMT
+   content-type: text/html
+   content-length: 571
+   last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+   etag: "6785f3fc-23b"
+   accept-ranges: bytes
+   ```
 
 **NOTE**: The course here is a bit outdated, as the most modern version of the HTTP protocol is [HTTP3](https://en.wikipedia.org/wiki/HTTP/3).
 
@@ -1904,7 +1933,7 @@ id  responseEnd requestStart  process code size request path
 
 ### HTTPS (SSL)
 
-We will continue to work on our SSL configuration and see how to optimize our HTTPS connections. 
+We will continue to work on our SSL configuration and see how to optimize our HTTPS connections.
 
 First off, if we go to our landing page at `http://206.189.100.37/` then we get an error because we have set up the server to only listen on port 443 (SSL).
 To redirect all HTTP traffic to HTTPS, we can add a new server block that listens on port 80 and redirects to port 443:
@@ -1917,6 +1946,7 @@ server {
         return 301 https://$host$request_uri;
 }
 ```
+
 Test with curl:
 
 ```bash
@@ -1932,7 +1962,7 @@ Location: https://206.189.100.37/
 
 Now we can see that the server redirects all HTTP traffic to HTTPS.
 
-We will continue by disabling SSL in favor of [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0), 
+We will continue by disabling SSL in favor of [TLS](https://en.wikipedia.org/wiki/Transport_Layer_Security#SSL_1.0,_2.0,_and_3.0),
 optimising our [cipher suites](https://en.wikipedia.org/wiki/Cipher_suite), and enabling [Diffie-Hellman key exchange](https://en.wikipedia.org/wiki/Diffie%E2%80%93Hellman_key_exchange).
 
 ```nginx
@@ -2062,7 +2092,7 @@ accept-ranges: bytes
 
 ### Rate limiting
 
-Rate limiting is a technique used to control the rate of traffic sent or received by a network interface controller and is used 
+Rate limiting is a technique used to control the rate of traffic sent or received by a network interface controller and is used
 for the following reasons:
 
 1. Security against brute force attacks.
@@ -2247,7 +2277,7 @@ If we now change the test and run it with 15 concurrent connections in one batch
 }
 ```
 
-We see that there were just 6 successful transactions. Why six and not five? This is because the burst limit allows for 
+We see that there were just 6 successful transactions. Why six and not five? This is because the burst limit allows for
 the original request plus five extra requests to be made in a single burst.
 
 We can also add the `nodelay` parameter to the `limit_req` directive, which means that the rate limit is applied immediately
@@ -2286,77 +2316,80 @@ Then check your version of Nginx and the [Nginx changelog](https://nginx.org/en/
 
 Now to further secure your Nginx server:
 
-1. Hide the version number in the server header by adding `server_tokens off;` to the `http` block. 
-   The reason is that if an attacker knows the version number, they can look up known vulnerabilities for that version. 
+1. Hide the version number in the server header by adding `server_tokens off;` to the `http` block.
+   The reason is that if an attacker knows the version number, they can look up known vulnerabilities for that version.
 
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
-    HTTP/2 200
-    server: nginx/1.27.3
-    date: Tue, 04 Feb 2025 20:32:05 GMT
-    content-type: text/html
-    content-length: 571
-    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
-    etag: "6785f3fc-23b"
-    strict-transport-security: max-age=31536000
-    accept-ranges: bytes
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
+   HTTP/2 200
+   server: nginx/1.27.3
+   date: Tue, 04 Feb 2025 20:32:05 GMT
+   content-type: text/html
+   content-length: 571
+   last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+   etag: "6785f3fc-23b"
+   strict-transport-security: max-age=31536000
+   accept-ranges: bytes
+   ```
 
-    If we turn off the server tokens then we get this:
+   If we turn off the server tokens then we get this:
 
-    ```bash
-    root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
-    HTTP/2 200
-    server: nginx
-    date: Tue, 04 Feb 2025 20:32:05 GMT
-    content-type: text/html
-    content-length: 571
-    last-modified: Tue, 14 Jan 2025 05:19:56 GMT
-    etag: "6785f3fc-23b"
-    strict-transport-security: max-age=31536000
-    accept-ranges: bytes
-    ```
+   ```bash
+   root@ubuntu-s-1vcpu-512mb-10gb-ams3-01:/etc/nginx# curl -Ik https://206.189.100.37/
+   HTTP/2 200
+   server: nginx
+   date: Tue, 04 Feb 2025 20:32:05 GMT
+   content-type: text/html
+   content-length: 571
+   last-modified: Tue, 14 Jan 2025 05:19:56 GMT
+   etag: "6785f3fc-23b"
+   strict-transport-security: max-age=31536000
+   accept-ranges: bytes
+   ```
 
-    Voilà! The version number is gone.
-2. `X-Frame-Options`: This header is used to protect against [clickjacking](https://en.wikipedia.org/wiki/Clickjacking) attacks. 
+   Voilà! The version number is gone.
+
+2. `X-Frame-Options`: This header is used to protect against [clickjacking](https://en.wikipedia.org/wiki/Clickjacking) attacks.
    It tells the browser whether to allow a page to be displayed in an iframe. Add this to the `server` block:
 
-    ```nginx
-    add_header X-Frame-Options "SAMEORIGIN";
-    ```
+   ```nginx
+   add_header X-Frame-Options "SAMEORIGIN";
+   ```
 
    What this does is it tells the browser that the page can only be displayed in a frame on the same origin as the page itself.
    Test by creating a simple website:
 
-    ```html
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <title>Origin</title>
-      </head>
-      <body>
-        <iframe src="https://206.189.100.37/" width="800" height="400"></iframe>
-      </body>
-    </html>
-    ```
+   ```html
+   <!DOCTYPE html>
+   <html lang="en">
+     <head>
+       <meta charset="utf-8" />
+       <title>Origin</title>
+     </head>
+     <body>
+       <iframe src="https://206.189.100.37/" width="800" height="400"></iframe>
+     </body>
+   </html>
+   ```
 
-    If you add the `X-Frame-Options` header, then the page will not be displayed in the iframe.
+   If you add the `X-Frame-Options` header, then the page will not be displayed in the iframe.
+
 3. Add the `X-XSS-Protection` header to protect against [cross-site scripting](https://en.wikipedia.org/wiki/Cross-site_scripting) attacks:
 
-    ```nginx
-    add_header X-XSS-Protection "1; mode=block";
-    ```
+   ```nginx
+   add_header X-XSS-Protection "1; mode=block";
+   ```
 
-    This header tells the browser to block the page if an XSS attack is detected. `1`means `on`, and `mode=block` means that the browser should block the page.
-4. Rebuild Nginx with the `--without-http_autoindex_module` flag to disable the `autoindex` module. 
-   This module generates directory listings if there is no index file in a directory. This is a security risk because it can 
-   expose sensitive information. f an index file (such as `index.html`) isn’t present, the module creates a directory listing that 
-   might expose sensitive files or internal organization details. Disabling autoindex minimizes the risk of accidental exposure of 
-   file system information that could help an attacker plan further exploits. 
+   This header tells the browser to block the page if an XSS attack is detected. `1`means `on`, and `mode=block` means that the browser should block the page.
+
+4. Rebuild Nginx with the `--without-http_autoindex_module` flag to disable the `autoindex` module.
+   This module generates directory listings if there is no index file in a directory. This is a security risk because it can
+   expose sensitive information. f an index file (such as `index.html`) isn’t present, the module creates a directory listing that
+   might expose sensitive files or internal organization details. Disabling autoindex minimizes the risk of accidental exposure of
+   file system information that could help an attacker plan further exploits.
    To rebuild, do the following:
-   * Run `nginx -V` to see the build arguments, then copy them and add `--without-http_autoindex_module` to the `./configure` command.
-   * Run `make` and `make install`.
+   - Run `nginx -V` to see the build arguments, then copy them and add `--without-http_autoindex_module` to the `./configure` command.
+   - Run `make` and `make install`.
 
 ### Let's Encrypt - SSL certificates
 
@@ -2368,7 +2401,7 @@ I also had to connect the Digital Ocean's name servers to the custom domain.
 
 In order to generate certificates and automate their renewal, I used the [Certbot](https://certbot.eff.org/) tool.
 To install certbot on Ubuntu, I followed the instructions on the [Certbot website](https://certbot.eff.org/instructions?ws=nginx&os=snap).
-I installed Certbot with [snap](https://en.wikipedia.org/wiki/Snap_(software)), a package manager for Linux. Snaps are self-contained applications with mediated access 
+I installed Certbot with [snap](<https://en.wikipedia.org/wiki/Snap_(software)>), a package manager for Linux. Snaps are self-contained applications with mediated access
 to the host system.
 
 Because I ran the `sudo certbot --nginx` command, Certbot edited my Nginx configuration automatically, and I ended up with this:
@@ -2405,12 +2438,12 @@ http {
 }}
 ```
 
-As I went to the browser, I could see that the website was now secure and I could inspect the certificate there. 
+As I went to the browser, I could see that the website was now secure and I could inspect the certificate there.
 
 The last part was making sure that the certificate will be renewed. It is possible to renew the certificate manually by running
 `sudo certbot renew`. But there is no need to automate the renewal of the certificate, as that is the default behaviour, as stated
-in the [Certbot documentation](https://certbot.eff.org/instructions?ws=nginx&os=snap): *"The Certbot packages on your system come with a cron job or systemd timer that will renew 
-your certificates automatically before they expire. You will not need to run Certbot again, unless you change your configuration."*
+in the [Certbot documentation](https://certbot.eff.org/instructions?ws=nginx&os=snap): _"The Certbot packages on your system come with a cron job or systemd timer that will renew
+your certificates automatically before they expire. You will not need to run Certbot again, unless you change your configuration."_
 
 We could also add a `cronjob` manually with the `crontab -e` command, and by adding the following line there `@daily certbot renew`.
 Then we could list all our cronjobs with the `crontab -l` command.
@@ -2420,7 +2453,7 @@ Then we could list all our cronjobs with the `crontab -l` command.
 ### Prerequisites
 
 We will be using our local Nginx server here, along with a few simple php servers. I installed my Nginx with homebrew,
-so the Nginx configuration was placed in the `/opt/homebrew/etc/nginx` folder. There was already a nice setup there, but to test a very 
+so the Nginx configuration was placed in the `/opt/homebrew/etc/nginx` folder. There was already a nice setup there, but to test a very
 simple version, I changed the `location` block to this:
 
 ```nginx
@@ -2443,15 +2476,15 @@ simple version, I changed the `location` block to this:
 Running `curl` to `http://localhost:8080/` returns the greeting.
 
 Now we can also fire up a simple php server (I had to install php first with `brew install php`). Then I could fire up
-a php server with `php -S localhost:9090`. I also copied an image from the internet into my nginx folder with 
+a php server with `php -S localhost:9090`. I also copied an image from the internet into my nginx folder with
 `sudo curl -o /opt/homebrew/etc/nginx/logo.png <URL>`, so if I go to `locahost:9090/logo.png` I can see the image there.
 
-I then created a `resp.txt` file in the nginx folder, and in the file I simply said **"Hello from PHP!"**. Then I started the 
+I then created a `resp.txt` file in the nginx folder, and in the file I simply said **"Hello from PHP!"**. Then I started the
 PHP server again with `php -S localhost:9090 resp.txt`, and now I am served the greeting from the file at `localhost:9090`.
 
 ### Reverse proxy
 
-A reverse proxy acts as an intermediary between the client (e.g., a browser), and the resource itself. 
+A reverse proxy acts as an intermediary between the client (e.g., a browser), and the resource itself.
 
 I have the following running:
 
@@ -2480,7 +2513,7 @@ location /php {
 }
 ```
 
-If we `curl` now we get this: 
+If we `curl` now we get this:
 
 ```bash
 HTTP/1.1 200 OK
@@ -2537,7 +2570,7 @@ array(5) {
 
 ### Load balancer
 
-Nginx makes it easy to configure a [simple and robust load balancer](https://nginx.org/en/docs/http/load_balancing.html). 
+Nginx makes it easy to configure a [simple and robust load balancer](https://nginx.org/en/docs/http/load_balancing.html).
 A load balancer should perform two main tasks:
 
 1. Distribute requests to multiple servers, thus reducing the load on those individual servers
@@ -2576,7 +2609,7 @@ We can also test this configuration by running `nginx -t -c <file-path>`.
 
 Since we are proxying to the first PHP server, if we curl our nginx server, we get a response from the first server.
 
-To create the load balancer functionality, we need to create an `upstream`, a block that groups servers and enables us to set 
+To create the load balancer functionality, we need to create an `upstream`, a block that groups servers and enables us to set
 options on the block. We will be using the [`http_ustream_module`](https://nginx.org/en/docs/http/ngx_http_upstream_module.html)
 for this purpose.
 
@@ -2594,14 +2627,14 @@ http {
 	}
 
   server {
-  
+
     listen 8888;
-    
+
     location / {
       proxy_pass http://php_servers;
       }
   }
-} 
+}
 ```
 
 Remember to reload the configuration file like so: `nginx -s reload`. Then run a simple while loop that curls to the Nginx server,
@@ -2637,10 +2670,10 @@ the servers one-by-one. We see that the server balances the requests to the rema
 
 Let's look at a few load balancer options:
 
-_Sticky sessions_: the request is bound to a user's IP request and always, when possible, proxied to the same server. 
-This allows us to maintain user sessions for things like login state, etc. 
+_Sticky sessions_: the request is bound to a user's IP request and always, when possible, proxied to the same server.
+This allows us to maintain user sessions for things like login state, etc.
 
-Add `ip_hash` directive to the `upstream php_servers` block: 
+Add `ip_hash` directive to the `upstream php_servers` block:
 
 ```nginx
 upstream php_servers {
@@ -2651,8 +2684,8 @@ upstream php_servers {
 }
 ```
 
-If we run our three PHP servers again and `curl` the nginx server with the `while` loop, as we did before, we will now get 
-proxied to only one server. If that server goes down, nginx will start proxying to the next available server, etc. In the 
+If we run our three PHP servers again and `curl` the nginx server with the `while` loop, as we did before, we will now get
+proxied to only one server. If that server goes down, nginx will start proxying to the next available server, etc. In the
 terminal output below you can see where I killed `PHP Server 2`:
 
 ```bash
@@ -2704,7 +2737,7 @@ http {
 server {
 
     listen 8888;
-    
+
     location / {
       proxy_pass http://php_servers;
       }
@@ -2722,13 +2755,11 @@ Here are two interesting resources worth looking at:
 ## Final thoughts and certificate
 
 I really enjoyed this course. I learned a lot about Nginx and its powerful capabilities. The course is a bit outdated in
-some sections, e.g., Security, but that is to be expected. The initial motivation was to take the course to learn more 
+some sections, e.g., Security, but that is to be expected. The initial motivation was to take the course to learn more
 about reverse proxying, and I would have liked for that section to be longer and more in-depth, but I certainly feel I have
-enough knowledge now to set things up myself and start experimenting. And that is really the best way to learn anything. 
+enough knowledge now to set things up myself and start experimenting. And that is really the best way to learn anything.
 
 And I even got a nice little certificate from Udemy!
 
 ![Udemy Certificate](../assets/images/nginx/udemy-nginx-certificate.jpg){: w="700" h="400" }
 _Figure 1: Certificate after the completion of the course_
-
-

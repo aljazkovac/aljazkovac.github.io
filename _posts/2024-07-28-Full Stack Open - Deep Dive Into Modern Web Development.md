@@ -1,8 +1,8 @@
 ---
 title: Full Stack Open - Deep Dive Into Modern Web Development
 date: 2024-07-28 10:48:23 +0200
-categories: [notes, fullstack]
-tags: [software, full stack, courses, certificates] # TAG names should always be lowercase.
+categories: [notes, fullstack] # MAX 2 categories, TOP and SUB.
+tags: [software, fullstack] # TAG names should always be lowercase.
 description: A course on modern full stack web development.
 ---
 

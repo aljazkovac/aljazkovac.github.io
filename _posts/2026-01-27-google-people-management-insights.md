@@ -1,8 +1,8 @@
 ---
 title: "Insights from Google's People Management Essentials Specialization"
 date: 2026-01-26 18:00:00 +0100
-categories: [articles, management]
-tags: [leadership, management, high-performing teams]
+categories: [articles, leadership] # MAX 2 categories, TOP and SUB.
+tags: [leadership, high-performing teams]
 mermaid: true
 description: Key takeaways and visualizations from the Google People Management Essentials Specialization on Coursera.
 ---

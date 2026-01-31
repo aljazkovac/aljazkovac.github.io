@@ -1,7 +1,7 @@
 ---
 title: Adventures with Raspberry Pi - Running a Nginx Server
 date: 2025-03-08 09:30:00 +0100
-categories: [notes, raspberry pi]
+categories: [notes, raspberry pi] # MAX 2 categories, TOP and SUB.
 tags: [devops, raspberry pi, nginx, linux] # TAG names should always be lowercase.
 description: Home Lab - How to Set Up a Nginx Server On a Raspberry Pi
 ---
