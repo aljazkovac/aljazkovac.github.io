@@ -1,6 +1,7 @@
 ---
 title: FromNand2Tetris
 date: 2024-08-30 10:48:23 +0200
+permalink: /posts/nand2tetris/
 categories: [notes, hardware] # MAX 2 categories, TOP and SUB.
 tags: [software, hardware] # TAG names should always be lowercase.
 description: A course in which you build a computer (hardware and software) from scratch.

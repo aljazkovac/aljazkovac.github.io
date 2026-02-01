@@ -1,6 +1,7 @@
 ---
 title: Designing Data-Intensive Applications
 date: 2024-07-28 10:36:23 +0200
+permalink: /posts/data-intensive-applications/
 categories: [notes, data] # MAX 2 categories, TOP and SUB.
 tags: [software, data, database] # TAG names should always be lowercase.
 description: A comprehensive book on best practices for building a data driven application.

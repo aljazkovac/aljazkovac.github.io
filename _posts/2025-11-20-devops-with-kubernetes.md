@@ -1,6 +1,7 @@
 ---
 title: DevOps with Kubernetes
 date: 2025-11-20 06:00:00 +0100
+permalink: /posts/devops-with-kubernetes/
 categories: [notes, kubernetes] # MAX 2 categories, TOP and SUB.
 tags: [devops, kubernetes, prometheus, grafana, google, cloud] # TAG names should always be lowercase.
 description: University of Helsinki course on Kubernetes

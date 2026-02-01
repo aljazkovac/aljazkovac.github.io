@@ -4,7 +4,7 @@ title: "The Sugar Rush of Vibe Coding: A YARP Experiment"
 date: 2025-06-02 16:33:00 +0200
 categories: [articles, software] # MAX 2 categories, TOP and SUB.
 tags: [.net, yarp, reverse proxy, prometheus, grafana, vibe-coding, ai]
-permalink: /posts/yarp/
+permalink: /posts/vibe-coding-yarp/
 description: "I built a reverse proxy twice: once with AI, once by hand. Here is what I learned about the future of engineering."
 ---
 

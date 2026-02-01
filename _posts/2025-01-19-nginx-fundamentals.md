@@ -1,6 +1,7 @@
 ---
 title: "Nginx Fundamentals: High performance servers from scratch"
 date: 2025-01-19 14:38:23 +0100
+permalink: /posts/nginx-fundamentals/
 categories: [notes, nginx] # MAX 2 categories, TOP and SUB.
 tags: [devops, nginx] # TAG names should always be lowercase.
 description: An Udemy course on Nginx fundamentals.

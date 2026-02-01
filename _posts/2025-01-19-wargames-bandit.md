@@ -1,6 +1,7 @@
 ---
 title: "OverTheWire Wargames"
 date: 2025-01-19 15:38:23 +0100
+permalink: /posts/overthewire-wargames/
 categories: [notes, security] # MAX 2 categories, TOP and SUB.
 tags: [security, devops, linux] # TAG names should always be lowercase.
 description: Learn and practice security concepts in the form of fun-filled games.
