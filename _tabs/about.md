@@ -5,9 +5,9 @@ icon: fas fa-user
 order: 4
 ---
 
-> I am the **Team Leader** for **Platform Engineering** and the **AI Initiative Lead** at [Caspeco](https://caspeco.com/), where I bridge the gap between technical infrastructure and organizational strategy.
+> I work at the intersection of **platform engineering**, **AI**, and **organizational strategy**—bridging the gap between technical infrastructure and business value.
 >
-> With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive measurable engineering impact.
+> With a background in journalism and education, I focus on building high-performing teams, robust systems, and practical AI strategies that drive measurable impact.
 
 ## <i class="fas fa-book-open text-muted me-2"></i> The Narrative
 
