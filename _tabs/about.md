@@ -25,11 +25,11 @@ This background in communication and education became my superpower when I trans
 
 ### **Engineering** | _2022 – Present_
 
-I joined Caspeco as a **Software Engineer** focused on backend optimization, but my interest in infrastructure quickly led me to the **Cloud & DevOps** team. There, I spearheaded our migration to Azure Container Apps, implemented a custom reverse proxy using YARP, and led the modernization of our observability stack using OpenTelemetry and self-hosted Grafana.
+I joined [Caspeco](https://caspeco.com/) as a **Software Engineer** focused on backend optimization, but my interest in infrastructure quickly led me to the **Cloud & DevOps** team. There, I spearheaded our migration to Azure Container Apps, implemented a custom reverse proxy using YARP, and led the modernization of our observability stack using OpenTelemetry and self-hosted Grafana.
 
 Today, as **Team Leader**, I drive a **data-centric engineering culture**, implementing infrastructure to measure DORA metrics and engineering efficiency. I lead the **Platform Engineering** team to build robust self-service tools, secure cloud infrastructure, and modern CI/CD pipelines.
 
-Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define the company’s AI strategy. Beyond adoption, I focus on **adoption and quantifiable impact**—driving workforce upskilling through internal workshops and building observability pipelines to measure the ROI of tools like GitHub Copilot and Claude Code through both metrics and developer feedback.
+Simultaneously, as **AI Initiative Lead**, I work directly with the CTO to define the company’s AI strategy. My focus is on **adoption and quantifiable impact**—driving workforce upskilling through internal workshops and building observability pipelines to measure the ROI of tools like GitHub Copilot and Claude Code through both metrics and developer feedback.
 
 ---
 
