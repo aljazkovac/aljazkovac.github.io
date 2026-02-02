@@ -198,4 +198,43 @@ Validate the certificate at the [validation link](https://coursera.org/verify/WK
 
 ## Support Individual Growth and Development
 
+Focus on:
+
+- What it means to be a good coach
+- How to give effective feedback
+- How to conduct meaningful performance reviews
+- How to navigate tough conversation
+- How to ask for and receive feedback
+
+**The relationship between a manager and a report is very similar to the relationship between a coach and an athlete.**
+
+The approach to developing a report:
+
+- Identify the skill gap for the next level
+- Work collaboratively to create a plan to close that gap
+- Give coaching and feedback until they achieve that next level
+
+Two of the most important factors in growth and development:
+
+- Feedback: information you can provide to a report that is actionable by them and that helps them perform better
+- Coaching: the act of collaborating with your report to give them guidance and help them grow
+
+**Management is a learnable skill.**
+
+The single most important thing good managers do is give good coaching and feedback.
+
+Ask your team: What kind of coaching or feedback would you like from me?
+
+Instead of providing answers, challenge team members to think through a challenge and come up with their own solutions. Ask open-ended questions, avoid leading questions. "Tell me more" works really well. Also, give the team member your full attention: put the phone down and close your laptop. Get comfortable with silence as well. Wait a few seconds before speaking. Also, repeat back information to confirm that you understand correctly (reflecting back or looping).
+
+Reflecting back:
+
+- This is what I'm hearing
+- Do I have this right?
+- What do you think would be the best next step?
+
+Encourage questions!
+
+### Develop and coach the team
+
 ## Grow as a Manager

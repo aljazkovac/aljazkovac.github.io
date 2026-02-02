@@ -15,7 +15,7 @@ My career began in journalism and education. For several years, I was a voice on
 
 Later, I moved abroad, living in Germany, England, and Sweden. During this time, I remained active in journalism while transitioning into education. I taught English and German and served as a researcher at the Department of Education at Stockholm University.
 
-This background in communication and education became my superpower when I transitioned into tech. I realized that the hardest engineering problems are often human ones: alignment, clarity, and culture. Today, I combine these communication strengths with a strong technical foundation in cloud-native systems to build high-performing teams and scalable architecture.
+This background in communication and education became my superpower when I transitioned into tech. I realized that the hardest engineering problems are often human ones: alignment, clarity, and culture. However, my transition was equally fueled by an affinity for structure, meticulous attention to detail, and an unwavering desire to understand things in depth. Today, I combine these qualities with a strong technical foundation in cloud-native systems to build high-performing teams and scalable architecture.
 
 ---
 
