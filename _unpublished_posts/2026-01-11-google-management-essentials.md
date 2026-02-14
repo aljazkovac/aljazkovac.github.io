@@ -101,7 +101,7 @@ To then build on that and put your network to that, here are some ideas:
 - Propose joint solutions
 - Address issues early
 
-### Course certificate
+### Create a High-Performing Team course certificate
 
 This wraps up this course. The jist of it is to maintain relationships across the organization, and to nurture them over time. Then you can use those relationships to create a culture of collaboration and learning, not blame. It is crucial to adapt a manager's mindset: the focus is on the team, not yourself.
 
@@ -190,6 +190,8 @@ The key to assigning work well is to look for opportunities in every task. Every
 - Encourage decision-making
 - Establish career checkpoints
 - Provide clear takeaways and ensure alignment
+
+### Set and Achieve Team Goals course certificate
 
 ![Set and Achieve Team Goals](/assets/images/google-people-management-essentials/set-and-achieve-team-goals-certificate.png)
 _Certificate for completing the Set and Achieve Team Goals course_
@@ -351,6 +353,8 @@ Upward feedback (getting feedback from the team on your leadership):
 
 **The best leaders are always learning and your team's perspectives are priceless for your growth!**
 
+### Support Individual Growth and Development course certificate
+
 ![Support Individual Growth and Development](/assets/images/google-people-management-essentials/support-individual-growth-and-development-certificate.png)
 _Certificate for completing the Support Individual Growth and Development course_
 
@@ -364,3 +368,75 @@ Focus on how to build a foundation for sustained success and impact as a leader:
 - Apply time management strategies managers can use to maximize productivity.
 - Utilize reflection and feedback to improve self-awareness.
 - Develop a plan for investing in ongoing development as a manager.
+
+Approach your role with a growth mindset. Keep your ego in check and stay balanced, so that you can continue to stay self-aware.
+
+### Become a self-aware manager
+
+Reflecting on your strengths and development areas is key!
+
+Self-awaraness:
+
+- internal: an understanding of your own strenghts, development areas, values, emotions, preferences, etc. => this improves your self-esteem and sense of purpose.
+- external: developing an understanding of what others think about you.=> can help improve your interactions
+
+Practicing self-awareness:
+
+- write down observations on the incident
+- seek feedback
+- ask yourself what you can do to improve
+- be aware of how you respond to feedback
+
+### Invest in yourself as a manager
+
+Effective time management is key to becoming a great manager. Effective time management can help you:
+
+- manage stress
+- focus on high-priority work
+- maximize your productivity
+
+Time management strategies:
+
+- completing a time audit
+- identifying important tasks
+- creating short-term due dates
+- using time blocking: scheduling your time into chunks that allow you to be most productive
+- focusing on one task at a time (multi-tasking decreases productivity!)
+- reflecting at the end of each week: what went well, what could have be improved, and where you spent time most effectively
+
+Time management is something you need to consider every day and every week: it is a dynamic process. You want to stay flexible and communicate to your team how you are managing your own time.
+
+Managers have a direct impact on the motivation levels of their reports, but they need to find the time for their own development too.
+Use the following cycle: practice -> reflect -> learn.
+Reflection:
+
+- How have I tried to improve my management skills in the last three months?
+- What is one management skill that I have succesfully improved?
+- Which management skill can I improve to add the most value to the team I manage?
+
+Get feedback from your direct reports, manager peers and your manager!
+
+Learning opportunities:
+
+- workshops
+- courses
+- books, articles
+- podcasts
+- learning from others
+- learning by doing
+
+An effective manager stays curious and is constantly learning!
+
+### Grow as a Manager course certificate
+
+![Grow as a Manager](/assets/images/google-people-management-essentials/grow-as-a-manager-certificate.png)
+_Certificate for completing the Grow as a Manager course_
+
+Validate the certificate at the [validation link](https://www.coursera.org/account/accomplishments/verify/QUDBIDTTHKVJ).
+
+## Google Management Essentials Specialization Certificate
+
+![Google People Management Essentials Specialization](/assets/images/google-people-management-essentials/google-people-management-essentials-specialization-certificate.png)
+_Certificate for completing the Google People Management Essentials Specialization_
+
+Validate the certificate at the [validation link](https://www.coursera.org/account/accomplishments/specialization/XFX6N27RYFM2).
