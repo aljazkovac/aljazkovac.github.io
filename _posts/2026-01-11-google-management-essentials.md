@@ -1,109 +1,100 @@
 ---
-layout: article
 title: Google People Management Essentials Specialization
 date: 2026-01-11 08:00:00 +0100
-categories: [articles, leadership] # MAX 2 categories, TOP and SUB.
+categories: [notes, leadership] # MAX 2 categories, TOP and SUB.
 tags: [leadership, high-performing teams] # TAG names should always be lowercase.
 description: Google People Management Essentials Specialization - Coursera
+mermaid: true
 ---
 
 ## Create a High-Performing Team
 
-### Module 1: Get Started with People Management
+The shift from being an individual contributor to a manager is more than a change in title—it's a fundamental shift in how you deliver value. At Google, this is defined by three core pillars.
 
-The key ingredient to making your team more performant is the team manager. The best managers have more engaged, better performing teams and less turnover.
+### The Google Manager Framework
 
-Google Manager Responsibilities is the core framework used by managers at Google, based on years of research and data. Its guiding principles are:
+The most effective managers don't just "manage"; they build communities and develop the next generation of leaders while delivering results.
 
-- Build community
-- Deliver results
-- Develop people
+```mermaid
+graph TD
+    Top([Managerial Excellence])
 
-The goals of the course:
+    Top --- P1[Build Community]
+    Top --- P2[Deliver Results]
+    Top --- P3[Develop People]
 
-- Shift from being an individual contributor to a builder of high-performing teams
-- Tools and strategies to deliver powerful results
-- Ways to effectively coach and give feedback
-- Develop own skills to become a more resilient and impactful leader
+    style Top fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b
+    style P1 fill:#f5f5f5,stroke:#424242,color:#212121
+    style P2 fill:#f5f5f5,stroke:#424242,color:#212121
+    style P3 fill:#f5f5f5,stroke:#424242,color:#212121
+```
 
-### Become an effective and impactful people manager
+### The Manager Mindset: Three Critical Shifts
 
-People management when done right touches people in incredible ways. People management is a privilege and should not be taken for granted.
+Success as a manager requires moving away from the "doer" mentality. It’s no longer about your output, but the team's outcomes.
 
-Manager mindset: it shapes everything you do as a manager. Three key mindset shifts:
+| From: Individual Contributor | To: People Manager                                     |
+| :--------------------------- | :----------------------------------------------------- |
+| **Execution Focus**          | **Enabling Focus** (Delegating to create growth)       |
+| **Personal Career**          | **Team Progression** (Aligning work with their "why")  |
+| **Tactical Decisions**       | **Systemic Impact** (Thinking in second-order effects) |
 
-- **Shift focus from my work to the team's results**: don't try and do too much; delegate, and set team members up for success;
-- **Shift from thinking about your own career to helping others progress in theirs**: help team members grow, stay motivated and progress in their careers. Get to know your team and understand where they want to go;
-- **Shift from making project-level decisions, to considering the impact on the entire team**: your decisions affect other people. Consider the full impact of your decisions (or lack thereof -> not making a decision can be as damaging as making the wrong decision); what decisions do I need to make to help the team? Who else should I ask for information? What consequences will this decision have on team members and our performance?
+> **Self-Reflection Checkpoint:**
+>
+> - What tasks am I holding on to that could be growth opportunities for others?
+> - Whose potential have I not fully unlocked?
+> - In my next decision, how will this ripple across the whole team?
 
-**Key takeaway:**
-It takes effort to shift your thinking into a manager mindset, but doing so will empower your team and drive meaningful outcomes.
+### Creating an Effective Team Culture
 
-To start, ask yourself:
+Culture isn't what you say; it's how you interact. High-performing teams are built on trust, open communication, and a shift from a "blame" culture to a "learning" culture.
 
-- What tasks am I holding on to that could create opportunities for other team members?
-- Whose potential have I not fully unlocked, and what can I do to support their career goals?
-- In my next decision, how can I better weigh the potential impact on the team?
+#### Change Your Conversations
 
-### Create an effective team
+| Scenario             | Old Approach (Status Update)                | New Approach (Dialogue)                                       |
+| :------------------- | :------------------------------------------ | :------------------------------------------------------------ |
+| **1:1 Meetings**     | "Give me a list of what you did this week." | "What's the biggest challenge you faced, and how can I help?" |
+| **Team Meetings**    | Settling for silence or one-way updates.    | Proactively inviting dissenting opinions and quiet voices.    |
+| **Project Failures** | Identifying who made the mistake.           | Identifying what the system lacked that allowed the mistake.  |
 
-How a team works together is more important than who is on the team. Collaboration and a culture of learning are the key ingredients. Trust and open communication also.
+### Practical Application: Navigating "Difficult" Dynamics
 
-Ways to build an effective team:
+In one exercise, I explored how to handle technically capable but interpersonal "difficult" colleagues.
 
-- Develop one-on-one relationships
-- Promote open communication
-- Create a culture of learning, not blame
+| Aspect        | Description                                                                                                                                                                                  |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scenario**  | Technically strong but unpleasant team member.                                                                                                                                               |
+| **Goal**      | Improve culture without sacrificing technical excellence.                                                                                                                                    |
+| **Approach**  | [**Radical Candor**](https://www.radicalcandor.com/frequently-asked-questions) (Kim Scott): Challenging directly while caring personally.                                                    |
+| **Rationale** | Addressing behavior decisively avoids "toxic high-performers" from eroding team trust. Honesty about impact, paired with respect for their skill, is the only way to pivot the relationship. |
 
-Change your conversations:
+### Managing Beyond the Team: The Strategic Network
 
-- Shift the focus of your one-on-ones from simple status updates to genuine dialogues.
-- Don't settle for silence in team meetings by inviting everyone's opinions.
-- Reframe project failures from a search for blame to a quest for learning
+A manager’s effectiveness is often determined by their network outside their immediate team.
 
-There were some scenarios we had to work through. The last scenario we had to come up with ourselves. I decided to work on this:
+```mermaid
+graph TD
+    A((<b>Network</b>))
+    
+    A --- Influence[<b>Influence</b><br/>Decision Makers]
+    A --- Inspiration[<b>Inspiration</b><br/>Industry Leaders]
+    A --- Mentorship[<b>Mentorship</b><br/>Guides & Advisors]
+    A --- Collaboration[<b>Collaboration</b><br/>Cross-functional Peers]
 
-| Aspect        | Description                                                                                                                                                                                                                                                        |
-| :------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Scenario**  | **A “difficult” team member**                                                                                                                                                                                                                                      |
-| **Goal**      | Improve the culture and relationship with a coworker who is technically very capable but can be very difficult and unpleasant to work with.                                                                                                                        |
-| **Approach**  | [**Radical Candor**](https://www.radicalcandor.com/frequently-asked-questions) (Kim Scott): Challenging directly while caring personally. I once addressed a colleague's behavior decisively, being honest about the impact while reaffirming my respect for them. |
-| **Rationale** | This approach aligns with my preference for direct communication and transparency. I value directness, even when it involves difficult feedback.                                                                                                                   |
+    style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b
+    style Influence fill:#f5f5f5,stroke:#424242,color:#212121
+    style Inspiration fill:#f5f5f5,stroke:#424242,color:#212121
+    style Mentorship fill:#f5f5f5,stroke:#424242,color:#212121
+    style Collaboration fill:#f5f5f5,stroke:#424242,color:#212121
+```
 
-### Manage beyond the team
+**How to build these connections:**
 
-### Manage up and across your organization
-
-Build relationships all around you! Proactively build relationships with your team, your peers and your managers and leaders.
-
-1. Create a relationship map
-2. Ask yourself the following questions:
-   - Collaboration: Who leads the teams we currently work with or should be working with?
-   - Inspiration: Who is leading work that I admire or want to learn more about?
-   - Mentorship: Who has the experience or skills I could learn from?
-   - Influence: Who makes the key decisions that impact my team's success?
-3. Reach out and meet everyone on the list and build relationships. Find ways to be helpful!
-4. Stay connected and be consistent
-
-"Answering these questions transforms a vague goal ("I should network more") into a clear, actionable plan. You now know who to reach out to and, just as importantly, why."
-
-Here are some possible ways to reach out:
-
-- Offer specific help
-- Share relevant information
-- Show curiosity
-- Provide a new perspective
-
-To then build on that and put your network to that, here are some ideas:
-
-- Identify shared goals
-- Suggest combined efforts
-- Propose joint solutions
-- Address issues early
+1.  **Identify:** Who leads the teams we work with? Who is doing work I admire? Who makes the decisions that impact us?
+2.  **Reach Out:** Offer specific help, share relevant info, or simply show curiosity about their challenges.
+3.  **Consistency:** Don't just network when you need something. Be a consistent resource for others.
 
 ### Create a High-Performing Team course certificate
-
-This wraps up this course. The jist of it is to maintain relationships across the organization, and to nurture them over time. Then you can use those relationships to create a culture of collaboration and learning, not blame. It is crucial to adapt a manager's mindset: the focus is on the team, not yourself.
 
 ![Create a High-Performing Team](/assets/images/google-people-management-essentials/create-a-high-performing-team-certificate.png)
 _Certificate for completing the Create a High-Performing Team course_
@@ -440,3 +431,55 @@ Validate the certificate at the [validation link](https://www.coursera.org/accou
 _Certificate for completing the Google People Management Essentials Specialization_
 
 Validate the certificate at the [validation link](https://www.coursera.org/account/accomplishments/specialization/XFX6N27RYFM2).
+
+## LinkedIn Strategy
+
+To promote this specialization effectively while respecting the "Jante Law" and the current confidentiality of upcoming role transitions, use the following approach:
+
+### The "Continuous Learning" Angle
+
+Frame the post around your current role as a Team Lead. This signals growth to your CTO (Rob) and EM (Alex) without making unofficial announcements.
+
+**Draft Post Structure:**
+
+- **Hook:** "Technical leadership in Platform Engineering is as much about people as it is about infrastructure."
+- **Value:** Mention that you took this specialization to better support your team and refine your approach to coaching and feedback.
+- **Key Takeaways:** Highlight the SBI model for feedback and the shift from "assigning work" to "designing opportunities."
+- **CTA:** Link to this blog post as a resource for other technical leads.
+
+Headline: Investing in the "Human side" of Platform Engineering.
+
+Post Text:
+Technical roadmaps and architecture are only half the battle in Platform Engineering. The other half—and often the more challenging part—is the people.
+
+I recently completed the "Google People Management Essentials" Specialization on Coursera to better support my team and sharpen my approach to leadership.
+
+A few key takeaways that I’m already applying:
+🔹 The Manager Mindset: Shifting focus from personal output to team-wide impact.
+🔹 The SBI Model: A structured approach to feedback (Situation - Behavior - Impact) that removes the "guesswork."
+🔹 Design, Don't Just Assign: Thinking of tasks as growth opportunities rather than just tickets.
+
+I’ve documented my full notes and reflections on my blog for any other leads or engineers looking to bridge the gap between technical and people leadership.
+
+### Timeline
+
+1. **Immediate:** Publish this blog post and share on LinkedIn focusing on the "Lead's Toolkit."
+2. **Future (Late Q3):** Once the EM role is official and you have experience, write a "Theory vs. Reality" essay contrasting these Google frameworks with actual interim management challenges.
+
+## Plan for Course 1 Improvement: Create a High-Performing Team
+
+This plan outlines how to transform the raw notes for the first course into a more reader-friendly format while retaining the core learnings.
+
+### 1. Visualizations
+
+- **Google's Manager Framework:** A Mermaid Venn diagram showing the overlap between "Build Community," "Deliver Results," and "Develop People."
+- **The Three Mindset Shifts:** A "From/To" comparison table to clearly contrast the Individual Contributor mindset versus the Manager mindset.
+- **The Relationship Map:** A Mermaid 2x2 matrix to help readers categorize their professional network into Collaboration, Inspiration, Mentorship, and Influence.
+
+### 2. Text Overview & Structure
+
+- **Introduction:** Sharpen the core definition of management as a "builder of teams" rather than a "doer of tasks."
+- **The Mindset Shift:** Convert the bullet points into a more structured "Internal Reflection" section with call-out boxes for the three critical questions.
+- **Team Culture:** Use a "Change the Conversation" section with a clear table showing "Old Approach" vs. "New Approach" for 1:1s and meetings.
+- **Practical Application:** Retain the scenario table but add a brief "Reflective Commentary" to explain why Radical Candor was the chosen approach.
+- **Managing Up & Across:** Group the "How to reach out" and "How to build" ideas into a cohesive strategy for proactive networking.
