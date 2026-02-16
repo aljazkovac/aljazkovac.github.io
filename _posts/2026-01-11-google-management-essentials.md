@@ -75,7 +75,7 @@ A manager’s effectiveness is often determined by their network outside their i
 ```mermaid
 graph TD
     A((<b>Network</b>))
-    
+
     A --- Influence[<b>Influence</b><br/>Decision Makers]
     A --- Inspiration[<b>Inspiration</b><br/>Industry Leaders]
     A --- Mentorship[<b>Mentorship</b><br/>Guides & Advisors]
@@ -90,9 +90,9 @@ graph TD
 
 **How to build these connections:**
 
-1.  **Identify:** Who leads the teams we work with? Who is doing work I admire? Who makes the decisions that impact us?
-2.  **Reach Out:** Offer specific help, share relevant info, or simply show curiosity about their challenges.
-3.  **Consistency:** Don't just network when you need something. Be a consistent resource for others.
+1. **Identify:** Who leads the teams we work with? Who is doing work I admire? Who makes the decisions that impact us?
+2. **Reach Out:** Offer specific help, share relevant info, or simply show curiosity about their challenges.
+3. **Consistency:** Don't just network when you need something. Be a consistent resource for others.
 
 ### Create a High-Performing Team course certificate
 
@@ -103,84 +103,74 @@ Validate the certificate at the [validation link](https://coursera.org/verify/NP
 
 ## Set and Achieve Team Goals
 
-The main learnings of this course:
+Setting goals is more than a planning exercise; it's about creating a clear line of sight between individual tasks and the organization’s mission.
 
-- Clear and compelling team roadmapping
-- Effective work allocation
-- How to combine high performance with genuine care and support goals for the team
-- How to transform your approach to management
+### Driving Results through Clarity and Meaning
 
-### Develop goals for the team
+To drive high performance, a manager must balance three critical ingredients:
 
-It is important that an individual on a team can see the connection of their work to the broader organizational goals. Achieve this through ongoing and constant communication. Set goals and define what success looks like. Be the wind in people's back. You will not be able to hit all your goals: When you don't win, you learn.
+| Ingredient  | Definition                                  | Manager's Role                                            |
+| :---------- | :------------------------------------------ | :-------------------------------------------------------- |
+| **Clarity** | Everyone knows their role and expectations. | Continuous, two-way conversation to remove ambiguity.     |
+| **Meaning** | A personal "why" behind the work.           | Understanding individual motivators for each team member. |
+| **Impact**  | Seeing the tangible results of the work.    | Providing proof that their contribution matters.          |
 
-Key ingredients to help teams drive results:
+#### The SMART Framework
 
-- Clarity == everyone on the team can confidently explain what their role is and what the expectations on them are (requires consistent effort and two-way conversation)
-- Meaning == your personal sense why you do this work. As a manager, you need to understand what motivates each team member.
-- Impact == seeing the results of your work is proof that your work has an impact and motivates you.
+When translating vision into reality, goals should be structured using the SMART approach:
 
-How to set clear team goals:
+| Letter | Attribute      | Description                                  |
+| :----- | :------------- | :------------------------------------------- |
+| **S**  | **Specific**   | Clear and well-defined.                      |
+| **M**  | **Measurable** | Tracks progress with concrete criteria.      |
+| **A**  | **Attainable** | Realistic and achievable.                    |
+| **R**  | **Relevant**   | Aligned with broader team and company goals. |
+| **T**  | **Time-bound** | Has a defined start and end date.            |
 
-- Get clarity on the organization's priorities and challenges
-- Connect with the team on how to move the organization forward
-- Break down team goals into clear individual goals
+### Designing Opportunities: The Three-Legged Stool
 
-[SMART GOALS](https://www.atlassian.com/blog/productivity/how-to-write-smart-goals): An approach that helps translate vision into reality when it comes to great goal-building.
+Great managers don't just assign work; they design opportunities. Effective work allocation requires balancing three competing needs:
 
-- S: Specific
-- M: Measurable
-- A: Attainable
-- R: Relevant
-- T: Time-bound
+```mermaid
+graph TD
+    Stool([Work Allocation Balance])
 
-Important: Periodically reevaluate if the goal still makes sense and can be achieved.
+    Stool --- P1[Individual Skills/Strengths]
+    Stool --- P2[Individual Interests/Growth]
+    Stool --- P3[Business Needs/Deadlines]
 
-With these goals you are setting your team up for success because they know WHAT they are aiming for and WHY it matters.
+    style Stool fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#01579b
+    style P1 fill:#f5f5f5,stroke:#424242,color:#212121
+    style P2 fill:#f5f5f5,stroke:#424242,color:#212121
+    style P3 fill:#f5f5f5,stroke:#424242,color:#212121
+```
 
-Activity: Practice goal setting. Consider including something from the finished template: <https://docs.google.com/document/d/1fh5CDsOb8l8cnkkUR95jCDGXlXfMCs8X-pBZx3tT8fI/edit?tab=t.0>
+**Key Reflection:** Where can you give someone a "stretch" assignment that balances their growth with the project's success?
 
-Never set goals in a vacuum! Discuss them with your management and your team and collaborate to come up with a final version that everyone can collaborate on and feel proud to be doing.
+### Supporting the Team through Effective Check-ins
 
-### Allocate work effectively
+Supporting a team is an active, ongoing process. The focus of check-ins should shift from "status updates" to "coaching and alignment."
 
-Thoughtfully connect the right person to the right goal when allocating work.
-Consider:
+#### The Check-in Lifecycle
 
-- Their skills
-- Their interests
-- Their current workload
+```mermaid
+graph LR
+    A[Prepare] --> B[Connect]
+    B --> C[Set Agenda]
+    C --> D[Listen & Discuss]
+    D --> E[Action Items]
+    E --> F[Follow-up]
 
-Ask yourself: where can I give someone a chance to grow and shine?
+    style A fill:#e1f5fe,stroke:#01579b,color:#01579b
+    style F fill:#e1f5fe,stroke:#01579b,color:#01579b
+```
 
-When you talk to your team, go beyond status reports. Ask questions such as:
+**How to lead a high-impact check-in:**
 
-- What part of this goal are you most excited about?
-- Where do you see the biggest opportunity?
-- What will be most challenging for you?
-- What new methods might you explore to reach the goal?
-
-Both sides of equation: people and the needs of the business. A three-legged stool: the current state of the individual; the interest or goals of the individual; the need of the business.
-
-The key to assigning work well is to look for opportunities in every task. Every project is a chance to build skills, engagement, and impact for team members. Great managers don't assign work, they design opportunities! It is important to balance "stretching" an employee with "utilizing their existing strengths" to ensure the project doesn't fail.
-
-### Support the team in achieving goals
-
-1. Know what everyone is working on and how they're doing: shared document, regular meetings, good project tracking.
-2. Support team member by asking: How can I help you be successful? How is your work going? What's in your way? **Listen actively and be understanding!** => Feeling heard can make a huge difference!
-3. Provide tangible support: training, connection with colleagues, help explore different points of view. Connect the team to the right resources and people.
-4. Supporting the team is an active, ongoing process.
-
-**How to lead an effective check-in:**
-
-- Prepare for the check-in: Create a dedicated, shared document for each team member to capture their goals, check-in notes, and career interests.
-- Start with a friendly connection
-- Create the agenda together
-- Use active listening
-- Discuss performance
-- Encourage decision-making
-- Establish career checkpoints
-- Provide clear takeaways and ensure alignment
+1.  **Prepare:** Use a shared document for goals and notes.
+2.  **Listen Actively:** Use open-ended questions like "What will be most challenging for you?"
+3.  **Support:** Ask "How can I help you be successful?" rather than just asking for progress.
+4.  **Alignment:** Ensure you both leave the conversation with the same understanding of the next steps.
 
 ### Set and Achieve Team Goals course certificate
 
