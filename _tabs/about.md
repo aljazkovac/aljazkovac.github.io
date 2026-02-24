@@ -93,12 +93,18 @@ _University of Ljubljana, Slovenia (2012)_
 
 - **[Google People Management Essentials Specialization](https://www.coursera.org/account/accomplishments/specialization/XFX6N27RYFM2)** (Google, 2026) – _[High-Performing Teams](https://www.coursera.org/account/accomplishments/verify/NPI6WPHPZIOM)_, _[Goal Setting](https://www.coursera.org/account/accomplishments/verify/WK0LZX6D5ERK)_, _[Support Growth](https://coursera.org/verify/O4LC6M0UHLSG)_, _[Grow as a Manager](https://www.coursera.org/account/accomplishments/verify/QUDBIDTTHKVJ)_
 
-### Technical
+### Platform Engineering
 
 - **[DevOps with Kubernetes](https://courses.mooc.fi/certificates/validate/e5ejzzzty47ea9n)** (University of Helsinki, 2026)
 - **[NGINX Fundamentals](https://www.udemy.com/certificate/UC-2f371ef2-fb52-45a1-add6-0c9001f6621d/)** (Udemy, 2025)
 - **DevOps with Docker** (University of Helsinki, 2025) – _[Basics](https://courses.mooc.fi/certificates/validate/7sb5eqwntiyyxcg)_, _[Compose](https://courses.mooc.fi/certificates/validate/8c978jnqck2k83x)_, _[Security](https://courses.mooc.fi/certificates/validate/sbvgjqy9inmwt7x)_
+
+### Software
+
 - **Full Stack Open** (University of Helsinki, 2024) – _[React](https://studies.cs.helsinki.fi/stats/api/certificate/fullstackopen/en/ead362aab105f5a2259b8b61d757bb33)_, _[GraphQL](https://studies.cs.helsinki.fi/stats/api/certificate/fs-graphql/en/62eb02b924ff99a6e3056e502ef6f318)_, _[TypeScript](https://studies.cs.helsinki.fi/stats/api/certificate/fs-typescript/en/ef6d26f5a190222fb9350ab6fabc69dd)_, _[React Native](https://studies.cs.helsinki.fi/stats/api/certificate/fs-react-native-2020/en/84ab9a8eceb542f889f82a034f78921a)_, _[CI/CD](https://studies.cs.helsinki.fi/stats/api/certificate/fs-cicd/en/a4a01a679261ce20cef7ab17eca0f7e5)_, _[Containers](https://studies.cs.helsinki.fi/stats/api/certificate/fs-containers/en/a3a4bc32b5dc199423c631937d4ae57e)_, _[SQL](https://studies.cs.helsinki.fi/stats/api/certificate/fs-psql/en/0d4fa228fd259e3c7544dd4951d194cf)_
+
+### Hardware
+
 - **Nand2Tetris** (Hebrew University of Jerusalem, 2024) – _[Computer Architecture](https://coursera.org/verify/07VIZ68LMXFI)_
 
 ---
