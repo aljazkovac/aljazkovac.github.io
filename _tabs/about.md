@@ -91,7 +91,7 @@ _University of Ljubljana, Slovenia (2012)_
 
 ### Leadership
 
-- **Google People Management Essentials** (2026) – _[High-Performing Teams](https://www.coursera.org/account/accomplishments/verify/NPI6WPHPZIOM)_, _[Goal Setting](https://www.coursera.org/account/accomplishments/verify/WK0LZX6D5ERK)_
+- **[Google People Management Essentials Specialization](https://www.coursera.org/account/accomplishments/specialization/XFX6N27RYFM2)** (Google, 2026) – _[High-Performing Teams](https://www.coursera.org/account/accomplishments/verify/NPI6WPHPZIOM)_, _[Goal Setting](https://www.coursera.org/account/accomplishments/verify/WK0LZX6D5ERK)_, _[Support Growth](https://coursera.org/verify/O4LC6M0UHLSG)_, _[Grow as a Manager](https://www.coursera.org/account/accomplishments/verify/QUDBIDTTHKVJ)_
 
 ### Technical
 
