@@ -1,0 +1,47 @@
+---
+title: ChatGPT Prompt Engineering for Developers
+date: 2026-02-24 18:00:00 +0100
+categories: [notes, ai] # MAX 2 categories, TOP and SUB.
+tags: [ai, prompt engineering] # TAG names should always be lowercase.
+description: ChatGPT Prompt Engineering for Developers - Deeplearning.ai
+mermaid: true
+---
+
+Two types of large language models (LLMs):
+
+- base models (trained to predict the next word)
+- instruction-tuned LLMs (trained to follow instructions): often trained with RLHF (Reinforcement Learning with Human Feedback)
+
+## Prompting Principles
+
+1. Principle 1: Write clear and specific instructions
+   - Use delimiters to clearly indicate distinct parts of the input
+   - Ask for a structured output
+   - Ask the model to check whether conditions are satisfied (check assumptions required to do the task)
+   - "Few-shot" prompting (give successful examples)
+
+2. Principle 2: Give the model time to “think”
+   - Specify the steps required to complete a task and ask for output in a specified format
+   - Instruct the model to work out its own solution before rushing to a conclusion
+
+**Model Limitations: Hallucinations!**
+
+## Iterative Prompt Development
+
+Idea -> Implementation (code/data) -> Experimental result -> Error analysis -> Repeat
+
+## Summarizing text
+
+- Summarize with a focus on different aspects
+- Try "extract" instead of "summarize"
+
+## Inferring
+
+- Identify sentiment (positive/negative)
+- Identify types of emotions
+- Extract various information from a text
+- Inferring topics
+
+## Text transformation
+
+Various types of text transformation: language translation, spelling and grammar checking, tone adjustment, and format conversion.
