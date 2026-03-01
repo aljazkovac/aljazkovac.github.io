@@ -45,3 +45,11 @@ Idea -> Implementation (code/data) -> Experimental result -> Error analysis -> R
 ## Text transformation
 
 Various types of text transformation: language translation, spelling and grammar checking, tone adjustment, and format conversion.
+
+## Expanding
+
+Use an LLM to generate a longer piece of text from a shorter piece of text.
+
+Temperature: degree of the randomness of the model.
+Lower temperature => more likely next word (reliability, predictability)
+Higher temperature => less likely next word (variety, unpredictability)
