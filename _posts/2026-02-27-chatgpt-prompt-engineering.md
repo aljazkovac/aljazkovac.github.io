@@ -60,3 +60,10 @@ Beyond simple Q&A, LLMs excel at several higher-level tasks:
 
 - **Low Temperature (e.g., 0):** Most predictable and reliable. Best for tasks requiring high accuracy.
 - **High Temperature (e.g., 0.7+):** Increases variety and "creativity." Best for tasks requiring diverse or unique outputs.
+
+## Course certificate - ChatGPT Prompt Engineering
+
+![ChatGPT Prompt Engineering](/assets/images/deeplearning-ai/chatgpt-prompt-engineering/deeplearning-chagtp-promptengineering-certificate.png)
+_Certificate for completing the ChatGPT Prompt Engineering course_
+
+Validate the certificate at the [validation link](https://learn.deeplearning.ai/accomplishments/ffe8a579-44c4-42cc-bf7a-e5984eb2017a).
