@@ -91,25 +91,25 @@ _University of Ljubljana, Slovenia (2012)_
 
 ### AI
 
-- **[ChatGPT Prompt Engineering for Developers](/posts/chatgpt-prompt-engineering/)** (DeepLearning.AI, 2026)
+- **[ChatGPT Prompt Engineering for Developers](../_posts/2026-02-27-chatgpt-prompt-engineering.md)** (DeepLearning.AI, 2026)
 
 ### Leadership
 
-- **[Google People Management Essentials Specialization](/posts/google-management-essentials/)** (Google, 2026)
+- **[Google People Management Essentials Specialization](../_posts/2026-01-11-google-management-essentials.md)** (Google, 2026)
 
 ### Platform Engineering
 
-- **[DevOps with Kubernetes](/posts/devops-with-kubernetes/)** (University of Helsinki, 2026)
-- **[NGINX Fundamentals](/posts/nginx-fundamentals/)** (Udemy, 2025)
-- **[DevOps with Docker](/posts/devops-with-docker/)** (University of Helsinki, 2025)
+- **[DevOps with Kubernetes](../_posts/2025-11-20-devops-with-kubernetes.md)** (University of Helsinki, 2026)
+- **[NGINX Fundamentals](../_posts/2025-01-19-nginx-fundamentals.md)** (Udemy, 2025)
+- **[DevOps with Docker](../_posts/2025-03-28-devops-with-docker.md)** (University of Helsinki, 2025)
 
 ### Software
 
-- **[Full Stack Open](/posts/full-stack-open-deep-dive/)** (University of Helsinki, 2024)
+- **[Full Stack Open](../_posts/2024-07-28-full-stack-open-deep-dive.md)** (University of Helsinki, 2024)
 
 ### Hardware
 
-- **[Nand2Tetris](/posts/nand2tetris/)** (Hebrew University of Jerusalem, 2024)
+- **[Nand2Tetris](../_posts/2024-08-30-nand2tetris.md)** (Hebrew University of Jerusalem, 2024)
 
 ---
 
