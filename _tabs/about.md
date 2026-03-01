@@ -105,7 +105,7 @@ _University of Ljubljana, Slovenia (2012)_
 
 ### Software
 
-- **[Full Stack Open](/posts/full-stack-open-deep-dive/)** (University of Helsinki, 2024)
+- **[Full Stack Open](/posts/full-stack-open/)** (University of Helsinki, 2024)
 
 ### Hardware
 
