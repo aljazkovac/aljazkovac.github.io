@@ -65,7 +65,7 @@ Beyond simple Q&A, LLMs excel at several higher-level tasks:
 
 ## Course certificate - ChatGPT Prompt Engineering
 
-![ChatGPT Prompt Engineering](/assets/images/deeplearning-ai/chatgpt-prompt-engineering/deeplearning-chatgpt-promptengineering-certificate.png)
+![ChatGPT Prompt Engineering](/assets/images/deeplearning-ai/chatgpt-prompt-engineering/deeplearning-chagpt-promptengineering-certificate.png)
 _Certificate for completing the ChatGPT Prompt Engineering course_
 
 Validate the certificate at the [validation link](https://learn.deeplearning.ai/accomplishments/ffe8a579-44c4-42cc-bf7a-e5984eb2017a).

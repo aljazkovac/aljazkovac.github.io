@@ -15,3 +15,10 @@ In this course, we learn how to build our own AI agent to interact with tabular 
 Learnings from this course:
 
 - Deploy LLMs to build your AI agent
+- Implement RAG with tabular data
+- Develop your own database agent
+- Build a function calling system
+- Integrate Azure OpenAI Assistance API
+- Use Azure OpenAI service and LangChain
+
+## Your First AI Agent
