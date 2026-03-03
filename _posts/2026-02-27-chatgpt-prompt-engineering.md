@@ -4,7 +4,7 @@ date: 2026-02-27 12:00:00 +0100
 permalink: /posts/chatgpt-prompt-engineering/
 categories: [notes, ai]
 tags: [ai, deeplearning.ai, prompt engineering, llm]
-description: [ChatGPT Prompt Engineering for Developers - DeepLearning.AI](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/) 
+description: "[ChatGPT Prompt Engineering for Developers - DeepLearning.AI](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)"
 mermaid: true
 ---
 
