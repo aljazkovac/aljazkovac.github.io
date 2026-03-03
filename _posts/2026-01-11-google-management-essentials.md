@@ -4,9 +4,11 @@ date: 2026-01-11 08:00:00 +0100
 permalink: /posts/google-management-essentials/
 categories: [notes, leadership] # MAX 2 categories, TOP and SUB.
 tags: [leadership, high-performing teams] # TAG names should always be lowercase.
-description: "[Google People Management Essentials Specialization - Coursera](https://www.coursera.org/specializations/google-people-management-essentials)"
+description: "Insights from the Google People Management Essentials Specialization on Coursera, focusing on leadership frameworks, team culture, and individual growth."
 mermaid: true
 ---
+
+**Course Source:** [Google People Management Essentials Specialization - Coursera](https://www.coursera.org/specializations/google-people-management-essentials)
 
 ## Create a High-Performing Team
 

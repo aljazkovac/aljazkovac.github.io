@@ -4,9 +4,11 @@ date: 2026-02-27 12:00:00 +0100
 permalink: /posts/chatgpt-prompt-engineering/
 categories: [notes, ai]
 tags: [ai, deeplearning.ai, prompt engineering, llm]
-description: "[ChatGPT Prompt Engineering for Developers - DeepLearning.AI](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)"
+description: "A summary of the ChatGPT Prompt Engineering for Developers course by DeepLearning.AI, covering core principles and iterative development."
 mermaid: true
 ---
+
+**Course Source:** [ChatGPT Prompt Engineering for Developers - DeepLearning.AI](https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/)
 
 Large Language Models (LLMs) have transformed how we build software. Understanding how to interact with them effectively is now a core developer skill. Generally, we work with two types of models:
 
@@ -63,7 +65,7 @@ Beyond simple Q&A, LLMs excel at several higher-level tasks:
 
 ## Course certificate - ChatGPT Prompt Engineering
 
-![ChatGPT Prompt Engineering](/assets/images/deeplearning-ai/chatgpt-prompt-engineering/deeplearning-chagtp-promptengineering-certificate.png)
+![ChatGPT Prompt Engineering](/assets/images/deeplearning-ai/chatgpt-prompt-engineering/deeplearning-chatgpt-promptengineering-certificate.png)
 _Certificate for completing the ChatGPT Prompt Engineering course_
 
 Validate the certificate at the [validation link](https://learn.deeplearning.ai/accomplishments/ffe8a579-44c4-42cc-bf7a-e5984eb2017a).
