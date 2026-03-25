@@ -3,7 +3,7 @@ title: Building Your Own Database Agent
 date: 2026-03-07 08:00:00 +0100
 permalink: /posts/building-database-agent/
 categories: [notes, ai]
-tags: [ai, deeplearning.ai, database, agent, llm]
+tags: [ai, database, agent, llm]
 description: Key takeaways and principles from the DeepLearning.AI course on building your own database agent using LangChain and Azure OpenAI.
 mermaid: true
 ---
