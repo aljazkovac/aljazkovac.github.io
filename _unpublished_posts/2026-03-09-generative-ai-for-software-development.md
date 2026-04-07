@@ -81,11 +81,91 @@ This modules gives hands-on experience developing code with an LLM. It shows how
 
 ## Team Software Engineering with AI
 
+This course is about testing, documentation and dependency management.
+
 ### Module 1: Testing and Debugging
+
+Testing and debugging strategies:
+
+- Exploratory testing: explore the application without predefined test cases, in a way the user would
+- Functional testing: black box, requirements-driven, with focus on input/output. Common types: unit testing, integration testing, smoke testing, regression testing and user acceptance testing.
+- Automated testing: helps maintain the quality and reliability of your software over time.
+- Software performance testing: measuring execution time and identifying performance bottlenecks.
+- Security testing: an area in which LLMs can struggle, due to the complexity and the fast pace of the domain.
 
 ### Module 2: Documentation
 
+Principles of good documentation:
+
+- Improves code readability
+- Prevents technical debt
+- Helps others learn how to use your code
+- Increases overall code quality
+
+Principles of writing good documentation:
+
+- Be clear and concise
+- Avoid redundancy
+- Think of your audience
+- Follow language-specific conventions
+- Keep documentation up-to-date
+
+Two types of comments:
+
+- inline comments
+- documentation comments
+
+Automated documentation tools: Sphinx for Python.
+
+LLMs can really speed up the process of writing great documentation and setting up automated documentation tools.
+
 ### Module 3: Dependency Management
+
+Pros:
+
+- off-the-shelf solutions
+- often efficient, secure, tested
+
+Cons:
+
+- your code depends on other code to work as expected
+
+Dependencies:
+
+- internal: modules or packages you've written yourself and live within your project
+- external: 3rd party libraries that you've included in your project
+
+Possible complexities:
+
+- version conflicts: different dependencies require different versions of the same library
+- security vulnerabilities: outdated libraries are a risk
+- transitive dependencies: complex and difficult to manage
+
+#### LLMs and dependencies
+
+Strengths:
+
+- brainstorm libraries and packages to use in your project
+- learn more about a dependency
+- identify dependency conflicts
+- suggest solutions to issues with dependency
+
+Weaknesses:
+
+- LLMs could miss relevant information
+- LLMs could lack information about obscure libraries
+
+#### Virtual environments
+
+Use venv in python to set up a virtual environment.
+
+## AI-Powered Software and System Design
+
+### Module 1: Data Serialization and Configuration-Driven Development
+
+### Module 2: Databases
+
+### Module 3: Software Design Patterns
 
 ## Specialization certificate
 
