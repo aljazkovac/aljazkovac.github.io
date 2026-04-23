@@ -163,9 +163,80 @@ Use venv in python to set up a virtual environment.
 
 ### Module 1: Data Serialization and Configuration-Driven Development
 
+Configuration-driven development (CDD):
+
+- Behaviour, features and settings of an application are controlled by external configuration files
+- More flexible software
+- Non-technical teammates can modify the application
+
+Design paradigms:
+
+- Structured approach to software architecture and organization
+- Some are baked into popular tools
+- Others are supported in tools, but optional
+
 ### Module 2: Databases
 
+Schema design is usually a collaborative process. AI can speed up the prototype design process and design a schema from text descriptions.
+
+Use an LLM to optimize your database:
+
+- Schema design
+- Indexig
+- Query optimization
+- Caching
+- Connection management
+- Monitoring and maintenance
+
 ### Module 3: Software Design Patterns
+
+Gang of Four design pattern groups:
+
+- Structural == the composition of classes or objects:
+  - Adapter
+  - Bridges
+  - Composites
+  - Decorators
+  - Facades
+  - Flyweights
+  - Proxies
+- Behavioral == the ways in which classes or objects interact and distribute responsibility:
+  - Iterator
+  - Strategy
+  - Template Method
+  -
+
+1. Creational Patterns (Object creation mechanisms)
+   - Singleton: Ensures a class has only one instance and provides a global access point to it (e.g., a single configuration manager).
+   - Builder: Separates the construction of a complex object from its representation, allowing you to create different types and representations using the same construction process (e.g., building a
+     complex SQL query).
+   - Prototype: Creates new objects by copying an existing "prototype" instance rather than creating them from scratch (e.g., cloning a pre-configured UI element).
+   - Factory Method: Defines an interface for creating an object but lets subclasses decide which class to instantiate (e.g., a "Document" creator where subclasses create "PDF" or "Word" docs).
+   - Abstract Factory: Provides an interface for creating families of related or dependent objects without specifying their concrete classes (e.g., a UI kit that creates "Windows" style buttons and
+     scrollbars).
+
+2. Structural Patterns (Composition of classes or objects)
+   - Adapter: Allows objects with incompatible interfaces to collaborate by acting as a translator (e.g., making a 3rd-party XML API work with your JSON-based system).
+   - Bridge: Decouples an abstraction from its implementation so the two can vary independently (e.g., separating a "Remote Control" abstraction from the specific "TV" implementation).
+   - Composite: Lets you compose objects into tree structures to represent part-whole hierarchies, treating individual objects and compositions uniformly (e.g., a file system where folders contain both files and other folders).
+   - Decorator: Attaches additional responsibilities to an object dynamically without modifying its code (e.g., adding "Scrollbar" and "Border" features to a Window).
+   - Facade: Provides a simplified, high-level interface to a complex library or subsystem (e.g., a single orderFood() method that handles payment, inventory, and delivery systems).
+   - Flyweight: Minimizes memory usage by sharing as much data as possible with similar objects (e.g., sharing "Font" data across thousands of character objects in a text editor).
+   - Proxy: Provides a placeholder or representative for another object to control access to it (e.g., a "Lazy Loading" proxy that only creates a heavy object when it's actually needed).
+
+3. Behavioral Patterns (Interaction and responsibility)
+   - Chain of Responsibility: Passes requests along a chain of handlers. Each handler decides either to process the request or pass it to the next handler (e.g., a technical support phone tree).
+   - Command: Encapsulates a request as an object, allowing you to parameterize clients with different requests, queue them, or support undoable operations (e.g., a "Save" button object).
+   - Interpreter: Provides a way to evaluate language grammar or expressions (e.g., a component that parses and executes simple mathematical formulas).
+   - Iterator: Provides a way to access elements of a collection sequentially without exposing its underlying representation (e.g., a loop that works on both Lists and Trees).
+   - Mediator: Reduces chaotic dependencies between objects by forcing them to communicate through a single mediator object (e.g., an Air Traffic Control tower).
+   - Memento: Captures and externalizes an object's internal state so it can be restored later without violating encapsulation (e.g., "Undo" functionality).
+   - Observer: Defines a subscription mechanism to notify multiple objects about any events that happen to the object they’re observing (e.g., a "Like" notification on social media).
+   - State: Allows an object to alter its behavior when its internal state changes, appearing as if the object changed its class
+     (e.g., a "Vending Machine" that behaves differently depending on if money was inserted).
+   - Strategy: Defines a family of algorithms and makes them interchangeable at runtime (e.g., choosing between "QuickSort" and "MergeSort" depending on data size).
+   - Template Method: Defines the skeleton of an algorithm in a base class but lets subclasses override specific steps without changing the structure (e.g., a "Data Miner" that defines the process but lets subclasses handle "CSV" vs "PDF" parsing).
+   - Visitor: Lets you separate algorithms from the objects on which they operate, allowing you to add new operations to existing object structures without modifying them (e.g., an "Export" visitor that visits all elements in a document).
 
 ## Specialization certificate
 
