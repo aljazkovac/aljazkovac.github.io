@@ -224,20 +224,20 @@ Gang of Four design pattern groups:
    - Template Method: Defines the skeleton of an algorithm in a base class but lets subclasses override specific steps without changing the structure (e.g., a "Data Miner" that defines the process but lets subclasses handle "CSV" vs "PDF" parsing).
    - Visitor: Lets you separate algorithms from the objects on which they operate, allowing you to add new operations to existing object structures without modifying them (e.g., an "Export" visitor that visits all elements in a document).
 
-   GoF Pattern │ Modern C# Implementation │
-   ├─────────────────┼───────────────────────────────────────────────┤
-   │ Strategy │ delegate, Func, Action, Lambdas │
-   │ Observer │ event, EventHandler, IObservable │
-   │ Iterator │ IEnumerable, yield return │
-   │ Visitor │ switch expressions, Pattern Matching │
-   │ Singleton │ Lazy<T> │
-   │ Prototype │ record + with expression │
-   │ Template Method │ abstract methods or Default Interface Methods │
-   │ Adapter │ Extension Methods
+| GoF Pattern     | Modern C# Implementation                      |
+| --------------- | --------------------------------------------- |
+| Strategy        | delegate, Func, Action, Lambdas               |
+| Observer        | event, EventHandler, IObservable              |
+| Iterator        | IEnumerable, yield return                     |
+| Visitor         | switch expressions, Pattern Matching          |
+| Singleton       | Lazy<T>                                       |
+| Prototype       | record + with expression                      |
+| Template Method | abstract methods or Default Interface Methods |
+| Adapter         | Extension Methods                             |
 
 ## Specialization certificate
 
-![Generative AI for Software Development Professional Certficate](/assets/images/generative-ai-for-software-developmen/generative-ai-for-software-development-certificate.png)
+![Generative AI for Software Development Professional Certficate](/assets/images/generative-ai-for-software-development/generative-ai-for-software-development-certificate.png)
 _Professional Certificate for completing the Generative AI for Software Development specialization_
 
 Validate the certificate at the [validation link](https://learn.deeplearning.ai/certificates/f850bfc9-a310-48f2-b83e-a4e078b18c66).
