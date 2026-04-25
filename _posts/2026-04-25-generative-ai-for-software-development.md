@@ -1,6 +1,6 @@
 ---
 title: Generative AI for Software Development
-date: 2026-03-09 08:00:00 +0100
+date: 2026-04-25 08:00:00 +0100
 permalink: /posts/generative-ai-for-software-development/
 categories: [notes, ai]
 tags: [ai, generative ai, software, llm]
