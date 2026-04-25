@@ -235,7 +235,7 @@ Gang of Four design pattern groups:
 | Template Method | abstract methods or Default Interface Methods |
 | Adapter         | Extension Methods                             |
 
-## Specialization certificate
+## Professional certificate
 
 ![Generative AI for Software Development Professional Certficate](/assets/images/generative-ai-for-software-development/generative-ai-for-software-development-certificate.png)
 _Professional Certificate for completing the Generative AI for Software Development specialization_
