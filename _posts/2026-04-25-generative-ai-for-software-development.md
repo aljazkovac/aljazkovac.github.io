@@ -77,7 +77,7 @@ Reasoning models "think out loud", generating reasoning tokens, which also use u
 
 ### Module 3: Leveraging an LLM for code anaylsis
 
-This modules gives hands-on experience developing code with an LLM. It shows how to use an LLM to develop, review and iteratve over code to make it fast, reliable and production-ready.
+This module gives hands-on experience developing code with an LLM. It shows how to use an LLM to develop, review and iteratve over code to make it fast, reliable and production-ready.
 
 ## Team Software Engineering with AI
 
@@ -191,20 +191,6 @@ Use an LLM to optimize your database:
 ### Module 3: Software Design Patterns
 
 Gang of Four design pattern groups:
-
-- Structural == the composition of classes or objects:
-  - Adapter
-  - Bridges
-  - Composites
-  - Decorators
-  - Facades
-  - Flyweights
-  - Proxies
-- Behavioral == the ways in which classes or objects interact and distribute responsibility:
-  - Iterator
-  - Strategy
-  - Template Method
-  -
 
 1. Creational Patterns (Object creation mechanisms)
    - Singleton: Ensures a class has only one instance and provides a global access point to it (e.g., a single configuration manager).
