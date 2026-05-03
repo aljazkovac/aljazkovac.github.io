@@ -32,7 +32,7 @@ _Sep 2022 – Present_
 - **Member of the Company Integration Council** (Jun 2025 – Present)
   Ensuring seamless integration between merged entities by championing centralized information hubs and maturity surveys.
 - **Cloud & DevOps Engineer** (Nov 2023 – Nov 2025)
-  Spearheaded containerization (Azure Container Apps), migrated CI/CD to GitHub Actions, and modernized the reverse proxy architecture with YARP.
+  Spearheaded containerization (Azure Container Apps), migrated CI/CD to GitHub Actions, and modernized the reverse proxy architecture with **[YARP](/posts/vibe-coding-yarp/)**.
 - **Software Engineer** (Sep 2022 – Nov 2023)
   Fullstack developer focused on backend optimization, including dynamic visibility algorithms and robust menu management APIs.
 
@@ -87,10 +87,22 @@ _University of Ljubljana, Slovenia (2012)_
 
 ---
 
+## <i class="fas fa-book-open text-muted me-2"></i> Continuing Education
+
+**Designing Data-Intensive Applications**
+_Self-paced Study (2024)_
+
+- **Notes:** **[Chapter Summaries & Key Principles](/posts/data-intensive-applications/)**
+
+---
+
 ## <i class="fas fa-certificate text-muted me-2"></i> Certifications
 
 ### AI
 
+- **[Spec-Driven Development with Coding Agents](/posts/spec-driven-development/)** (DeepLearning.AI, 2026)
+- **[Generative AI for Software Development](/posts/generative-ai-for-software-development/)** (DeepLearning.AI, 2026)
+- **[Building Your Own Database Agent](/posts/building-database-agent/)** (DeepLearning.AI, 2026)
 - **[ChatGPT Prompt Engineering for Developers](/posts/chatgpt-prompt-engineering/)** (DeepLearning.AI, 2026)
 
 ### Leadership

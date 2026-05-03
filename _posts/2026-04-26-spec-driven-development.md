@@ -4,62 +4,70 @@ date: 2026-04-26 08:00:00 +0100
 permalink: /posts/spec-driven-development/
 categories: [notes, ai]
 tags: [ai, generative ai, software]
-description: Notes from the DeepLearning.AI course on how to implement spec-driven development with coding agents.
+description: Notes from the DeepLearning.AI course on implementing spec-driven development with coding agents.
 mermaid: true
 ---
 
 ## Introduction
 
-Benefits of spec-driven development with coding agents:
+Spec-driven development (SDD) is a methodology that shifts the focus from manual coding to the creation and maintenance of a high-fidelity specification. When working with coding agents, this approach offers several key advantages:
 
-- Control code with small changes to spec
-- Eliminate context decay
-- Improve intent fidelity
+- **Granular Control:** You can influence the final codebase through small, precise changes to the specification.
+- **Context Preservation:** It eliminates "context decay" by providing a stable, centralized source of truth.
+- **Intent Fidelity:** It ensures the agent's output aligns closely with your original requirements.
 
-The flow: spec.md ->[SDD] -> source code ->[compiler] -> machine code
+The fundamental flow of SDD can be visualized as follows:
 
-## Workflow overview
+```mermaid
+graph LR
+    spec[spec.md] --> SDD[SDD Process]
+    SDD --> source[Source Code]
+    source --> compiler[Compiler]
+    compiler --> machine[Machine Code]
+```
 
-Project level -> feature level
+## Workflow Overview
 
-Level of detail:
+The SDD workflow operates across two main levels: the **Project Level** and the **Feature Level**.
 
-- Goals
-- Mission
-- Target audience
-- Constraints
+### Project Level: The Constitution
 
-The agent can figure out the low-level details on its own!
+At the project level, you define the "Constitution" of your application. This consists of three living documents that guide the agent's understanding:
 
-Constitution: Mission + Tech stack + Roadmap
+1. **Mission:** The "Why." It defines the vision, target audience, and overall scope.
+2. **Tech Stack:** The "How." A common understanding of the technologies used for development and deployment.
+3. **Roadmap:** The "When." A sequence of phases and features to be implemented.
 
-**Mission**: The Why - vision, audiences, scope, etc.
-**Tech stack**: For the engineering team - a common understanding of the development and deployment technologies
-**Roadmap**: A living document with a seqence of phases and features to be implemented
+The agent uses these to handle low-level implementation details while you focus on the high-level goals and constraints.
 
-### Project evolution
+```mermaid
+graph TD
+    Project[Project Level] --> Constitution[Constitution]
+    Constitution --> Mission[Mission]
+    Constitution --> Stack[Tech Stack]
+    Constitution --> Roadmap[Roadmap]
+```
 
-Flow: Constitution -> Replanning
-Documents: mission.md, tech-stack.md, roadmap.md
+### Feature Level: Implementation Phase
 
-### Feature phase
+Once the project framework is set, individual features move through a repeatable cycle:
 
-Flow: Specification -> Implementation -> Validation
-Documents: plan.md, requirements.md, validation.md
+**Specification → Implementation → Validation**
 
-Roles:
+This phase relies on three key documents: `plan.md`, `requirements.md`, and `validation.md`. The roles are clearly defined:
 
-- Developer: Design, supervise, review and accept or ask for changes
-- Builders and agents: Write the code
+- **Developer:** Acts as the supervisor, designing the plan, reviewing output, and either accepting changes or requesting iterations.
+- **Builders/Agents:** Execute the plan by writing the actual code.
 
 ![Project Evolution](/assets/images/spec-driven-development/sdd-project-feature.png)
 
-## Tips and tricks
+## Tips and Tricks
 
-- Use the AskUserQuestion tool.
-- Use [Context7](https://context7.com/) to give your LLM the latest documentation and libraries
-- [Spec Kit](https://github.com/github/spec-kit)
-- [Open Spec](https://github.com/Fission-AI/OpenSpec)
+To maximize the efficiency of coding agents in an SDD workflow, consider these tools and techniques:
+
+- **Interactive Feedback:** Use the `AskUserQuestion` tool to resolve ambiguities early.
+- **Real-Time Documentation:** Leverage [Context7](https://context7.com/) to provide the LLM with the most up-to-date documentation and library references.
+- **Frameworks:** Explore established patterns like [Spec Kit](https://github.com/github/spec-kit) or [Open Spec](https://github.com/Fission-AI/OpenSpec).
 
 ## Conclusion
 
