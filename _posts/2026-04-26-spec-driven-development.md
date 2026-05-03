@@ -71,9 +71,11 @@ To maximize the efficiency of coding agents in an SDD workflow, consider these t
 
 ## Conclusion
 
-Spec-driven development is one of the latest buzz-words and it is supposed to be the next big thing when working with LLMs. I decided to take this course, expecting to learn an entirely new way of working with agentic coding. Very soon into the course I realized that I have been using my own version of "spec-driven development" for quite a while now. So, what is spec-driven development? It is just a way of working with an LLM in a structured way, using an organized set of .md files to plan, control and validate your work. It does not matter what the actual files are called and how the work is structured as long as it is organized well and your team understands and follows the same convention. I have been using a TODO.md file instead of a ROADMAP.md. AGENTS.md instead of MISSION.md. And README.md instead of TECH-STACK.md. It has worked quite well for me and I did not even realized I have been doing the new hot thing, "spec-driven development"!.
+Spec-driven development is currently one of the industry's favorite buzzwords, touted as the next big thing for agentic coding. However, as I progressed through the course, I realized that SDD isn't necessarily a revolutionary new paradigm—it's essentially a formalization of what many of us have been doing for a long time: working in a structured, organized way.
 
-The point is: find your own structured way of working and do not let yourself be bogged down by a specific framework. Working with an LLM introduces a lot of cognitive debt and places great demand on our context-switching capabilities. Find your own way of dealing with this, depending on your ability, preferences and old habits, as well as the project you are working on.
+I found that I was already practicing the core principles of SDD, just with different labels. I used a `TODO.md` instead of a `ROADMAP.md`, `AGENTS.md` instead of `MISSION.md`, and `README.md` instead of `TECH-STACK.md`. The specific names don't matter as much as the underlying discipline of using an organized set of files to plan, control, and validate work.
+
+The real takeaway isn't that you must adopt the SDD framework to be successful. Working with LLMs introduces significant cognitive debt and places a heavy demand on our context-switching capabilities. The goal shouldn't be to get bogged down in a specific framework, but to find your own structured way of dealing with that debt. Whether it's SDD or your own custom workflow, the best approach is the one that fits your preferences, your habits, and the specific needs of your project. Don't follow the buzz; follow the structure that actually works for you.
 
 ## Accomplishment
 
