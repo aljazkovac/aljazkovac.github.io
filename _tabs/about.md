@@ -89,6 +89,8 @@ _University of Ljubljana, Slovenia (2012)_
 
 ## <i class="fas fa-book-open text-muted me-2"></i> Books
 
+### Software
+
 - **[Designing Data-Intensive Applications](/posts/data-intensive-applications/)**
 
 ---
