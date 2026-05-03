@@ -1,6 +1,6 @@
 ---
 title: Spec-Driven Development with Coding Agents
-date: 2026-04-26 08:00:00 +0100
+date: 2026-05-03 08:00:00 +0100
 permalink: /posts/spec-driven-development/
 categories: [notes, ai]
 tags: [ai, generative ai, software]
