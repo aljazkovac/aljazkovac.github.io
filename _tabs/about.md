@@ -87,12 +87,9 @@ _University of Ljubljana, Slovenia (2012)_
 
 ---
 
-## <i class="fas fa-book-open text-muted me-2"></i> Continuing Education
+## <i class="fas fa-book-open text-muted me-2"></i> Books
 
-**Designing Data-Intensive Applications**
-_Self-paced Study (2024)_
-
-- **Notes:** **[Chapter Summaries & Key Principles](/posts/data-intensive-applications/)**
+- **[Designing Data-Intensive Applications](/_posts/data-intensive-applications)**
 
 ---
 
