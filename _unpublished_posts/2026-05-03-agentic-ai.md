@@ -14,7 +14,7 @@ An agentic workflow follows, in a more or less autonomous way, a flow where thin
 
 Agentic AI can range from less autonomous to highly autonomous.
 
-![Degrees of Autonomy](/assets/images/agentic-ai/degrees-of-autonomy.png)
+![Degrees of Autonomy](/assets/images/agentic-ai/agentic-ai-degrees-of-autonomy.png)
 
 The benefits of agentic workflows:
 
@@ -63,6 +63,21 @@ The four key design patterns for building agentic workflows:
 - Multi-agent collaboration: multiple agents with different roles collaborating on a task outperform a single agent
 
 ## Module 2: Reflection Design Pattern
+
+Reflection is much more powerful when you can inject additional, external information, into the reflection process. An example of this would be running the code that the LLM wrote and then use the output of that to improve the code.
+
+![Reflection with External Feedbac](/assets/images/agentic-ai/agentic-ai-reflection.png)
+
+Reflection performs better than zero (zero examples of input and output given, just a direct prompt) or one (one example given) or few-shot prompting (few examples given).
+
+![Tasks for Reflection](/assets/images/agentic-ai/agentic-ai-reflection-tasks.png)
+
+Tips for writing reflection prompts:
+
+- Clearly indicate the reflection action
+- Specify criteria to check
+
+You may consider using a different LLM for reflection, e.g., a multimodal LLM which can also take images as reflection input. Using a reasoning model for reflection might work better than using a non-reasoning model.
 
 ## Module 3: Tool use
 
