@@ -79,6 +79,31 @@ Tips for writing reflection prompts:
 
 You may consider using a different LLM for reflection, e.g., a multimodal LLM which can also take images as reflection input. Using a reasoning model for reflection might work better than using a non-reasoning model.
 
+Evaluating reflection:
+
+- Objective database queries, e.g, calculating various metrics
+- Using an LLM as a judge for subjective tasks, e.g., judging which graph is better
+
+Using LLMs for comparison or evaluation is problematic:
+
+- Often not very good
+- Position bias (LLMs often prefer the first option)
+
+This can be mitigated with a quality rubric (grading criteria).
+
+Evaluating reflection guidelines:
+
+1. Objective evals:
+   - Code-based evals are easier
+   - Build a dataset of ground truth examples
+2. Subjective evals:
+   - Use LLM as a judge
+   - Rubric-based grading is better
+
+![External Feedback Improvement](/assets/images/agentic-ai/agentic-ai-external-feedback.png)
+
+![Tools to Help Reflection](/assets/images/agentic-ai/agentic-ai-reflection-tools.png)
+
 ## Module 3: Tool use
 
 ## Module 4: Practical Tips for Building Agentic AI
