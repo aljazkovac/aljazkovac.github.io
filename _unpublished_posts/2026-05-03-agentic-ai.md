@@ -106,6 +106,12 @@ Evaluating reflection guidelines:
 
 ## Module 3: Tool use
 
+Tools are functions that enable LLMs to access outside information, perform actions, e.g., web_search, query_database, interest_calc, etc.
+
+In other words, tools are code that the LLM can request to be executed. Modern, premium LLMs, are trained to use tools. At the start of the LLM era, the LLM had to be prompted explicitly to use a specific tool.
+
+You can also let an LLM write and execute code! This can pose risks, so consider executing LLM-written code in sandboxed environments. MCP (Model Context Protocol) is a new standard for developer to get access to a wealth of tools.
+
 ## Module 4: Practical Tips for Building Agentic AI
 
 ## Module 5: Patterns for Highly Autonomous Agents
