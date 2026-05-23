@@ -114,6 +114,57 @@ You can also let an LLM write and execute code! This can pose risks, so consider
 
 ## Module 4: Practical Tips for Building Agentic AI
 
+It can be hard to know what parts of an AI application won't work as expected. A tip is to build a quick prototype to identify what parts don't work well - and then focus your efforts on making those parts work well.
+
+Development process with evals:
+
+1. Build a system and look at outputs to see where it is discovering in an unsatisfactory way
+2. Implement an eval with examples to help you track progress
+3. Monitor as you make changes to the workflow
+
+Use error analysis and traces to understand what component of the agentic workflow is performing poorly.
+
+Benefits of component-level evaluations:
+
+- Can provide clearer signal for specific errors
+- More efficient for team to optimize
+
+### Fixing problems
+
+Improving non-LLM component performance:
+
+- Tune hyperparameters of component
+- Replace the component
+
+Improving LLM-component performance:
+
+- Improve your prompts
+- Try a new model
+- Split up the step
+- Fine-tune a model (quite complex and costly, last resort)
+
+### Latency, cost optimization
+
+Tip: focus on latency and cost optimization once you have a working system.
+
+Latency tip: time the workflow by steps to see if you should consider parallelism or a different model or LLM provider at various steps.
+
+Cost tip: measure per-step cost to understand which components to optimize.
+
+Development process summary: Build <-> Analyze
+
+Build:
+
+- Build end-to-end system
+- Improve individual components
+
+Analyze:
+
+- Examine outputs and traces
+- Build evals and compute metrics
+- Error analysis
+- Component-level evals
+
 ## Module 5: Patterns for Highly Autonomous Agents
 
 ## Certificate
