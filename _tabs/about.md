@@ -120,7 +120,7 @@ _University of Ljubljana, Slovenia (2012)_
 
 ### Hardware
 
-- **[Nand2Tetris](/posts/nand2tetris/)** (Hebrew University of Jerusalem, 2024)
+- **[Nand2Tetris Part I - Hardware](/posts/nand2tetris/)** (Hebrew University of Jerusalem, 2024)
 
 ---
 

@@ -1,7 +1,7 @@
 ---
-title: FromNand2Tetris
+title: FromNand2Tetris-Hardware
 date: 2024-08-30 10:48:23 +0200
-permalink: /posts/nand2tetris/
+permalink: /posts/nand2tetris-hardware/
 categories: [notes, hardware] # MAX 2 categories, TOP and SUB.
 tags: [software, hardware] # TAG names should always be lowercase.
 description: A course in which you build a computer (hardware and software) from scratch.
@@ -9,14 +9,10 @@ description: A course in which you build a computer (hardware and software) from
 
 ## Overview
 
-In this [famous course](https://www.nand2tetris.org/) (often regarded as one of the best courses ever designed for Computer Science), we build a computer
-from scratch, and then, using a higher-level programming language that we design ourselves, develop a program that runs on
+In this [famous course](https://www.nand2tetris.org/) (often regarded as one of the best courses ever designed for Computer Science), we build a computer from scratch, and then, using a higher-level programming language that we design ourselves, develop a program that runs on
 that very computer.
 
-This means that we go through all the building blocks a modern computer needs to be able to run software. In the first we design
-the hardware, and in the second part we focus on the software.
-
-## Part I
+This means that we go through all the building blocks a modern computer needs to be able to run software. In the first we design the hardware, and in the second part we focus on the software.
 
 Part I consists of six projects:
 
@@ -29,7 +25,7 @@ Part I consists of six projects:
 
 Feel free to check out my [repo for the course](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/).
 
-### Project 1
+## Project 1
 
 I really enjoyed designing the chips using the HDL (Figure 1). One thing one needs to keep in mind is that the multi-bit buses
 are indexed from right to left, so the opposite from what one is used to. I especially enjoyed designing the Mux4Way16 and Mux8Way16,
@@ -44,10 +40,10 @@ This could lead to a further debate on how to properly use LLMs for both work an
 simply: Don't use them to give you solutions. Only use them as a form of quicker and more comprehensive research,
 or as a complement to Googling and reading the documentation. That is, if you actually want to learn anything, of course.
 
-![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p1-chips.jpg){: w="700" h="400"}
+![Desktop View](../assets/images/fromnand2tetris-hardware/fromnand2tetris-hardware-chips.jpg){: w="700" h="400"}
 _Figure 1: Design for a Dmux4Way and a Dmux8Way chip_
 
-### Project 2
+## Project 2
 
 In this project we built an ALU (Arithmetic Logic Unit). We built a family of adders (half-adder, full adder, add16, inc16),
 and then we used those to build a full ALU. The ALU computes a function on two inputs, and outputs the result.
@@ -126,7 +122,7 @@ CHIP ALU {
 }
 ```
 
-### Project 3
+## Project 3
 
 In this part we built the computer's main memory unit, Random Access Memory, or RAM. This marks the point where we move
 from combinational logic to a clock-based sequential logic. We know that the RAM is not the only type of memory in a computer.
@@ -155,10 +151,10 @@ drawing diagrams, turning the concepts around in my head. In the end, I did arri
 and one can see the elegance of it from the diagram below (Figure 2). The logic of what input is chosen,
 follows the logic of what the selector bit will be in the register.
 
-![Desktop View](../assets/images/fromnand2tetris/fromnand2tetris-p3-pc.jpg){: w="700" h="400" }
+![Desktop View](../assets/images/fromnand2tetris-hardware/fromnand2tetris-hardware-pc.jpg){: w="700" h="400" }
 _Figure 2: Design for a Program Counter (PC)_
 
-### Project 4
+## Project 4
 
 This project was all about writing assembly programs using the Hack machine language, designed specifically for this course.
 I love writing low-level code, and find it intellectually much more interesting to high-level coding.
@@ -292,7 +288,7 @@ D;JNE
 0;JMP
 ```
 
-### Project 5
+## Project 5
 
 In this part we had to finish and tie together the entire computer architecture. First we build the memory module,
 consisting of RAM, Screen and Keyboard parts. Then we design the central processing unit (CPU), which we connect
@@ -373,7 +369,7 @@ CHIP CPU {
 The rest was quite simple, and the final Hack computer implementation can then be done in only a few lines of HDL code.
 Feel free to check out [this part of my course repository](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project5) for more detail.
 
-### Project 6
+## Project 6
 
 In this part we had to implement the assembler for the Hack assembly language. This was a proper, albeit small, software project,
 and I thoroughly enjoyed it. An assembler is, in essence, just a parsing and translation tool. I implemented the parsing
@@ -520,11 +516,7 @@ internal abstract class Program
 
 Check out [my code for the HACK assembler](https://github.com/aljazkovac/from-nand-to-tetris/tree/main/part1/project6/Assembler), or [my repository for this course](https://github.com/aljazkovac/from-nand-to-tetris), and thanks for reading!
 
-### Certificate
+## Certificate
 
-![Certificate for Part I](../assets/images/fromnand2tetris/fromnand2tetris-1-certificate.png){: w="700" h="400" }
-_Figure 3: Certificate for Part I of the course_
-
-## Part II
-
-To be continued... Please check back later for updates (probably sometime in 2026).
+![FromNand2Tetris-Hardware Certificate](../assets/images/fromnand2tetris-hardware/fromnand2tetris-hardware-certificate.png){: w="700" h="400" }
+_Figure 3: Certificate for the course FromNand2Tetris-Hardware_
