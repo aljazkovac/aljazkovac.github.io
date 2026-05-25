@@ -167,6 +167,24 @@ Analyze:
 
 ## Module 5: Patterns for Highly Autonomous Agents
 
+### Planning design pattern
+
+An example would be an email assistant which needs to execute several steps and use different tools in those steps. The idea is to not have to hardcode the exact sequence of steps.
+
+We can either ask an LLM to create and execute a plan, or ask an LLM to write code and have the code capture multiple steps of the plan. Research shows that planning with code produces superior results.
+
+![Planning with JSON](/assets/images/agentic-ai/agentic-ai-planning.png)
+_Ask an LLM to create a JSON plan_
+
+![Planning with code](/assets/images/agentic-ai/agentic-ai-planning-with-code.png)
+_Ask an LLM to write code to solve the problem_
+
+### Multi-agentic pattern
+
+Some tasks require more than one person - and therefore more than one agent, e.g., a researcher, graphic designer, writer, etc.
+
+You can either execute a linear plan, where one agent hands off its work to another agent. You could also have several agents available to choose from for a specific task.
+
 ## Certificate
 
 ![Spec Driven Development Course Accomplishment](/assets/images/spec-driven-development/spec-driven-development-certficate.png)
