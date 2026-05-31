@@ -185,9 +185,29 @@ Some tasks require more than one person - and therefore more than one agent, e.g
 
 You can either execute a linear plan, where one agent hands off its work to another agent. You could also have several agents available to choose from for a specific task.
 
+The challenge: how to combine the imagination of large language models with the discipline of structured workflow.
+
+Communication patterns for multi-agent systems:
+
+- linear
+- hierarchical
+- deeper hierarchy
+- all-to-all
+
+## Summary
+
+We have discussed the following:
+
+1. Why Agentic AI
+2. Design patterns:
+   - Reflection (and evals)
+   - Tool calling
+   - Planning
+   - Multi-agent systems
+
 ## Certificate
 
-![Spec Driven Development Course Accomplishment](/assets/images/spec-driven-development/spec-driven-development-certficate.png)
-_Accomplishment - completing the course Spec-Driven Development_
+![Agentic AI Certificate](/assets/images/agentic-ai/agentic-ai-certificate.png)
+_The certificate for the completion of the course Agentic AI_
 
-Validate the accomplishment at the [validation link](https://learn.deeplearning.ai/accomplishments/effdff70-8dad-4a3a-8c55-9a66d50cd657).
+Validate the certificate at the [validation link](https://learn.deeplearning.ai/certificates/c9102bb2-5c3e-482e-9cbe-cd9d2ff0f246).
