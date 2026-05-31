@@ -99,6 +99,7 @@ _University of Ljubljana, Slovenia (2012)_
 
 ### AI
 
+- **[Agentic AI](/posts/agentic-ai/)** (DeepLearning.AI, 2026)
 - **[Spec-Driven Development with Coding Agents](/posts/spec-driven-development/)** (DeepLearning.AI, 2026)
 - **[Generative AI for Software Development](/posts/generative-ai-for-software-development/)** (DeepLearning.AI, 2026)
 - **[Building Your Own Database Agent](/posts/building-database-agent/)** (DeepLearning.AI, 2026)
