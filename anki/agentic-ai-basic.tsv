@@ -1,0 +1,6 @@
+What is the primary difference between a traditional linear prompt and an agentic workflow?	An agentic workflow follows an iterative cycle where the LLM executes multiple steps (thinking, research, revision) autonomously to complete a complex task.	ai::agentic-ai
+What are the four primary agentic design patterns?	1. Reflection, 2. Tool Use, 3. Planning, 4. Multi-agent Collaboration.	ai::agentic-ai
+In the context of evaluating Agentic AI, what is the difference between objective and subjective evals?	Objective evals use automated checks (code execution, unit tests), while subjective evals use an LLM as a judge for qualitative aspects.	ai::agentic-ai
+What is the Model Context Protocol (MCP)?	A standardized way for AI agents to access a broad ecosystem of external tools and data sources.	ai::agentic-ai
+What is position bias in the context of using LLMs as judges?	The tendency for LLMs to prefer the first option presented to them during an evaluation.	ai::agentic-ai
+What are the three common communication patterns for multi-agent systems?	1. Linear (sequential), 2. Hierarchical (manager/specialist), 3. All-to-all (collaborative).	ai::agentic-ai

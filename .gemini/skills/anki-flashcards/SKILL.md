@@ -11,10 +11,11 @@ This skill automates the extraction of key concepts, definitions, and technical 
 
 1.  **Analyze Content:** Read the provided Markdown file. Identify core concepts, definitions, lists, and procedural steps.
 2.  **Apply Principles:** Consult [references/flashcard-principles.md](references/flashcard-principles.md) to ensure cards are atomic and effective.
-3.  **Generate Basic Cards:** Create a set of Question/Answer cards for definitions and concepts.
-4.  **Generate Cloze Deletions:** Create a set of fill-in-the-blank cards for workflows, context-heavy facts, or syntax.
-5.  **Format as TSV:** Output two separate code blocks, one for each card type, using Tab-Separated Values (TSV).
-6.  **Tagging:** Automatically generate a tag based on the post's title or categories (e.g., `ai::agentic-ai`).
+3.  **Storage Setup:** Ensure a directory named `anki/` exists at the project root.
+4.  **Generate Basic Cards:** Create a set of Question/Answer cards for definitions and concepts. Save them to `anki/<post-slug>-basic.tsv`.
+5.  **Generate Cloze Deletions:** Create a set of fill-in-the-blank cards for workflows, context-heavy facts, or syntax. Save them to `anki/<post-slug>-cloze.tsv`.
+6.  **Format as TSV:** Output the content as code blocks and inform the user of the saved file paths.
+7.  **Tagging:** Automatically generate a tag based on the post's title or categories (e.g., `ai::agentic-ai`).
 
 ## TSV Structure
 
