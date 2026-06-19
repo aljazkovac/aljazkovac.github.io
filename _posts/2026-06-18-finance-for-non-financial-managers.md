@@ -2,7 +2,7 @@
 title: Finance for Non-Financial Managers
 date: 2026-06-18 08:00:00 +0200
 permalink: /posts/finance-for-non-financial-managers/
-categories: [Notes, Finance]
+categories: [notes, finance]
 tags: [business, finance]
 description: Notes from the LinkedIn Learning course "Finance for Non-Financial Managers" detailing financial basics and statements.
 mermaid: true
