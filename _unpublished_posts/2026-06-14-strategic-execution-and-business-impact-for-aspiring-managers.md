@@ -1,5 +1,5 @@
 ---
-title: Finance for Non-Financial Managers
+title: Strategic Execution and Business Impact for Aspiring Managers
 date: 2026-06-14 08:00:00 +0100
 permalink: /posts/strategic-execution-and-business-impact-for-aspiring-managers/
 categories: [notes, business]
