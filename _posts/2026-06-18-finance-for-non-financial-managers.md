@@ -46,8 +46,6 @@ The balance sheet is built on the accounting equation:
 ```mermaid
 graph LR
     A[Assets] --> EQ[Liabilities + Equity]
-    style A fill:#d4edda,stroke:#28a745,stroke-width:2px
-    style EQ fill:#f8d7da,stroke:#dc3545,stroke-width:2px
 ```
 
 - **Assets:** Resources owned or controlled by a company providing probable future benefit.
