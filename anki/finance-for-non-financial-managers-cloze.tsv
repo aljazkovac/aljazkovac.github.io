@@ -1,0 +1,7 @@
+The {{c1::Balance Sheet}} is a snapshot of a company's assets, liabilities, and equity at a specific point in time.	It provides the fundamental equation: Assets = Liabilities + Equity.	finance::statements
+The {{c1::Income Statement}} details a company's revenues, expenses, and net income over a specific period.	Equation: Revenues - Expenses = Net Income.	finance::statements
+The Statement of Cash Flows tracks three main types of activities: {{c1::Operating}}, {{c2::Investing}}, and {{c3::Financing}}.	Operating (e.g., wages), Investing (e.g., new buildings), and Financing (e.g., bank loans).	finance::statements
+The DuPont framework breaks ROE into three components: {{c1::Profitability}} (controlling expenses), {{c2::Efficiency}} (utilizing assets), and {{c3::Leverage}} (borrowing money).	This detailed analysis helps draw conclusions about business operations.	finance::ratios
+The {{c1::operating cycle}} is the time it takes to buy inventory, sell it, and collect the cash.	A lengthy cycle ties up cash and can cause shortfalls.	finance::management
+{{c1::Variable costs}} change based on production volume, while {{c2::fixed costs}} remain constant regardless of production.	E.g., materials are variable; rent is fixed.	finance::costs
+Under {{c1::Responsibility Accounting}}, individuals are held accountable only for the financial inflows and outflows they can control.	This concept is key when creating a budget.	finance::budgeting
